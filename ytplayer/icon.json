@@ -10,6 +10,6 @@
   ],
   "start_url": "https://zhselfweb.github.io/ytplayer/ytplayer.html",
   "display": "standalone",
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff"
+  "theme_color": "#000000",
+  "background_color": "#000000"
 }
