@@ -1,0 +1,8 @@
+/* 導覽列其餘連結在被鼠標觸碰到的反應 */
+
+.pagelink a:hover {
+    background-color: rgb(218, 205, 134);
+    color: rgb(0, 0, 0) !important;
+    font-weight: 800;
+    transition: background-color 0.2s 0s, color 0.2s 0s, ;
+}
