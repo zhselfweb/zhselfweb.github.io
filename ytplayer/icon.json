@@ -1,5 +1,5 @@
 {
-  "name": "𝚈𝚃 𝙿𝚕𝚊𝚢𝚎𝚛 𝚋𝚢- 𝚣𝚑_𝚘𝚞𝚘 ",
+  "name": "𝚈𝚃 𝙿𝚕𝚊𝚢𝚎𝚛 𝚋𝚢-𝚣𝚑_𝚘𝚞𝚘 ",
   "short_name": "𝚈𝚃 𝙿𝚕𝚊𝚢𝚎𝚛",
   "icons": [
     {
@@ -10,6 +10,6 @@
   ],
   "start_url": "https://zhselfweb.github.io/ytplayer/ytplayer.html",
   "display": "standalone",
-  "theme_color": "#000000",
+  "theme_color": "#ffffff",
   "background_color": "#000000"
 }
