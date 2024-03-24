@@ -18,8 +18,8 @@ nav {
     font-family: "nv";
     motion: 3px;
     position: absolute;
-    left: 0.5%;
-    right: 0.5%;
+    left: 1%;
+    right: 1%;
     top: 1%;
     white-space: nowrap;
     user-select: none;
