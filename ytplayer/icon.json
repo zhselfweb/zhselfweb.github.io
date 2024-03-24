@@ -3,7 +3,7 @@
   "short_name": "𝚈𝚃 𝙿𝚕𝚊𝚢𝚎𝚛",
   "icons": [
     {
-      "src": "/zhlogo.png",
+      "src": "zhlogo.png",
       "type": "image/png",
       "sizes": "192x192"
     }
