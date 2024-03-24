@@ -16,7 +16,6 @@ body {
 
 nav {
     font-family: "nv";
-    motion: 3px;
     position: absolute;
     left: 0.5%;
     right: 0.5%;
@@ -53,7 +52,7 @@ img {
     width: 3cm;
     height: auto;
     margin-left: 90%;
-    opacity: 75%;
+    opacity: 65%;
 }
 
 
@@ -64,6 +63,8 @@ body::-webkit-scrollbar {
 }
 
 header {
+    right: 0.1%;
+    left: 0.1%;
     padding: 20px;
     display: flex;
     align-items: center;
