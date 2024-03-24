@@ -53,7 +53,7 @@ nav a {
     position: absolute;
     width: 3cm;
     height: auto;
-    margin-left: 90%;
+    left: 90%;
     opacity: 65%;
 }
 
@@ -65,7 +65,7 @@ body::-webkit-scrollbar {
 }
 
 header {
-   position: absolute;
+    position: absolute;
     width: 100%;
     padding: 20px;
     display: flex;
