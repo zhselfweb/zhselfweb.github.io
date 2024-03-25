@@ -1,0 +1,98 @@
+@font-face {
+    font-family: "ctm";
+    src: url(./ctm.ttf);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInOut {
+    0% {
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.ani {
+    animation: fadeInOut 5s ease-in-out 1 forwards;
+}
+
+.hid {
+    pointer-events: none;
+}
+
+ig {
+    position: relative;
+    text-align: center;
+    animation: fadeInOut 4s ease-in-out;
+}
+
+.iglogo {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -190px);
+}
+
+.text {
+    font-family: "ctm";
+    text-shadow: 1px 2px 5px rgb(233, 221, 181);
+    color: #424961;
+    position: absolute;
+    top: 38%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.new-element img {
+    animation: fadeIn 1s ease-in-out 1 forwards;
+    width: 18%;
+    user-select: none;
+    -webkit-user-drag: none;
+    height: auto;
+    position: absolute;
+    top: 50%;
+    left: 14%;
+    transform: translateY(-50%);
+    border-radius: 20px;
+}
+
+.firstText p {
+    animation: fadeIn 1s ease-in-out 1 forwards;
+    font-family: "ctm";
+    position: absolute;
+    top: 25%;
+    left: 38%;
+    transform: translateY(-50%);
+    font-size: 60px;
+    color: #000;
+    margin: 0;
+}
+
+.bodyText  {
+    animation: fadeIn 1s ease-in-out 1 forwards;
+    font-family: "ctm";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateY(-50%);
+    font-size: 60px;
+    color: #000;
+    margin: 0;
+}
+
+

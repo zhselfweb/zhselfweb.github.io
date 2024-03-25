@@ -1,0 +1,50 @@
+/* 導覽列 */
+
+@font-face {
+    font-family: "nv";
+    src: url(./NotoSansTC-VariableFont_wght.ttf);
+}
+
+
+/* 導覽列背景 基本字體 */
+
+nav {
+    font-family: "nv";
+    motion: 3px;
+    position: fixed;
+    left: 0.5%;
+    right: 0.5%;
+    top: 1%;
+    white-space: nowrap;
+    user-select: none;
+    background-color: #333;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+}
+
+
+/* 目前所在頁面文字大小,粗細 */
+
+nav span {
+    font: normal 18px;
+    font-weight: bolder;
+}
+
+
+/* 其餘連結樣式 */
+
+nav a {
+    font: normal 15px;
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+    font-size: 16px;
+}
+
+
+/* 處理滾動條 */
+
+body::-webkit-scrollbar {
+    width: 0px;
+}

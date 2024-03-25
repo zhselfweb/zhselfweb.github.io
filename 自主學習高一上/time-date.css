@@ -1,0 +1,111 @@
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        font-family: Arial, sans-serif;
+    }
+    
+    .date {
+        user-select: none;
+        letter-spacing: 18px;
+        font-size: 5vw;
+        color: transparent;
+        -webkit-background-clip: text;
+        /* 設定文字為背景的顏色 */
+        background-image: linear-gradient(45deg, #35352d, #0c0909);
+        /* 與背景漸層顏色相反 */
+        animation: textAnimation 5s ease forwards;
+        opacity: 0;
+    }
+    /* 文字動畫效果 */
+    
+    @keyframes textAnimation {
+        0% {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .time {
+        font-weight: bold;
+    }
+    /* 背景漸層 */
+    
+    .gradient-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 110%;
+        height: 110%;
+        z-index: -1;
+        /* 讓背景處於最底層 */
+        background: linear-gradient(-45deg, #6c9466, rgb(121, 98, 75), rgb(126, 86, 110), rgb(141, 116, 167));
+        background-size: 400% 400%;
+        animation: gradientAnimation 15s ease infinite;
+    }
+    /* 動畫效果 */
+    
+    @keyframes gradientAnimation {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+    /* 確保其他內容不受背景影響 */
+    
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    
+    #fullscreen-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 10px 20px;
+        background-color: transparent;
+        border: 2px solid rgba(70, 70, 109, 0.671);
+        color: rgb(38, 38, 71);
+        cursor: pointer;
+        z-index: 9999;
+    }
+    
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        /* 設置透明度為 0，讓方塊隱形 */
+        opacity: 0;
+    }
+    
+    footer {
+        z-index: 100;
+    }
+    
+    nav,
+    footer {
+        display: block;
+        /* 初始顯示 */
+    }
+    
+    .hidden {
+        display: none;
+        /* 隱藏 */
+    }
+    
+    #hiddenCursor {
+        cursor: none;
+    }

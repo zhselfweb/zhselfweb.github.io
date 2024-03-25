@@ -1,0 +1,79 @@
+/* 導入字體 */
+
+@font-face {
+    font-family: 'webTitle';
+    src: url(./MasaFont-Regular.woff2);}
+
+@font-face {
+    font-family: 'enWebTitle';
+    src: url(./BodoniFLF-BoldItalic.ttf) ;
+}
+
+
+/* 文字入場動畫 */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.anitext {
+    float: none;
+    animation: fadeIn 2s ease-in-out;
+}
+
+
+/* 首頁字體 */
+
+body {
+    min-width: 300px;
+    min-height: 100%;
+    white-space: nowrap;
+}
+
+.webTitleWord {
+    user-select: none;
+    font-family: 'webTitle';
+    font-size: 250px;
+    font-weight: 590;
+    text-align: center;
+    text-shadow: 10px 10px 10px gray;
+}
+
+.webDownTitle {
+    font-family: "enWebTitle";
+    user-select: none;
+    font-size: 50px;
+    letter-spacing: 20px;
+    font-weight: 10;
+    font-variant: small-caps;
+}
+
+
+/* 中英標題行距 */
+
+article>p {
+    line-height: 80px;
+}
+
+
+/* 滾動 */
+
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+.page {
+    height: 200vh;
+}

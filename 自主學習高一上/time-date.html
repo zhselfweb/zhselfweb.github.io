@@ -1,0 +1,43 @@
+<!--主頁-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自主學習成果網站</title>
+    <script src="basicCode-time-date.js"></script>
+
+    <style>
+        .hide-in-fullscreen {
+            display: block;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <title>網頁時鐘</title>
+    <link rel="stylesheet" href="time-date.css">
+
+</head>
+
+<body>
+    <div id="hiddenCursor">
+        <div class="overlay"></div>
+        <nav class="pagelink">
+            <a href="frontpage.html">回首頁</a>
+            <a href="introduce.html">作者介紹</a>
+            <a href="code.html" style="color: #7d9b6e;">網站介紹</a>
+            <a href="time.html">現在時間</a>
+            <span style="color: antiquewhite; ">目前在現在日期</span>
+        </nav>
+
+        <button id="fullscreen-button" onclick="toggleFullScreen()">全螢幕</button>
+        <div class="gradient-bg"></div>
+        <div class="date">
+            <h1 id="currentDate"></h1>
+        </div>
+    </div>
+    <script src="time-date.js" defer></script>
+
+</body>
+
+</html>

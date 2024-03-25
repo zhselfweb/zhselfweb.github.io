@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自主學習成果網站</title>
+    <script src="basicCode.js"></script>
+    <script src="iglogo.js"></script>
+</head>
+
+<body>
+    <nav class="pagelink">
+
+        <a href="frontpage.html">回首頁</a>
+        <span style="color: antiquewhite ">目前在作者介紹</span>
+
+        <a href="code.html" style="color:  #b4dce6;">網站架構</a>
+        <a href="time.html">現在時間</a>
+        <a href="time-date.html">現在日期</a>
+    </nav>
+
+    <div class="ig ani" id="aniani">
+        <a href="https://www.instagram.com/zh_ouo/?next=%2F">
+            <img src="iglogo.jpg" class="iglogo" alt="iglogo" width="100" height="100">
+            <h1 class="text">作者ig╰(*°▽°*)╯</h1>
+        </a>
+    </div>
+    <script>
+        const animatedDiv = document.getElementById('aniani');
+
+        animatedDiv.addEventListener('animationend', () => {
+            animatedDiv.classList.add('hid');
+
+
+            // 創建圖片
+            var newElement1 = document.createElement('div');
+            var imgElement = document.createElement('img');
+            newElement1.className = 'new-element'
+            imgElement.className = 'new-element'
+            imgElement.src = 'zhlogo.jpg'; // 替換圖片路徑
+            newElement1.appendChild(imgElement);
+
+
+            // 創建自介文本
+            // 動畫結束，新元素
+            var newElement = document.createElement('div');
+            newElement.className = 'firstText ';
+            var textElement = document.createElement('p');
+            textElement.className = "firstText";
+            textElement.textContent = '作者介紹'; // 替换成你的文字内容
+            newElement.appendChild(textElement);
+
+
+            var newElement2 = document.createElement('div');
+            var textElement2 = document.createElement('p');
+            newElement2.className = 'bodyText';
+            textElement2.className = "bodyText";
+            textElement2.textContent = '這是內文'; // 替换成你的文字内容
+            newElement2.appendChild(textElement2);
+
+            // 添加到html
+            document.body.appendChild(newElement);
+            document.body.appendChild(newElement1);
+            document.body.appendChild(newElement2);
+        });
+    </script>
+
+
+
+</body>
+
+</html>

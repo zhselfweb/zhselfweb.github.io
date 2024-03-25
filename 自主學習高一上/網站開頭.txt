@@ -1,0 +1,30 @@
+<!--主頁-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自主學習成果網站</title>
+    <script src="basicCode.js"></script>
+
+
+</head>
+
+<body>
+
+
+<!--導覽列各頁面需要自訂-->
+    <nav class="pagelink">
+        <span style="color: antiquewhite; ">目前在</span>
+        <a href="frontpage.html">回首頁</a>
+        <a href="introduce.html">作者介紹</a>
+        <a href="code.html" style="color: #7d9b6e;">網站介紹</a>
+        <a href="time.html">現在時間</a>
+    </nav>
+
+</body>
+
+</html>
+
+
