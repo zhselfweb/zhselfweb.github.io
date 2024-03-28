@@ -65,7 +65,7 @@ img {
     position: absolute;
     width: 3cm;
     height: auto;
-    margin-left: 90%;
+    right: 1%;
     opacity: 65%;
 }
 
