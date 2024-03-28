@@ -99,7 +99,6 @@ function searchSongs(keyword) {
     });
 }
 
-
 addSongToTable("張齊山ZQS - 這是你期盼的長大嗎『你很失望吧，大人的世界不快樂吧。』【高音質|動態歌詞Lyrics】♫ Is this what you expected grew up?", "https://www.youtube.com/watch?v=nlYskBsMbmE");
 addSongToTable("陳村長 - 愛怎麼了『怎麼我 比想像中脆弱得多』【Lyrics Video】", "https://www.youtube.com/watch?v=yjf2Doys0nk");
 addSongToTable("梁靜茹 Fish Leong - 慢冷 Slow-To-Cool-Down【慢冷的人啊，會自我折磨】[ 歌詞 ]", "https://www.youtube.com/watch?v=2LuW7acW9B8");
