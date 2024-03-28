@@ -61,13 +61,6 @@ nav a {
     font-size: 16px;
 }
 
-img {
-    position: absolute;
-    width: 3cm;
-    height: auto;
-    right: 1%;
-    opacity: 65%;
-}
 
 
 /* 處理滾動條 */
