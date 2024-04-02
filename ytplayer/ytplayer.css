@@ -188,12 +188,14 @@ main {
 
 #songTable th,
 #songTable td {
+    border-radius: 5px;
     border: 1px solid #0a0a0a;
     padding: 8px;
     text-align: center;
 }
 
 #songTable th {
+    border-radius: 5px;
     user-select: none;
     background-color: #f44336;
     color: rgb(255, 255, 255);
