@@ -154,8 +154,8 @@ main {
     text-align: center;
     width: 560px;
     height: 315px;
-    border: 5px solid #000;
-    box-shadow: 3px 3px 5px black, 3px -3px 5px black, -3px 3px 5px black, -3px -3px 5px black;
+    border: 5px solid #1a1a1a;
+    box-shadow: 3px 3px 5px rgb(22, 22, 22), 3pxrgb(22, 22, 22) 5px rgb(24, 24, 24), -3px 3px 5px rgb(24, 24, 24), -3px -3px 5px rgb(26, 26, 26);
     border-radius: 6px;
     padding: 20px;
     box-sizing: border-box;
