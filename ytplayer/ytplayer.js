@@ -99,6 +99,27 @@ function searchSongs(keyword) {
     });
 }
 
+
+addSongToTable("趙乃吉 - 當 (原唱:動力火車)『讓我們紅塵作伴活得瀟瀟灑灑，策馬奔騰共享人世繁華。』【高音質|動態歌詞Lyrics】♫ · 翻唱歌曲", "https://www.youtube.com/watch?v=7H1DZyckZpY");
+addSongToTable("【HD】金玟岐 - 歲月神偷 [歌詞字幕][電影《北京愛情故事》主題曲][完整高清音質] Beijing Love Story Theme Song : Travel in Time", "https://www.youtube.com/watch?v=lR1WgXLllq4");
+addSongToTable("劉人語 心跳的證明 歌詞", "https://www.youtube.com/watch?v=HfJDdxSWfnU");
+addSongToTable("Giveon - Heartbreak Anniversary (Lyrics)", "https://www.youtube.com/watch?v=KK3E56xc0as");
+addSongToTable("忘記你", "https://www.youtube.com/watch?v=S9CoQioeBD0");
+addSongToTable("周杰倫 擱淺 歌詞（繁體中文）", "https://www.youtube.com/watch?v=Up59Y0U11uY");
+addSongToTable("K.D 翻唱《擱淺》【我只能永遠讀著對白，讀著我給妳的傷害...】♫周傑倫《擱淺》", "https://www.youtube.com/watch?v=Lpfp7klFOaY");
+addSongToTable("Architect", "https://www.youtube.com/watch?v=QkNzZUVToyM");
+addSongToTable("承桓 - 丟掉天分『後來我丟掉取悅你的天分，但這件事我曾比誰都認真。』【高音質|動態歌詞Lyrics】♫", "https://www.youtube.com/watch?v=9AcBlzom0fQ");
+addSongToTable("在加納共和國離婚", "https://www.youtube.com/watch?v=eACpNen3ZcI");
+addSongToTable("en - 在加納共和國離婚『只是覺得努力了那麽久，最後卻還是敗給不適合。』【高音質|動態歌詞Lyrics】♫ · 翻唱歌曲 (原唱:菲道爾/Dior大穎)", "https://www.youtube.com/watch?v=Dy0Uu0VcQw4");
+addSongToTable("ILLIT (아일릿) ‘Magnetic’ Official MV", "https://www.youtube.com/watch?v=Vk5-c_v4gMU");
+addSongToTable("趙雷 -《無法長大》- 成都 MV (高圓圓出演)", "https://www.youtube.com/watch?v=MAXeCR7iNmU");
+addSongToTable("廬州月", "https://www.youtube.com/watch?v=KWEWyewO3mg");
+addSongToTable("蔡依林 & 陶喆  今天你要嫁給我《歌詞》", "https://www.youtube.com/watch?v=RZ2WRJnSAyY");
+addSongToTable("盧廣仲 Crowd Lu 【幾分之幾 You Complete Me】 Official Music Video （花甲大人轉男孩電影主題曲）", "https://www.youtube.com/watch?v=HQ_mU73VhEQ");
+addSongToTable("都是weather你", "https://www.youtube.com/watch?v=wDDvtyeXy4g");
+addSongToTable("言瑾羽 - 未必『孤獨的島 躺在大海的懷抱，自由的鳥 愛上遠方的困擾，誰先爭吵 未必就是誰胡鬧，眼前的一切就是如此的奇妙。』【動態歌詞MV】", "https://www.youtube.com/watch?v=vTDvi1Au4f4");
+addSongToTable("★南方姑娘-趙雷★南方姑娘，你是否習慣北方的秋涼，南方姑娘，你是否喜歡北方人的直爽【動態歌詞Lyric】", "https://www.youtube.com/watch?v=1xUH7XbFWQU");
+addSongToTable("董又霖 - 一個人去巴黎『怎麼放下兩個人的記憶....』【動態歌詞Lyrics】", "https://www.youtube.com/watch?v=VF7DiE12wFM");
 addSongToTable("張齊山ZQS - 這是你期盼的長大嗎『你很失望吧，大人的世界不快樂吧。』【高音質|動態歌詞Lyrics】♫ Is this what you expected grew up?", "https://www.youtube.com/watch?v=nlYskBsMbmE");
 addSongToTable("陳村長 - 愛怎麼了『怎麼我 比想像中脆弱得多』【Lyrics Video】", "https://www.youtube.com/watch?v=yjf2Doys0nk");
 addSongToTable("梁靜茹 Fish Leong - 慢冷 Slow-To-Cool-Down【慢冷的人啊，會自我折磨】[ 歌詞 ]", "https://www.youtube.com/watch?v=2LuW7acW9B8");
@@ -256,7 +277,6 @@ addSongToTable("[MV] 陳華 HuaChen【想和你看五月的晚霞 Sunset In May�
 addSongToTable("吳大文 - 安靜的稻草人『我到過你的世界與你遇見，一個期限趕走我所有的一切。』【動態歌詞/Vietsub/Pinyin Lyrics】", "https://www.youtube.com/watch?v=AqxqdxpVGdY");
 addSongToTable("李浩然 - 愛丫愛丫「愛我的話 愛我的話 給我回答」【動態歌詞/PinyinLyrics】♪", "https://www.youtube.com/watch?v=FQgUHSaqu6M");
 addSongToTable("皮卡丘多多Cover - 我和你【動態歌詞】「我和你 飛到藍藍的天邊」♪", "https://www.youtube.com/watch?v=PDJFb377N0c");
-addSongToTable("【悲の鋼琴曲】極致悲傷鋼琴音樂 —— 心靈療愈系鋼琴音樂", "https://www.youtube.com/watch?v=CbGRd8O4jnM");
 addSongToTable("The Chainsmokers, Coldplay - Something Just Like This (Lyrics / Lyric Video)", "https://www.youtube.com/watch?v=jdDa1wv22o0");
 addSongToTable("蘇打綠 當我們一起走過 歌詞", "https://www.youtube.com/watch?v=1lZnwDZuFJM");
 addSongToTable("最後一堂課_歌詞版", "https://www.youtube.com/watch?v=hnRLKPb3-tE");
@@ -450,7 +470,6 @@ addSongToTable("彈棉花的小花 - 捨不得又如何『我知道你根本沒�
 addSongToTable("林小珂 - 要不你先說〖榕樹上 的枝椏 都枯了 你怎麼不回頭看一下〗動態歌詞", "https://www.youtube.com/watch?v=K3ITweXm9NA");
 addSongToTable("蜡笔小心 - MOM【動態歌詞/Lyrics Video】", "https://www.youtube.com/watch?v=othQVXxFd6I");
 addSongToTable("張遠 - 嘉賓【高音質|動態歌詞Lyrics】♫『感謝你特別邀請，來見證你的愛情。』Zhang Yuan-Khách", "https://www.youtube.com/watch?v=jPzkNvWOcGc");
-addSongToTable("蔡健雅 - Letting Go『I'm letting go 我终于舍得为你放开手，因为爱你爱到我心痛。』【動態歌詞】♪", "https://www.youtube.com/watch?v=In0cTkWF9WA");
 addSongToTable("王靖雯 - 玫瑰少年「哪朵玫瑰沒有荊棘 最好的 報復是 美麗 最美的 盛開是 反擊」【動態歌詞/PinyinLyrics】♪", "https://www.youtube.com/watch?v=8jTEXhG7toA");
 addSongToTable("艾辰 - 錯位時空『我吹過你吹過的晚風，那我們算不算相擁。』【動態歌詞Lyrics】", "https://www.youtube.com/watch?v=mXf3Klcn-sM");
 addSongToTable("大天蓬 - 女聲版「怕什麼天道輪迴，什麼魄散魂飛」【動態歌詞 Lyrics】", "https://www.youtube.com/watch?v=2bvb-Ql8Pb4");
@@ -477,7 +496,7 @@ addSongToTable("旺仔小乔-年轮【原唱：张碧晨】【数着一圈圈年
 addSongToTable("傅梦彤 - 潮汐「蓝色的海底，远山的风景」【動態歌詞/pīn yīn gē cí】", "https://www.youtube.com/watch?v=ch6gKkmQbF4");
 addSongToTable("王貳浪 - 此類生物『有人說笑掩飾自己多無助，平靜接受被利用的反面照顧。』【高音質|動態歌詞Lyrics】♫", "https://www.youtube.com/watch?v=vi6MtHV_rIY");
 addSongToTable("jia en-是你『相見的那天,身上帶著香味,挑起了媚眼,害羞的對到眼』【動態歌詞/Lyrics】", "https://www.youtube.com/watch?v=8YB-E37FzPA");
-addSongToTable("小陸 VI - 寫完這首歌我就會放下你了 (Official Audio)", "https://www.youtube.com/watch?v=0KMqq10rTrM");
+addSongToTable("小陸 - 寫完這首歌我就會放下你了 (Official Audio)", "https://www.youtube.com/watch?v=0KMqq10rTrM");
 addSongToTable("蓝心羽 - 星空剪影「夜晚拥有星星，云朵拥有雨滴」【動態歌詞/pīn yīn gē cí】", "https://www.youtube.com/watch?v=euwpeHyWwTI");
 addSongToTable("一路生花 - 溫奕心『我希望許過的願望一路生花，護送那時的夢抵擋過風沙』【動態歌詞】", "https://www.youtube.com/watch?v=F7R1Y7_W45c");
 addSongToTable("隊長YoungCaptain - 哪裡都是你【動態歌詞】「你想要的是現在 而不是那遙遠的未來」♪", "https://www.youtube.com/watch?v=R46qc7jopF4");
