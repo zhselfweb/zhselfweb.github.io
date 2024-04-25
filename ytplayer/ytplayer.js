@@ -100,13 +100,27 @@ function searchSongs(keyword) {
 }
 
 
+
+
+
+
+
+
+
+addSongToTable("【AMV】SPYAIR - オレンジ (ORANGE) 《排球少年！！ 垃圾場的決戰》 劇場版主題曲 【中日歌詞字幕】", "https://www.youtube.com/watch?v=f_XHSsI9wBI");
+addSongToTable("SPYAIR - オレンジ(Orange)《劇場版排球少年!!垃圾場的決戰》電影主題曲【中日歌詞】", "https://www.youtube.com/watch?v=ffiZaVU23tc");
+addSongToTable("王巨星 - 画 (Cover: G.E.M.邓紫棋)【動態歌詞/Lyrics Video】", "https://www.youtube.com/watch?v=tN_Bf6ijOfE");
+addSongToTable("池魚 - 畫心（完整版）「愛著你像心跳難觸摸 畫著你畫不出你的骨骼」【動態歌詞】♪", "https://www.youtube.com/watch?v=ZkvEcEw0D1A");
+addSongToTable("周兴哲单依纯《永不失联的爱》  原唱和翻唱的梦幻合体！纯享 | ZJSTV #Music #live", "https://www.youtube.com/watch?v=Umz_2fYtYpY");
+addSongToTable("lil/MILK - Moonlight『你的笑容像是我昨晚的moonlight（月光）』【動態歌詞Lyrics】", "https://www.youtube.com/watch?v=VmUxPayaTAA");
+addSongToTable("胡夏 Xia Hu - Those Bygone Years 那些年", "https://www.youtube.com/watch?v=KqjgLbKZ1h0");
+addSongToTable("K.D 翻唱《擱淺》【我只能永遠讀著對白，讀著我給妳的傷害...】♫周傑倫《擱淺》", "https://www.youtube.com/watch?v=Lpfp7klFOaY");
 addSongToTable("趙乃吉 - 當 (原唱:動力火車)『讓我們紅塵作伴活得瀟瀟灑灑，策馬奔騰共享人世繁華。』【高音質|動態歌詞Lyrics】♫ · 翻唱歌曲", "https://www.youtube.com/watch?v=7H1DZyckZpY");
 addSongToTable("【HD】金玟岐 - 歲月神偷 [歌詞字幕][電影《北京愛情故事》主題曲][完整高清音質] Beijing Love Story Theme Song : Travel in Time", "https://www.youtube.com/watch?v=lR1WgXLllq4");
 addSongToTable("劉人語 心跳的證明 歌詞", "https://www.youtube.com/watch?v=HfJDdxSWfnU");
 addSongToTable("Giveon - Heartbreak Anniversary (Lyrics)", "https://www.youtube.com/watch?v=KK3E56xc0as");
 addSongToTable("忘記你", "https://www.youtube.com/watch?v=S9CoQioeBD0");
 addSongToTable("周杰倫 擱淺 歌詞（繁體中文）", "https://www.youtube.com/watch?v=Up59Y0U11uY");
-addSongToTable("K.D 翻唱《擱淺》【我只能永遠讀著對白，讀著我給妳的傷害...】♫周傑倫《擱淺》", "https://www.youtube.com/watch?v=Lpfp7klFOaY");
 addSongToTable("Architect", "https://www.youtube.com/watch?v=QkNzZUVToyM");
 addSongToTable("承桓 - 丟掉天分『後來我丟掉取悅你的天分，但這件事我曾比誰都認真。』【高音質|動態歌詞Lyrics】♫", "https://www.youtube.com/watch?v=9AcBlzom0fQ");
 addSongToTable("在加納共和國離婚", "https://www.youtube.com/watch?v=eACpNen3ZcI");
