@@ -1,0 +1,336 @@
+@font-face {
+    font-family: "w";
+    src: url(./SourceHanSerifTC-Bold.otf);
+}
+
+@font-face {
+    font-family: "wd";
+    src: url(./ThePeakFontBeta_V0_101.ttf);
+}
+
+@font-face {
+    font-family: "wp";
+    src: url(./SourceHanSerifTC-SemiBold.otf);
+}
+
+h1 {
+    margin-left: 20px;
+    font-size: 30px;
+    font-family: "wd";
+}
+
+body {
+    font-family: "w";
+    background: linear-gradient(45deg, #c9c7c5e0, #dfddd9b7);
+    background-size: 400% 400%;
+}
+
+a {
+    text-decoration: none;
+}
+
+nav {
+    -webkit-user-select: none;
+    /* Chrome, Safari, Opera */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer */
+    user-select: none;
+    /* Standard syntax */
+}
+
+button {
+    position: absolute;
+    right: 10px;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #b4aaa0;
+    color: #0a0a0a;
+    cursor: pointer;
+    margin: 20px 10px 0px 0px;
+}
+
+button:hover {
+    background-color: #97918b;
+}
+
+button:active {
+    background-color: #726f6c;
+    padding: 7px 12px;
+}
+
+@keyframes RemindWord {
+    0% {
+        opacity: 0;
+    }
+    15% {
+        opacity: 1;
+    }
+    85% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.remind {
+    user-select: none;
+    font-family: "wd";
+    position: absolute;
+    margin-left: 3%;
+    color: rgb(77, 77, 77);
+    animation: RemindWord 4s infinite;
+}
+
+li {
+    user-select: none;
+    cursor: pointer;
+    text-shadow: #2e2e2ee0;
+    margin-right: 20px;
+    list-style-type: none;
+}
+
+.intro {
+    font-size: 20px;
+    background: #dfdcdc;
+    text-align: center;
+}
+
+.tword {
+    margin-bottom: 30px;
+}
+
+
+/*  */
+
+.one {
+    color: #ff0000;
+}
+
+.onep {
+    color: #ff0000;
+}
+
+.one:hover {
+    color: #f06868;
+}
+
+
+/*  */
+
+.two {
+    color: #ff7b00;
+}
+
+.twop {
+    color: #ff7b00;
+}
+
+.two:hover {
+    color: #e9bd7b;
+}
+
+
+/*  */
+
+.three {
+    color: #11ac11;
+}
+
+.threep {
+    color: #11ac11;
+}
+
+.three:hover {
+    color: #6fbd6f;
+}
+
+
+/*  */
+
+.four {
+    color: #ff00ff;
+}
+
+.fourp {
+    color: #ff00ff;
+}
+
+.four:hover {
+    color: #f593f5;
+}
+
+
+/*  */
+
+.five {
+    color: #bf9000;
+}
+
+.fivep {
+    color: #bf9000;
+}
+
+.five:hover {
+    color: #beab70;
+}
+
+
+/*  */
+
+.six {
+    color: #30bdbd;
+}
+
+.sixp {
+    color: #30bdbd;
+}
+
+.six:hover {
+    color: #71b6b6;
+}
+
+
+/*  */
+
+.seven {
+    color: #0000ff;
+}
+
+.sevenp {
+    color: #0000ff;
+}
+
+.seven:hover {
+    color: #8888f7;
+}
+
+
+/*  */
+
+.eight {
+    color: #38761d;
+}
+
+.eightp {
+    color: #38761d;
+}
+
+.eight:hover {
+    color: #93a78b;
+}
+
+
+/*  */
+
+.nine {
+    color: #6211cc;
+}
+
+.ninep {
+    color: #6211cc;
+}
+
+.nine:hover {
+    color: #88a0c9;
+}
+
+
+/*  */
+
+.ten {
+    color: #a64d79;
+}
+
+.tenp {
+    color: #a64d79;
+}
+
+.ten:hover {
+    color: #c0a4b2;
+}
+
+
+/*  */
+
+.one-one {
+    color: #674ea7;
+}
+
+.one-onep {
+    color: #674ea7;
+}
+
+.one-one:hover {
+    color: #9c98a8;
+}
+
+
+/*  */
+
+.one-two {
+    color: #9900ff;
+}
+
+.one-twop {
+    color: #9900ff;
+}
+
+.one-two:hover {
+    color: #d7aef1;
+}
+
+.title {
+    text-align: center;
+    font-size: 35px;
+}
+
+.st {
+    margin-left: 20px;
+    font-size: 27px;
+}
+
+.n {
+    margin-left: 15%;
+    margin-right: 15%;
+    font-size: 23px;
+    text-align: left;
+}
+
+.note {
+    text-align: center;
+    opacity: 0.8;
+    color: #3a3939;
+    font-size: 17.5px;
+    background-color: #dacbcbb4;
+}
+
+.note2 {
+    text-align: center;
+    opacity: 0.9;
+    color: #202020;
+    font-size: 13px;
+    background-color: #dacbcbb4;
+}
+
+.note3 {
+    text-align: center;
+    opacity: 0.85;
+    color: #202020;
+    font-size: 15px;
+    background-color: #dacbcbb4;
+}
+
+.schematic {
+    text-align: center;
+}
+
+.schematic img {
+    display: block;
+    margin: 0 auto;
+    max-width: 190px;
+    height: auto;
+}
