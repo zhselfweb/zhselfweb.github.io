@@ -13,6 +13,65 @@
     src: url(./SourceHanSerifTC-SemiBold.otf);
 }
 
+@media only screen and (max-width: 768px) {
+    h1 {
+        font-size: 25px;
+        margin-left: 20px;
+        font-family: "wd";
+    }
+    .remind {
+        user-select: none;
+        font-family: "wd";
+        position: absolute;
+        margin-left: 2%;
+        font-size: 12px;
+        color: rgb(77, 77, 77);
+        animation: RemindWord 4s infinite;
+    }
+    .tword {
+        font-size: 12px;
+        margin-bottom: 30px;
+    }
+    .title {
+        text-align: center;
+        font-size: 30px;
+    }
+    .st {
+        margin-left: 20px;
+        font-size: 22px;
+    }
+    .n {
+        margin-left: 15%;
+        margin-right: 15%;
+        font-size: 15px;
+        text-align: left;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .note {
+        text-align: center;
+        opacity: 0.8;
+        color: #3a3939;
+        font-size: 12.5px;
+        background-color: #dacbcbb4;
+    }
+    .note2 {
+        text-align: center;
+        opacity: 0.9;
+        color: #202020;
+        font-size: 8px;
+        background-color: #dacbcbb4;
+    }
+    .note3 {
+        text-align: center;
+        opacity: 0.85;
+        color: #202020;
+        font-size: 10px;
+        background-color: #dacbcbb4;
+    }
+}
+
+
 h1 {
     margin-left: 20px;
     font-size: 30px;
