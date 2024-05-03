@@ -7,6 +7,23 @@ body {
     background-size: 400% 400%;
     animation: gradientAnimation 30s ease infinite;
 }
+#back-to-top-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 10px;
+    background-color: #42464b;
+    color: #c7c2c2;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#back-to-top-btn:hover {
+    background-color: #c0c1c2;
+    color: #000000;
+}
+
 
 @keyframes gradientAnimation {
     0% {
