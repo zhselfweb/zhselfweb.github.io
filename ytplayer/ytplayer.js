@@ -169,7 +169,7 @@ addSongToTable("劉大壯 - 最『想用盡全身的力氣 來挽救這份感情
 addSongToTable("热恋夏季 (抒情版)", "https://www.youtube.com/watch?v=3AtAufecosU");
 addSongToTable("｛高品质/动态音频可视化｝《姑娘别哭泣》~柯柯柯啊", "https://www.youtube.com/watch?v=keZJE_cShy8");
 addSongToTable("江皓南 - 大人「不知不覺我們變成曾嚮往的大人」【動態歌詞/PinyinLyrics】♪", "https://www.youtube.com/watch?v=aaPA7yR1c6I");
-addSongToTable("直到你降临", "https://www.youtube.com/watch?v=UJlf7gmqHPY");
+addSongToTable("直到你降临", "https://youtu.be/7349tcyyE-c?si=amVXRwbq1eDuiGI4");
 addSongToTable("Yu Ai", "https://www.youtube.com/watch?v=MirexJxv9PE");
 addSongToTable("Best Friend", "https://www.youtube.com/watch?v=XHfEdr2rhoU");
 addSongToTable("Abba - Money, Money, Money (Official Music Video)", "https://www.youtube.com/watch?v=ETxmCCsMoD0");
