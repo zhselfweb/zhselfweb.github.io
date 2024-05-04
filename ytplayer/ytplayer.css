@@ -1,3 +1,16 @@
+
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
 body {
     color: #eaeaea;
     margin: 0;
@@ -22,19 +35,6 @@ body {
 #back-to-top-btn:hover {
     background-color: #c0c1c2;
     color: #000000;
-}
-
-
-@keyframes gradientAnimation {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
 }
 
 
@@ -132,6 +132,11 @@ input[type="text"] {
     color: #56776c80;
 
   }
+
+
+input[type="text"] {
+    color: rgb(129, 245, 216);
+}
 
 
   
