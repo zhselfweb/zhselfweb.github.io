@@ -113,6 +113,9 @@ function searchSongs(keyword) {
 
 
 
+
+
+addSongToTable("阿冗-三個字【動態歌詞】「假如我說出三個字能不能換一種結局」♪", "https://youtu.be/Xr8APGSm8kM?si=rRsrgJAsTI_P1HQu");
 addSongToTable("【AMV】SPYAIR - オレンジ (ORANGE) 《排球少年！！ 垃圾場的決戰》 劇場版主題曲 【中日歌詞字幕】", "https://www.youtube.com/watch?v=f_XHSsI9wBI");
 addSongToTable("SPYAIR - オレンジ(Orange)《劇場版排球少年!!垃圾場的決戰》電影主題曲【中日歌詞】", "https://www.youtube.com/watch?v=ffiZaVU23tc");
 addSongToTable("王巨星 - 画 (Cover: G.E.M.邓紫棋)【動態歌詞/Lyrics Video】", "https://www.youtube.com/watch?v=tN_Bf6ijOfE");
