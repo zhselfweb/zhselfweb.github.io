@@ -11,6 +11,28 @@ $(document).ready(function() {
     });
 });
 
+// get the input that need to 清空
+const inputBox = document.getElementById('searchInput');
+// get 觸發清空的按鍵
+const clearButton = document.getElementById('clearButton');
+
+// 點擊監聽
+clearButton.addEventListener('click', function() {
+    // 清空
+    inputBox.value = '';
+});
+
+
+// 清空觸發搜尋
+document.getElementById('clearButton').addEventListener('click', function() {
+    // 清空輸入框內容
+    document.getElementById('searchInput').value = '';
+    // 觸發
+    searchSongs('');
+});
+
+
+//top
 document.getElementById("back-to-top-btn").addEventListener("click", function() {
     window.scrollTo({
         top: 0,
@@ -18,6 +40,7 @@ document.getElementById("back-to-top-btn").addEventListener("click", function() 
     });
 });
 
+//////////////////////////
 
 function playVideo() {
     var url = document.getElementById('videoURL').value;
