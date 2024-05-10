@@ -97,10 +97,26 @@ header {
     box-shadow: 0 2px 4px #474444;
 }
 
+
 h1 {
+    cursor: pointer;
     user-select: none;
     margin: 50px 0px 0px 0px;
     font-size: 24px;
+}
+
+h1:hover {
+    cursor: pointer;
+    user-select: none;
+    margin: 50px 0px 0px 0px;
+    font-size: 24.1px;
+}
+
+h1:active {
+    cursor: wait;
+    user-select: none;
+    margin: 50px 0px 0px 0px;
+    font-size: 23px;
 }
 
 input[type="text"] {
