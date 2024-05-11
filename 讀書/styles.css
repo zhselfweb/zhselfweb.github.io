@@ -1,0 +1,322 @@
+@font-face {
+    font-family: 'ww';
+    /* 自定义字体名称 */
+    src: url('ThePeakFontBeta_V0_101.ttf') format('truetype');
+    /* 字体文件路径 */
+}
+
+body {
+    font-family: 'CustomFont', sans-serif;
+    /* 应用自定义字体 */
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+header {
+    font-family: "ww";
+    background-color: #f1f1f1;
+    /* 背景颜色 */
+    color: #3a3838;
+    /* 文字颜色 */
+    text-align: center;
+    /* 文字居中 */
+    padding: 20px 0;
+    /* 上下内边距为 20px，左右为 0 */
+    box-shadow: 0 3px 4px rgba(223, 223, 223, 0.715);
+    /* 添加阴影效果 */
+}
+
+.dark-mode header {
+    background-color: #161616;
+    /* 背景颜色 */
+    color: #fff;
+    /* 文字颜色 */
+    text-align: center;
+    /* 文字居中 */
+    padding: 20px 0;
+    /* 上下内边距为 20px，左右为 0 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.742);
+    /* 添加阴影效果 */
+}
+
+header h1 {
+    font-size: 30px;
+    /* 标题字体大小 */
+    margin: 0;
+    /* 去除标题的默认上下间距 */
+}
+
+header p {
+    font-size: 14px;
+    /* 段落字体大小 */
+    margin: 10px 0;
+    /* 段落上下间距 */
+}
+
+.novelPage {
+    margin: 100px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+p {
+    text-align: left;
+    margin: 0;
+    /* 去除段落的默认上下间距 */
+    line-height: 1.5;
+    /* 增加行间距 */
+    margin-left: 10px;
+}
+
+footer {
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 30px;
+}
+
+#modeToggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 999;
+    background-color: #e7e7e7;
+    color: #000000;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 4px 6px rgba(224, 221, 221, 0.767);
+}
+
+#modeToggle:hover {
+    background-color: #d4d4d4;
+}
+
+.dark-mode #modeToggle {
+    background-color: #1f1e1e86;
+    color: #e7e2e2;
+    box-shadow: 0 4px 6px rgba(37, 37, 37, 0.767);
+    transition: background-color 0.3s, color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+
+.dark-mode #modeToggle:hover {
+    background-color: #666;
+    color: hsl(0, 0%, 100%);
+}
+
+#modeToggle:active {
+    transform: translateY(2px);
+}
+
+.butt {
+    margin-top: 10px;
+    padding-left: 10px;
+    margin-left: 10px;
+    z-index: 999;
+    background-color: #f9f9f9;
+    color: #000000;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.butt:hover {
+    background-color: #c7c5c5;
+    color: #262626;
+}
+
+.dark-mode .butt {
+    background-color: #1c1c1c;
+    color: #fff;
+}
+
+.dark-mode .butt:hover {
+    background-color: #666;
+}
+
+.butt:active {
+    transform: translateY(2px);
+}
+
+.dark-mode {
+    background-color: #222;
+    color: #fff;
+}
+
+.dark-mode .novelPage {
+    background-color: #333;
+    color: #fff;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+}
+
+@media screen and (max-width: 600px) {
+    .novelPage {
+        padding: 30px;
+        margin: 30px;
+    }
+    h2 {
+        text-align: center;
+        font-size: 20px;
+    }
+}
+
+h2 {
+    text-align: center;
+    font-size: 30px;
+}
+
+.fileUpload {
+    padding-top: 10px;
+    align-items: center;
+    position: relative;
+    display: inline-block;
+}
+
+.fileUpload input[type="file"] {
+    margin-right: 10px;
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+#prevPageButton,
+#nextPageButton {
+    box-shadow: 2 2px 3px rgba(0, 0, 0, 0.1);
+    background-color: #fff9f1;
+    color: #070707;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin-right: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, transform 0.3s;
+}
+
+#prevPageButton:hover,
+#nextPageButton:hover {
+    background-color: #a7a7a7;
+    color: #ffffff;
+}
+
+#prevPageButton {
+    margin-right: 10px;
+}
+
+#nextPageButton {
+    margin-left: 10px;
+}
+
+#prevPageButton:active,
+#nextPageButton:active {
+    transform: translateY(2px);
+}
+
+.dark-mode #prevPageButton,
+.dark-mode #nextPageButton {
+    background-color: #000000;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin-right: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, transform 0.3s;
+}
+
+.dark-mode #prevPageButton:hover,
+.dark-mode #nextPageButton:hover {
+    background-color: #1c1c1c;
+    color: #ebebeb;
+}
+
+.sel {
+    user-select: none;
+    position: relative;
+    display: inline-block;
+}
+
+.sel::-webkit-scrollbar {
+    width: 0;
+}
+
+.sel select {
+    user-select: none;
+    appearance: none;
+    /* 隐藏默认的下拉箭头 */
+    -webkit-appearance: none;
+    /* 兼容性设置 */
+    -moz-appearance: none;
+    /* 兼容性设置 */
+    padding: 10px 20px;
+    /* 添加内边距 */
+    border: 1px solid #ccc;
+    /* 边框样式 */
+    border-radius: 5px;
+    /* 圆角 */
+    background-color: #fff;
+    /* 背景颜色 */
+    cursor: pointer;
+    /* 光标样式为手型 */
+}
+
+.sel select:hover {
+    border-color: #666;
+    /* 悬停时边框颜色 */
+}
+
+.sel select:focus {
+    outline: none;
+    /* 移除默认的焦点样式 */
+}
+
+
+/* 自定义下拉箭头 */
+
+.sel::after {
+    content: '\25BC';
+    /* Unicode 下拉箭头字符 */
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    /* 不阻止鼠标事件 */
+}
+
+
+/* 悬停时下拉箭头颜色 */
+
+.sel:hover::after {
+    color: #666;
+}
+
+.dark-mode select {
+    border: 1px solid #212121;
+    /* 边框样式 */
+    background-color: #292929;
+    /* 背景颜色 */
+    color: #f9f9f9;
+}
+
+.dark-mode select:hover {
+    border-color: #000000;
+    /* 悬停时边框颜色 */
+}
