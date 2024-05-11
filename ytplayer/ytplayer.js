@@ -54,8 +54,16 @@ function playVideo() {
     }
 }
 
+
 function getYouTubeID(url) {
-    var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*$/;
+    var liveRegExp = /^(https?\:\/\/)?(www\.youtube\.com|youtube\.com)\/(channel\/|c\/|user\/)?[\w\-\_]{1,}/;
+
+    // 檢查是否為直播 URL
+    if (url.match(liveRegExp)) {
+        return url;
+    }
+
     var match = url.match(regExp);
     if (match && match[2].length === 11) {
         return match[2];
