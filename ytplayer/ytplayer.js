@@ -42,6 +42,7 @@ document.getElementById("back-to-top-btn").addEventListener("click", function() 
 
 //////////////////////////
 
+
 function playVideo() {
     var url = document.getElementById('videoURL').value;
     var videoId = getYouTubeID(url);
@@ -50,20 +51,12 @@ function playVideo() {
         playerDiv.innerHTML = '<iframe width="560" height="315" src="https://www.youtube.com/embed/' + videoId + '?autoplay=1" frameborder="0" allowfullscreen></iframe>';
         playerDiv.classList.add('show');
     } else {
-        alert('請輸入有效的 YouTube 影片網址！');
+        alert('請輸入有效的 YouTube 影片或直播連結！');
     }
 }
 
-
 function getYouTubeID(url) {
-    var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*$/;
-    var liveRegExp = /^(https?\:\/\/)?(www\.youtube\.com|youtube\.com)\/(channel\/|c\/|user\/)?[\w\-\_]{1,}/;
-
-    // 檢查是否為直播 URL
-    if (url.match(liveRegExp)) {
-        return url;
-    }
-
+    var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     var match = url.match(regExp);
     if (match && match[2].length === 11) {
         return match[2];
