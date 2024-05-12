@@ -139,6 +139,9 @@ function searchSongs(keyword) {
 
 
 
+
+
+addSongToTable("Sasablue - 最後一頁 (女声完整版)「想把你抱進身體裡面 不敢讓你看見」【動態歌詞】♪", "https://www.youtube.com/watch?v=yr4WKlmc5vM&pp=ygUM5pyA5b6M5LiA6aCB");
 addSongToTable("阿冗-三個字【動態歌詞】「假如我說出三個字能不能換一種結局」♪", "https://youtu.be/Xr8APGSm8kM?si=rRsrgJAsTI_P1HQu");
 addSongToTable("【AMV】SPYAIR - オレンジ (ORANGE) 《排球少年！！ 垃圾場的決戰》 劇場版主題曲 【中日歌詞字幕】", "https://www.youtube.com/watch?v=f_XHSsI9wBI");
 addSongToTable("SPYAIR - オレンジ(Orange)《劇場版排球少年!!垃圾場的決戰》電影主題曲【中日歌詞】", "https://www.youtube.com/watch?v=ffiZaVU23tc");
