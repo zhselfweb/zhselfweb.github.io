@@ -1,0 +1,207 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f3e8d5cd;
+    transition: background-color 0.5s ease;
+}
+
+.bgi {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    height: 100px;
+    width: auto;
+    opacity: 0.45;
+    user-select: none;
+}
+
+.dark-mode {
+    background-color: #333;
+    color: #fff;
+}
+
+#imageContainer {
+    text-align: center;
+    padding: 20px;
+}
+
+.image-preview-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.image-preview {
+    text-align: center;
+    position: relative;
+    margin-top: 30px;
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 400px;
+    border-radius: 8px;
+}
+
+#previewImage {
+    display: none;
+    /* 將預覽圖像設為隱藏 */
+}
+
+.adjusted-canvas {
+    max-width: 100%;
+    max-height: 400px;
+    display: none;
+    border-radius: 8px;
+}
+
+.controls-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.controls-container label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.controls-container input[type="range"] {
+    width: 80%;
+    margin: 0 auto 10px;
+    display: block;
+    -webkit-appearance: none;
+    /* 移除默認外觀 */
+    appearance: none;
+    background-color: #555;
+    border-radius: 20px;
+}
+
+.controls-container input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    /* 移除默認外觀 */
+    width: 13px;
+    height: 13px;
+    background-color: #c0c0c0;
+    /* 拉桿顏色 */
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.dark-mode .controls-container input[type="range"] {
+    background-color: #6e6e6e;
+}
+
+.dark-mode .controls-container input[type="range"]::-webkit-slider-thumb {
+    background-color: #3b3b3b;
+}
+
+.controls-container input[type="number"] {
+    width: 40px;
+    margin-bottom: 10px;
+}
+
+#downloadButton {
+    padding: 10px 20px;
+    border: none;
+    background-color: #008CBA;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    margin-bottom: 20px;
+}
+
+#downloadButton:hover {
+    background-color: #005f7f;
+}
+
+.dark-mode #downloadButton {
+    padding: 10px 20px;
+    border: none;
+    background-color: #000000;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.dark-mode #downloadButton:hover {
+    background-color: #313738;
+}
+
+#modeToggleContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+}
+
+#darkModeToggle {
+    padding: 8px 16px;
+    border: none;
+    background-color: #333;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+#darkModeToggle:hover {
+    background-color: #555;
+}
+
+.dark-mode #darkModeToggle {
+    padding: 8px 16px;
+    border: none;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.dark-mode #darkModeToggle:hover {
+    background-color: #999999;
+}
+
+#imageInput {
+    display: none;
+    position: absolute;
+    /* 設置為絕對定位 */
+    top: -9999px;
+    /* 將輸入框移出視窗 */
+}
+
+.select-file-label {
+    padding: 10px 20px;
+    border: none;
+    background-color: #008CBA;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.select-file-label:hover {
+    background-color: #005f7f;
+}
+
+.dark-mode .select-file-label {
+    padding: 10px 20px;
+    border: none;
+    background-color: #000000;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.dark-mode .select-file-label:hover {
+    background-color: #313738;
+}

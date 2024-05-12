@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>調整圖片透明度</title>
+    <link rel="stylesheet" href="opr.css">
+    <link rel="icon" href="icon.jpg" type="image/x-icon">
+    <a href="https://www.instagram.com/zh_ouo/"><img src="bg-icon.jpg" class="bgi" alt="icon" title="ℬ𝓎 : 𝚣𝚑_𝚘𝚞𝚘">
+    </a>
+
+</head>
+
+<body>
+
+    <div id="imageContainer">
+        <label for="imageInput" id="selectFileLabel" class="select-file-label">選擇檔案</label>
+        <input type="file" id="imageInput" accept="image/*">
+        <br>
+        <div id="previewContainer" class="image-preview">
+            <img id="previewImage" src="#" alt="Preview Image">
+            <canvas id="adjustedCanvas" class="adjusted-canvas"></canvas>
+        </div>
+        <div id="controlsContainer" class="controls-container">
+            <label for="transparencySlider">調整透明度：</label>
+            <input type="range" min="0" max="100" value="100" id="transparencySlider">
+            <br>
+            <label for="transparencyValue">透明度：</label>
+            <input type="number" min="0" max="100" value="100" id="transparencyValue">
+        </div>
+    </div>
+    <button id="downloadButton">下載</button>
+
+    <div id="modeToggleContainer">
+        <button id="darkModeToggle">主題</button>
+    </div>
+
+    <script src="opr.js"></script>
+    <footer>
+
+    </footer>
+
+</body>
+
+</html>
