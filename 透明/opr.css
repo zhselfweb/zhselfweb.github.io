@@ -10,15 +10,6 @@ body {
     transition: background-color 0.5s ease;
 }
 
-.bgi {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    height: 100px;
-    width: auto;
-    opacity: 0.45;
-    user-select: none;
-}
 
 .dark-mode {
     background-color: #333;
