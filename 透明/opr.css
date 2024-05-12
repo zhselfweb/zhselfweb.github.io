@@ -1,5 +1,10 @@
+@font-face {
+    font-family: 'www';
+    src: url('ThePeakFontBeta_V0_101.ttf') format('woff');
+}
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: "www";
     margin: 0;
     padding: 0;
     display: flex;
@@ -9,7 +14,6 @@ body {
     background-color: #f3e8d5cd;
     transition: background-color 0.5s ease;
 }
-
 
 .dark-mode {
     background-color: #333;
@@ -98,6 +102,7 @@ body {
 }
 
 #downloadButton {
+    font-family: "www";
     padding: 10px 20px;
     border: none;
     background-color: #008CBA;
@@ -134,6 +139,7 @@ body {
 }
 
 #darkModeToggle {
+    font-family: "www";
     padding: 8px 16px;
     border: none;
     background-color: #333;
