@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>備忘錄</title>
+    <link rel="stylesheet" href="not.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>備忘錄</h1>
+        <input type="text" id="memoInput" placeholder="輸入">
+        <button onclick="saveMemo()">保存</button>
+        <button onclick="clearMemo()">清除</button>
+        <select id="clearOption">
+            <option value="all">清除全部</option>
+            <option value="last">清除最後一個</option>
+
+        </select>
+        <div id="memoList"></div>
+    </div>
+
+    <script src="not.js"></script>
+</body>
+
+</html>
