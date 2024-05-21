@@ -146,7 +146,6 @@ addSongToTable("阿冗-三個字【動態歌詞】「假如我說出三個字能
 addSongToTable("【AMV】SPYAIR - オレンジ (ORANGE) 《排球少年！！ 垃圾場的決戰》 劇場版主題曲 【中日歌詞字幕】", "https://www.youtube.com/watch?v=f_XHSsI9wBI");
 addSongToTable("SPYAIR - オレンジ(Orange)《劇場版排球少年!!垃圾場的決戰》電影主題曲【中日歌詞】", "https://www.youtube.com/watch?v=ffiZaVU23tc");
 addSongToTable("王巨星 - 画 (Cover: G.E.M.邓紫棋)【動態歌詞/Lyrics Video】", "https://www.youtube.com/watch?v=tN_Bf6ijOfE");
-addSongToTable("池魚 - 畫心（完整版）「愛著你像心跳難觸摸 畫著你畫不出你的骨骼」【動態歌詞】♪", "https://www.youtube.com/watch?v=ZkvEcEw0D1A");
 addSongToTable("周兴哲单依纯《永不失联的爱》  原唱和翻唱的梦幻合体！纯享 | ZJSTV #Music #live", "https://www.youtube.com/watch?v=Umz_2fYtYpY");
 addSongToTable("lil/MILK - Moonlight『你的笑容像是我昨晚的moonlight（月光）』【動態歌詞Lyrics】", "https://www.youtube.com/watch?v=VmUxPayaTAA");
 addSongToTable("胡夏 Xia Hu - Those Bygone Years 那些年", "https://www.youtube.com/watch?v=KqjgLbKZ1h0");
