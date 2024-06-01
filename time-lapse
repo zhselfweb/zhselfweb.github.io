@@ -1,1 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快速旋轉時鐘</title>
+<style>
+/* style.css */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: black;
+    margin: 0;
+}
 
+#settings-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    padding: 10px;
+    background-color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 10; /* 確保設定按鈕在最前 */
+}
+.set-but{
+	margin-top:20px;
+    background-color: light gray;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 10; /* 確保設定按鈕在最前 */
+}
+
+#settings-modal {
+    display: none; /* 初始隱藏 */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 100; /* 確保設定視窗在最前 */
+}
+
+#settings-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    z-index: 101; /* 確保設定內容在最前 */
+}
+
+#clock {
+    width: 300px;
+    height: 300px;
+    position: relative;
+    border: 10px solid white;
+    border-radius: 50%;
+    z-index: 1; /* 時鐘圖層較低 */
+}
+
+#clock div {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-origin: bottom center;
+    background-color: white;
+    border-radius: 3px;
+}
+
+#hour {
+    width: 8px;
+    height: 90px; /* 調整時針長度 */
+    background-color: white;
+    transform: translateX(-50%) translateY(-100%);
+}
+
+#minute {
+    width: 6px;
+    height: 120px; /* 調整分針長度 */
+    background-color: white;
+    transform: translateX(-50%) translateY(-100%);
+}</style>
+</head>
+<body>
+    <button id="settings-button">設定</button>
+    <div id="settings-modal">
+        <div id="settings-content">
+            <label for="speed-input">倍數：</label>
+            <input type="number" id="speed-input" min="0.1" step="0.1" value="1">
+            <div >
+                <button id="cancel-button" class="set-but">取消</button>
+                <button id="reset-button" class="set-but">重製</button>
+                <button id="apply-button" class="set-but">設置</button>
+            </div>
+        </div>
+    </div>
+    <div id="clock">
+        <div id="hour"></div>
+        <div id="minute"></div>
+    </div>
+    <script>
+// script.js
+function rotateClock(speedMultiplier) {
+    const hourHand = document.getElementById('hour');
+    const minuteHand = document.getElementById('minute');
+
+    let hour = 0;
+    let minute = 0;
+
+    function updateClock() {
+        minute += 0.5 * speedMultiplier; // 每幀增加0.5度，乘以速度倍數
+        hour += (1 / 120) * speedMultiplier; // 每幀增加1/120度，乘以速度倍數
+
+        minuteHand.style.transform = `translateX(-50%) translateY(-100%) rotate(${minute}deg)`;
+        hourHand.style.transform = `translateX(-50%) translateY(-100%) rotate(${hour}deg)`;
+
+        requestAnimationFrame(updateClock); // 使用requestAnimationFrame進行下一次更新
+    }
+
+    requestAnimationFrame(updateClock); // 開始動畫循環
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    let speedMultiplier = 1;
+
+    const settingsButton = document.getElementById('settings-button');
+    const settingsModal = document.getElementById('settings-modal');
+    const speedInput = document.getElementById('speed-input');
+    const cancelButton = document.getElementById('cancel-button');
+    const resetButton = document.getElementById('reset-button');
+    const applyButton = document.getElementById('apply-button');
+
+    settingsButton.addEventListener('click', () => {
+        settingsModal.style.display = 'flex';
+    });
+
+    cancelButton.addEventListener('click', () => {
+        settingsModal.style.display = 'none';
+    });
+
+    resetButton.addEventListener('click', () => {
+        speedMultiplier = 1;
+        speedInput.value = 1;
+        settingsModal.style.display = 'none';
+        rotateClock(speedMultiplier); // 在重置後重新調用rotateClock函數
+    });
+
+    applyButton.addEventListener('click', () => {
+        speedMultiplier = parseFloat(speedInput.value);
+        settingsModal.style.display = 'none';
+        rotateClock(speedMultiplier); // 在更新倍數後重新調用rotateClock函數
+    });
+
+    rotateClock(speedMultiplier); // 開始時鐘旋轉
+});</script>
+</body>
+</html>
