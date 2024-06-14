@@ -1,0 +1,105 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #333;
+    color: #fff;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #222;
+}
+
+h1 {
+    margin: 0;
+    font-size: 24px;
+    text-align: center;
+}
+
+input[type="text"] {
+    padding: 8px;
+    margin-right: 10px;
+    border-radius: 5px;
+    border: 1px solid #eaeaea;
+    width: 50%;
+    display: block;
+    margin: 0 auto;
+}
+
+button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #f44336;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #d32f2f;
+}
+
+main {
+    padding: 20px;
+    position: relative;
+}
+
+#resultTable,
+#playlistTable {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+}
+
+#resultTable th,
+#resultTable td,
+#playlistTable th,
+#playlistTable td {
+    border: 1px solid #0a0a0a;
+    padding: 8px;
+    text-align: center;
+}
+
+#resultTable th,
+#playlistTable th {
+    background-color: #f44336;
+    color: rgb(255, 255, 255);
+}
+
+#resultTable tbody tr:hover,
+#playlistTable tbody tr:hover {
+    background-color: #f2f2f2;
+}
+
+#resultTable a,
+#playlistTable a {
+    text-decoration: none;
+    color: #fafafa;
+}
+
+#resultTable tbody tr:hover a,
+#playlistTable tbody tr:hover a {
+    color: #0a0a0a;
+}
+
+#resultTable button,
+#playlistTable button {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 3px;
+    background-color: #f44336;
+    color: #ffffff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#resultTable button:hover,
+#playlistTable button:hover {
+    background-color: #d32f2f;
+    color: #333;
+}

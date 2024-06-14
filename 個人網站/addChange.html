@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>YouTube 影片程式碼產生器</title>
+    <style>
+        /* 一些簡單的 CSS 樣式 */
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        
+        #input-form {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>YouTube 影片程式碼產生器</h1>
+
+    <form id="input-form">
+        <label for="video-url">請輸入 YouTube 影片網址：</label>
+        <input type="text" id="video-url">
+        <button type="button" onclick="generateCodeAndTitle()">取得標題並產生程式碼</button>
+    </form>
+
+    <p id="generated-code"></p>
+
+    <script>
+        function getVideoTitle(videoId, apiKey, videoUrl) {
+            // YouTube API 請求 URL
+            const apiUrl = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey}`;
+
+            // 使用 fetch 函數發送 API 請求
+            fetch(apiUrl)
+                .then(response => {
+                    // 檢查 API 響應是否成功
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // 從 JSON 響應中提取影片標題
+                    const videoTitle = data.items[0].snippet.title;
+
+                    // 顯示影片標題在網頁上
+                    document.getElementById('generated-code').innerText = `生成的程式碼： addSongToTable("${videoTitle}", "${videoUrl}");`;
+                })
+                .catch(error => {
+                    console.error('There has been a problem with your fetch operation:', error);
+                });
+        }
+
+        function generateCodeAndTitle() {
+            // 取得輸入的影片網址
+            const videoUrl = document.getElementById('video-url').value;
+            const videoId = videoUrl.split('v=')[1].split('&')[0];
+            const apiKey = 'AIzaSyA3yipqUhlCWbr4IdD8SIiYUgbo1XyK6Ng'; // 請用你的 API 金鑰替換這裡
+
+            getVideoTitle(videoId, apiKey, videoUrl);
+        }
+    </script>
+</body>
+
+</html>

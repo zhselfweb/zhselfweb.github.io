@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <title>YouTube 播放清單搜尋</title>
+</head>
+
+<body>
+    <input type="text" id="playlistInput" placeholder='輸入YouTube"撥放清單"網址'>
+    <button onclick="searchPlaylist()">複製"播放清單"</button>
+
+    <table id="playlistTable">
+        <thead>
+            <tr>
+                <th><s>影片片名</s></th>
+                <th><s>影片網址</s></th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <!-- 這裡會動態加入搜尋結果的內容 -->
+        </tbody>
+    </table>
+
+
+    <div class="pagination">
+        <button onclick="prevPage()" style="pointer-events: none;"><s>上一頁</s></button>
+        <span id="currentPage">1</span>
+        <button onclick="nextPage()" style="pointer-events: none"><s>下一頁</s></button>
+        <button onclick="copyTable()" style="pointer-events: none;"><s>複製表單內容</s></button>
+        <button onclick="copyAllPages()" style="pointer-events: none;"><s>複製全部頁面內容</s></button>
+    </div>
+
+
+    <script>
+        let nextPageToken = '';
+        let currentPage = 1;
+        let allContent = '';
+
+        function searchPlaylist() {
+            const playlistUrl = document.getElementById('playlistInput').value;
+            copyAllPages(playlistUrl);
+        }
+
+        function getPlaylistId(playlistUrl) {
+            const playlistIdRegex = /list=([A-Za-z0-9_-]+)/;
+            const match = playlistUrl.match(playlistIdRegex);
+            return match ? match[1] : null;
+        }
+
+        function fetchPlaylistItems(playlistId, pageToken = '') {
+            const apiKey = 'AIzaSyD0-Hyy39jPom80dvrwLT4IrPgm4LA7ESU'; // 請替換成你的YouTube API金鑰
+            const maxResults = 50;
+
+            let url = `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${playlistId}&key=${apiKey}&part=snippet&maxResults=${maxResults}`;
+            if (pageToken) {
+                url += `&pageToken=${pageToken}`;
+            }
+
+            return fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const filteredItems = data.items.filter(item => {
+                        return item.snippet && item.snippet.title && item.snippet.resourceId && item.snippet.resourceId.videoId && item.snippet.title !== 'Private video' && item.snippet.title !== 'Deleted video';
+                    });
+
+                    displayPlaylistItems(filteredItems);
+                    nextPageToken = data.nextPageToken ? data.nextPageToken : '';
+                });
+        }
+
+
+        function displayPlaylistItems(items) {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+
+            items.forEach(item => {
+                const video = item.snippet;
+                const row = document.createElement('tr');
+                const titleCell = document.createElement('td');
+                const urlCell = document.createElement('td');
+
+                titleCell.textContent = video.title;
+                urlCell.textContent = `https://www.youtube.com/watch?v=${video.resourceId.videoId}`;
+
+                row.appendChild(titleCell);
+                row.appendChild(urlCell);
+                tableBody.appendChild(row);
+            });
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                document.getElementById('currentPage').innerText = currentPage;
+                fetchPlaylistItems(getPlaylistId(document.getElementById('playlistInput').value), nextPageToken);
+            }
+        }
+
+        function nextPage() {
+            currentPage++;
+            document.getElementById('currentPage').innerText = currentPage;
+            fetchPlaylistItems(getPlaylistId(document.getElementById('playlistInput').value), nextPageToken);
+        }
+
+        function copyTable() {
+            let textToCopy = '';
+            const tableRows = document.querySelectorAll('#tableBody tr');
+            tableRows.forEach(row => {
+                const title = row.cells[0].textContent;
+                const url = row.cells[1].textContent;
+                textToCopy += `addSongToTable("${title}", "${url}");\n`;
+            });
+
+            copyToClipboard(textToCopy);
+        }
+
+        function copyAllPages(playlistUrl) {
+            allContent = ''; // 清空先前的內容
+            const playlistId = getPlaylistId(playlistUrl);
+            if (playlistId) {
+                copyAllPagesWithToken(playlistId);
+            } else {
+                alert('請輸入有效的 YouTube 撥放清單網址！');
+            }
+        }
+
+        function copyAllPagesWithToken(playlistId, token = '') {
+            const apiKey = 'AIzaSyD0-Hyy39jPom80dvrwLT4IrPgm4LA7ESU'; // 請替換成你的 YouTube API 金鑰
+            const maxResults = 50;
+
+            let url = `https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${playlistId}&key=${apiKey}&part=snippet&maxResults=${maxResults}`;
+            if (token) {
+                url += `&pageToken=${token}`;
+            }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const filteredItems = data.items.filter(item => {
+                        return item.snippet &&
+                            item.snippet.title &&
+                            item.snippet.resourceId &&
+                            item.snippet.resourceId.videoId &&
+                            item.snippet.title !== 'Private video' &&
+                            item.snippet.title !== 'Deleted video';
+                    });
+
+                    addContentToCopy(filteredItems);
+
+                    nextPageToken = data.nextPageToken ? data.nextPageToken : '';
+
+                    if (nextPageToken) {
+                        copyAllPagesWithToken(playlistId, nextPageToken);
+                    } else {
+                        copyToClipboard(allContent);
+                    }
+                })
+                .catch(error => {
+                    console.error('搜尋錯誤：', error);
+                });
+        }
+
+        function addContentToCopy(items) {
+            items.forEach(item => {
+                const video = item.snippet;
+                const title = video.title;
+                const url = `https://www.youtube.com/watch?v=${video.resourceId.videoId}`;
+                allContent += `addSongToTable("${title}", "${url}");\n`;
+            });
+        }
+
+        function copyToClipboard(content) {
+            navigator.clipboard.writeText(content)
+                .then(() => {
+                    alert('已複製全部頁面內容！');
+                })
+                .catch(err => {
+                    console.error('無法複製：', err);
+                });
+        }
+    </script>
+</body>
+
+</html>
