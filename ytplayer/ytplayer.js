@@ -136,13 +136,21 @@ function searchSongs(keyword) {
 
 
 
-
-
-
-
-
-addSongToTable("Sasablue - 最後一頁 (女声完整版)「想把你抱進身體裡面 不敢讓你看見」【動態歌詞】♪", "https://www.youtube.com/watch?v=yr4WKlmc5vM&pp=ygUM5pyA5b6M5LiA6aCB");
-addSongToTable("阿冗-三個字【動態歌詞】「假如我說出三個字能不能換一種結局」♪", "https://youtu.be/Xr8APGSm8kM?si=rRsrgJAsTI_P1HQu");
+addSongToTable("吉星出租 - 暮色回响『他也许在最后的地点，在你的身边，在你的梦魇，如果看见他请别害怕，神啊可不可以让我感受一下，看在我们对彼此都放心不下，就算一阵风一片叶一个眼神的触碰，都好啊』『动态歌词MV』", "https://www.youtube.com/watch?v=nJRn-jnB5ew");
+addSongToTable("于冬然 - 親愛的不要哭『親愛的不要哭，他愛你在無人處。』【高音質|動態歌詞Lyrics】♫", "https://www.youtube.com/watch?v=Ah-_3lAqyM0");
+addSongToTable("单依纯-爱的回归线【在愛的回歸線 有期待會相見 天會晴 心會暖 陽光在手指間】【动态歌词 | Pinyin Lyrics】", "https://www.youtube.com/watch?v=U5d5he2VEh4");
+addSongToTable("en - 雨聲漸起『你聽這漸起的雨聲，像不像漸遠的我們。』【高音質|動態歌詞Lyrics】♫", "https://www.youtube.com/watch?v=yPe6ZIBmWkE");
+addSongToTable("還是會想你 - 林達浪/h3R3『我們的愛就像是流星落下,隨煙火消失的火花』【動態歌詞】", "https://www.youtube.com/watch?v=IEFW6NRyyf0");
+addSongToTable("Flashlight - Jessie J (Lyrics) 🎵", "https://www.youtube.com/watch?v=kVnecr5a1Sc");
+addSongToTable("Rauf & Faik - колыбельная (Lyric Video)", "https://www.youtube.com/watch?v=tlEAEJKIatc");
+addSongToTable("汪東城 - 我應該去愛你『沒錯 我在 心跳』【動態歌詞Lyrics】", "https://www.youtube.com/watch?v=LhuWaNuI6Bc");
+addSongToTable("魚閃閃BLING《做自己的光，不需要太亮》版權新歌 ★2024.05.13 新歌上線☆【單曲版】||『做自己的光不需要太亮 誰說要逆著風才算飛翔』#做自己的光 #翻唱 #版權新歌 #魚閃閃 #鱼闪闪", "https://www.youtube.com/watch?v=eGnoG36BN-E");
+addSongToTable("Sasablue - 最後一頁 (女声完整版)「想把你抱進身體裡面 不敢讓你看見」【動態歌詞】♪", "https://www.youtube.com/watch?v=yr4WKlmc5vM");
+addSongToTable("王一一 - 我放下了喜欢捡起了孤单 「我只能试着放下了喜欢 捡起了孤单 慢慢收回曾经对你的勇敢」曾经深爱的你如今在哪里【动态歌词 Lyrics】", "https://www.youtube.com/watch?v=mSEA0wRia6I");
+addSongToTable("阿冗 - 三個字【動態歌詞】「假如我說出三個字 能不能換一種結局」♪", "https://www.youtube.com/watch?v=Xr8APGSm8kM");
+addSongToTable("刀醬 - 5:20AM (女版)「我在5:20睡覺13:14準時起 主打個浪漫沉溺在愛河不上岸」【動態歌詞/PinyinLyrics】♪", "https://www.youtube.com/watch?v=Fe1ZmP8c7J0");
+addSongToTable("有一个他", "https://www.youtube.com/watch?v=CluGOY-zwNc");
+addSongToTable("阿肆 - 直到你降臨『我從未如此相信 如此確定 誰會是我的宿命。』【動態歌詞/Vietsub/Pinyin Lyrics】", "https://www.youtube.com/watch?v=7349tcyyE-c");
 addSongToTable("【AMV】SPYAIR - オレンジ (ORANGE) 《排球少年！！ 垃圾場的決戰》 劇場版主題曲 【中日歌詞字幕】", "https://www.youtube.com/watch?v=f_XHSsI9wBI");
 addSongToTable("SPYAIR - オレンジ(Orange)《劇場版排球少年!!垃圾場的決戰》電影主題曲【中日歌詞】", "https://www.youtube.com/watch?v=ffiZaVU23tc");
 addSongToTable("王巨星 - 画 (Cover: G.E.M.邓紫棋)【動態歌詞/Lyrics Video】", "https://www.youtube.com/watch?v=tN_Bf6ijOfE");
@@ -169,7 +177,7 @@ addSongToTable("都是weather你", "https://www.youtube.com/watch?v=wDDvtyeXy4g"
 addSongToTable("言瑾羽 - 未必『孤獨的島 躺在大海的懷抱，自由的鳥 愛上遠方的困擾，誰先爭吵 未必就是誰胡鬧，眼前的一切就是如此的奇妙。』【動態歌詞MV】", "https://www.youtube.com/watch?v=vTDvi1Au4f4");
 addSongToTable("★南方姑娘-趙雷★南方姑娘，你是否習慣北方的秋涼，南方姑娘，你是否喜歡北方人的直爽【動態歌詞Lyric】", "https://www.youtube.com/watch?v=1xUH7XbFWQU");
 addSongToTable("董又霖 - 一個人去巴黎『怎麼放下兩個人的記憶....』【動態歌詞Lyrics】", "https://www.youtube.com/watch?v=VF7DiE12wFM");
-addSongToTable("張齊山ZQS - 這是你期盼的長大嗎『你很失望吧，大人的世界不快樂吧。』【高音質|動態歌詞Lyrics】♫ Is this what you expected grew up?", "https://www.youtube.com/watch?v=nlYskBsMbmE");
+addSongToTable("張齊山ZQS - 這是你期盼的長大嗎『你很失望吧，大人的世界不快樂吧。』【高音質|動態歌詞Lyrics】♫ Is this what you expected when you grew up?", "https://www.youtube.com/watch?v=nlYskBsMbmE");
 addSongToTable("陳村長 - 愛怎麼了『怎麼我 比想像中脆弱得多』【Lyrics Video】", "https://www.youtube.com/watch?v=yjf2Doys0nk");
 addSongToTable("梁靜茹 Fish Leong - 慢冷 Slow-To-Cool-Down【慢冷的人啊，會自我折磨】[ 歌詞 ]", "https://www.youtube.com/watch?v=2LuW7acW9B8");
 addSongToTable("於冬然 - 身騎白馬「而你卻 靠近了 逼我們視線交錯 原地不動 或向前走」【動態歌詞/PinyinLyrics】♪", "https://www.youtube.com/watch?v=UD4oCnle-70");
@@ -194,11 +202,9 @@ addSongToTable("PPlin x XIANG  想了不只幾百次(Official Music Video)", "ht
 addSongToTable("Bu$Y & Ye!!ow , Paper Jim - 【戀曲2020 LOVE SONG 2020】Chapter 1 (Official Music Video)", "https://www.youtube.com/watch?v=2oZr3uv_ddc");
 addSongToTable("許嵩 - 天龍八部之宿敵『當恩怨各一半 我怎麼圈攬』【動態歌詞Lyrics】", "https://www.youtube.com/watch?v=QgUshNyWC8E");
 addSongToTable("李榮浩 Li Ronghao / 李白【歌詞】", "https://www.youtube.com/watch?v=xbwqkqv5ljo");
-addSongToTable("劉大壯 - 最『想用盡全身的力氣 來挽救這份感情』【Lyrics Video】", "https://www.youtube.com/watch?v=ktaNd2oMmEo");
 addSongToTable("热恋夏季 (抒情版)", "https://www.youtube.com/watch?v=3AtAufecosU");
 addSongToTable("｛高品质/动态音频可视化｝《姑娘别哭泣》~柯柯柯啊", "https://www.youtube.com/watch?v=keZJE_cShy8");
 addSongToTable("江皓南 - 大人「不知不覺我們變成曾嚮往的大人」【動態歌詞/PinyinLyrics】♪", "https://www.youtube.com/watch?v=aaPA7yR1c6I");
-addSongToTable("直到你降临", "https://youtu.be/7349tcyyE-c?si=amVXRwbq1eDuiGI4");
 addSongToTable("Yu Ai", "https://www.youtube.com/watch?v=MirexJxv9PE");
 addSongToTable("Best Friend", "https://www.youtube.com/watch?v=XHfEdr2rhoU");
 addSongToTable("Abba - Money, Money, Money (Official Music Video)", "https://www.youtube.com/watch?v=ETxmCCsMoD0");
