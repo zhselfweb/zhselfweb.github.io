@@ -2,33 +2,37 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background-color: #333; /* 深灰色背景 */
+    color: #ccc; /* 淺灰色文字 */
 }
 
 .container {
     max-width: 600px;
     margin: 50px auto;
     padding: 20px;
-    background-color: #fff;
+    background-color: #444; /* 深灰色容器背景 */
     border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* 深色陰影 */
 }
 
 h1 {
     text-align: center;
+    color: #fff; /* 白色標題文字 */
 }
 
 input[type="text"] {
     width: calc(100% - 5%);
     padding: 10px;
     margin-bottom: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #666; /* 淺灰色邊框 */
     border-radius: 5px;
+    background-color: #555; /* 深灰色輸入框背景 */
+    color: #ccc; /* 淺灰色文字 */
 }
 
 button {
-    padding: 10px 20px;
-    background-color: #007bff;
+    padding: 5px 10px;
+    background-color: #33669c9a; /* 藍色按鈕背景 */
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -37,5 +41,30 @@ button {
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #0057b3bb; /* 深藍色懸停效果 */
 }
+
+select {
+    padding: 10px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    border: 1px solid #666; /* 淺灰色邊框 */
+    border-radius: 5px;
+    background-color: #555; /* 深灰色背景 */
+    color: #ccc; /* 淺灰色文字 */
+
+}
+
+select:hover,
+select:focus {
+    border-color: #999; /* 深灰色邊框懸停效果 */
+}
+
+/* 為了增強選項的可讀性，可以設定下拉選單中選項的背景與文字顏色 */
+
+select option {
+    background-color: #444; /* 深灰色背景 */
+    color: #ccc; /* 淺灰色文字 */
+}
+
+
