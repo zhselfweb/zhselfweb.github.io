@@ -1,31 +1,47 @@
 
-@keyframes gradientAnimation {
-    0% {
-        background-position: 0% 50%;
-    }
-    50% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0% 50%;
-    }
+.content {
+    min-height: 200vh; /* 使內容足夠長以允許滾動 */
+    padding: 20px;
+    color: white;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: url('bg.jpg') no-repeat center center/cover;
+    z-index: -2;
+    filter: brightness(80%);/* 調整飽和度，使圖片不那麼鮮豔 */
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.103); /* 半透明的白色覆蓋層，0.5 是透明度值 */
+    z-index: -1; /* 使覆蓋層位於背景圖片之上，但在內容之下 */
 }
 
 body {
-    color: #eaeaea;
+
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    background: linear-gradient(45deg, #000000, #353434);
-    background-size: 400% 400%;
-    animation: gradientAnimation 30s ease infinite;
+
 }
+
 #back-to-top-btn {
     position: fixed;
     bottom: 20px;
     right: 20px;
     padding: 10px 10px;
-    background-color: #42464b;
+    background-color: #42464b4f;
     color: #c7c2c2;
     border: none;
     border-radius: 50%;
@@ -53,7 +69,7 @@ nav {
     top: 1%;
     white-space: nowrap;
     user-select: none;
-    background-color: #312f2f;
+    background-color: #312f2f17;
     padding: 10px;
     box-shadow: 0 2px 3px rgba(255, 255, 255, 0.103);
     border-radius: 10px;
@@ -93,8 +109,8 @@ header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #242323;
-    box-shadow: 0 2px 4px #474444;
+    background-color: var(--bew-elevated-10);
+    box-shadow: 0 2px 4px #4744441a;
 }
 
 
@@ -103,6 +119,7 @@ h1 {
     user-select: none;
     margin: 50px 0px 0px 0px;
     font-size: 24px;
+    color: #c0c1c2;
 }
 
 h1:hover {
@@ -120,38 +137,45 @@ h1:active {
 }
 
 input[type="text"] {
-    border: 2px solid #85848493;
+    border-width: 1px;
+    border-color: var(--bew-border-color);
     padding: 8px;
     margin-right: 10px;
     border-radius: 5px;
-    border: 1px solid #eaeaea;
+    backdrop-filter: var(--bew-filter-glass-1);
     width: 50%;
     display: block;
     margin: 50px auto 0 auto;
-    background-color: #7c7b7b6e; /* 淡灰色背景 */
-    box-shadow: 0 0 5px 2px rgba(221, 221, 154, 0.233); /* 淡黄色光晕 */
-  }
+    background-color: #c0c1c21a;
+    box-shadow: var(--bew-shadow-edge-glow-1), var(--bew-shadow-2);
+}
   
-  /* 设置输入框聚焦时的样式 */
+
   input[type="text"]:focus {
-    outline: none; /* 清除默认的聚焦样式 */
-    box-shadow: 0 0 7px 2px rgba(196, 116, 212, 0.8); /* 聚焦时更亮的光晕 */
+    outline: none;
+    box-shadow: 0 0 7px 2px rgba(196, 116, 212, 0.596);
   }
 
   input[type="text"]::placeholder{
     user-select: none;
-    color: #fcfcfc62;
+    color: #ffffffa8;
 
   }
   input[type="text"]:focus::placeholder{
     user-select: none;
-    color: #56776c80;
+    color: #31313180;
 
   }
 
 
-input[type="text"] {
-    color: rgb(129, 245, 216);
+  input[type="text"] {
+    color: rgb(255, 255, 255);
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* 白色半透明光暈 */
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
 }
 
 
@@ -200,7 +224,7 @@ main {
 }
 
 .bChange {
-    opacity: 40%;
+    opacity: 60%;
     position: fixed;
     z-index: 999;
 }
@@ -251,8 +275,10 @@ main {
     border: 1px solid #0a0a0a;
     padding: 8px;
     text-align: center;
+    background: rgba(0, 0, 0, 0.171);
+    
 }
-
+    
 #songTable th {
     user-select: none;
     background-color: #f44336;
@@ -260,18 +286,20 @@ main {
 }
 
 #songTable tbody tr:hover {
-    background-color: #f2f2f2;
+    background-color: #ffffff;
     transition: background-color 0.8s ease;
 }
 
 #songTable a {
     user-select: text;
     text-decoration: none;
-    color: #fafafa;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px #000000; /* 加上黑色光暈 */
 }
 
 #songTable tbody tr:hover a {
     color: #0a0a0a;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.144);
 }
 
 #songTable button {
@@ -294,5 +322,4 @@ main {
     background-color: #d32f2f;
     color: #333;
 }
-
 
