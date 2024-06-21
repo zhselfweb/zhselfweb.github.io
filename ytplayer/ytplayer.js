@@ -56,7 +56,7 @@ function playVideo() {
 }
 
 function getYouTubeID(url) {
-    var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|live\/|watch\?v=|&v=)([^#\&\?]*).*/;
     var match = url.match(regExp);
     if (match && match[2].length === 11) {
         return match[2];
@@ -136,7 +136,7 @@ function searchSongs(keyword) {
 
 
 
-addSongToTable("吉星出租 - 暮色回响『他也许在最后的地点，在你的身边，在你的梦魇，如果看见他请别害怕，神啊可不可以让我感受一下，看在我们对彼此都放心不下，就算一阵风一片叶一个眼神的触碰，都好啊』『动态歌词MV』", "https://www.youtube.com/watch?v=nJRn-jnB5ew");
+addSongToTable("吉星出租 - 暮色回响『他也许在最后的地点，在你的身边，在你的梦魇，如果看见他请别害怕，神啊可不可以让我感受一下，看在我们对彼此都放心不下，就算一阵风一片叶一个眼神的触碰，都好啊』『动态歌词MV』", "https://youtu.be/BvFAvLZrF3I?si=9U0petJWWRGnIgoI");
 addSongToTable("于冬然 - 親愛的不要哭『親愛的不要哭，他愛你在無人處。』【高音質|動態歌詞Lyrics】♫", "https://www.youtube.com/watch?v=Ah-_3lAqyM0");
 addSongToTable("单依纯-爱的回归线【在愛的回歸線 有期待會相見 天會晴 心會暖 陽光在手指間】【动态歌词 | Pinyin Lyrics】", "https://www.youtube.com/watch?v=U5d5he2VEh4");
 addSongToTable("en - 雨聲漸起『你聽這漸起的雨聲，像不像漸遠的我們。』【高音質|動態歌詞Lyrics】♫", "https://www.youtube.com/watch?v=yPe6ZIBmWkE");
