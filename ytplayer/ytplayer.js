@@ -133,10 +133,9 @@ function searchSongs(keyword) {
 
 
 
-
-
-
-addSongToTable("吉星出租 - 暮色回响『他也许在最后的地点，在你的身边，在你的梦魇，如果看见他请别害怕，神啊可不可以让我感受一下，看在我们对彼此都放心不下，就算一阵风一片叶一个眼神的触碰，都好啊』『动态歌词MV』", "https://youtu.be/BvFAvLZrF3I?si=9U0petJWWRGnIgoI");
+addSongToTable("林志炫      鳳凰花開的路口     歌詞", "https://www.youtube.com/watch?v=y9OkB1m6BYY");
+addSongToTable("劉大壯 - 最【動態歌詞】「最最最 難忘回憶是與你 最最最 最後一吻的距離」♪", "https://www.youtube.com/watch?v=HmFhhfF68OU");
+addSongToTable("吉星出租 - 暮色迴響「神啊可不可以讓我感受一下 看在我們對彼此都放心不下」【動態歌詞/PinyinLyrics】♪", "https://www.youtube.com/watch?v=BvFAvLZrF3I");
 addSongToTable("于冬然 - 親愛的不要哭『親愛的不要哭，他愛你在無人處。』【高音質|動態歌詞Lyrics】♫", "https://www.youtube.com/watch?v=Ah-_3lAqyM0");
 addSongToTable("单依纯-爱的回归线【在愛的回歸線 有期待會相見 天會晴 心會暖 陽光在手指間】【动态歌词 | Pinyin Lyrics】", "https://www.youtube.com/watch?v=U5d5he2VEh4");
 addSongToTable("en - 雨聲漸起『你聽這漸起的雨聲，像不像漸遠的我們。』【高音質|動態歌詞Lyrics】♫", "https://www.youtube.com/watch?v=yPe6ZIBmWkE");
@@ -439,7 +438,6 @@ addSongToTable("space x - 0321【動態歌詞】「在看不到的夜裡 我時�
 addSongToTable("封茗囧菌 - 靜悄悄 (女聲版)【動態歌詞】", "https://www.youtube.com/watch?v=W1aT20Hp-M0");
 addSongToTable("陳雪凝 - 假裝「故事開始總是很甜，歲月流逝人心轉變」動態歌詞版", "https://www.youtube.com/watch?v=4C9_kSakeec");
 addSongToTable("烟(许佳豪)- 再见，我的女孩『就再见吧 我的女孩，见证我的失败 没能给你一个未来』【動態歌詞Lyrics】2022 热门歌曲 | 2022 新歌推送 | 抖音十大热门歌曲 | 最火最热门洗脑抖音歌曲", "https://www.youtube.com/watch?v=xMIaB7gGMG8");
-addSongToTable("Avicii - The Nights (Lyrics) 'my father told me'", "https://www.youtube.com/watch?v=H78YW7ycuwI");
 addSongToTable("Justin Bieber - Baby ft. Ludacris (Lyrics Video)", "https://www.youtube.com/watch?v=q8hdSF60U0A");
 addSongToTable("Crash Adams - Destination (Lyrics)", "https://www.youtube.com/watch?v=2jEIugrVZe8");
 addSongToTable("1個球 - 大雨還在下「猶如我最愛的你呀，三天三夜都不接電話」【動態歌詞/pīn yīn gē cí】", "https://www.youtube.com/watch?v=MNGtsOct75M");
