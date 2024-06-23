@@ -1,0 +1,15 @@
+{
+    "name": "𝚇𝚂𝚂𝙷 𝙰𝙽𝙾𝙽 ",
+    "short_name": "𝚇𝚂𝚂𝙷 𝙰𝙽𝙾𝙽",
+    "icons": [
+        {
+            "src": "xsshlogo.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        }
+    ],
+    "start_url": "https://zhselfweb.github.io/XsshAnon/home.html",
+    "display": "standalone",
+    "theme_color": "#ffffff",
+    "background_color": "#000000"
+}

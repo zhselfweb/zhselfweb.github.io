@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>來源</title>
+    <style>
+        body{
+            display: flex;
+            justify-content: center;
+            background:linear-gradient(
+                to left,
+                rgb(3, 3, 3),
+                rgb(46, 42, 59)) ;
+        }
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        .a{
+            position: relative;
+            width: 400px;
+            height: 250px;
+            top: 150px;
+        }
+        .b{
+            position: absolute;
+            width: 400px;
+            height: 250px;
+            border-radius: 20px;
+            background: linear-gradient(
+                to right bottom,
+                rgba(255,255,255,.6),
+                rgba(255,255,255,.3),
+                rgba(255,255,255,.2)
+            );
+
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255,255,255,.8);
+            border-left: 1px solid rgba(255,255,255,.8);
+        }
+        .b span{
+
+            font: 900 50px '';
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            color: rgba(0,0,0,.5);
+            text-shadow: 1px 1px 3px rgba(255,255,255,.7);
+        }
+        .b nav{
+            font: 900 25px '';
+            position: absolute;
+            transform: translate(50%, 50%);
+            bottom: 50%;
+            right: 50%;
+            color: rgba(255,255,255,.3);
+            letter-spacing: 3px;
+        }
+        .b p{
+            font: 900 25px '';
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            color: rgba(255,255,255,.3);
+            /* 设置字体间距 */
+            letter-spacing: 3px;
+        }
+
+        .c{
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            filter: blur(30px);
+            background-color: rgba(240, 160, 0, 0.781);
+            position: absolute;
+            top: 140px;
+            left: -40px;
+            z-index: -99;
+        }
+        .d{
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            filter: blur(30px);
+            background-color: #67c0a79a;
+            position: absolute;
+            top: -50px;
+            left: 260px;
+            z-index: -99;
+        }
+        a{
+           text-decoration: none;
+           font-size: 15px;
+           color: aliceblue;
+        }
+    </style>
+</head>
+<body>
+    <div class="a">
+        <div class="b">
+            <span>
+                Source
+            </span>
+            <nav>
+                <a href="https://www.bilibili.com/video/BV1S34y1i7E7/?spm_id_from=333.788.recommend_more_video.8&vd_source=97c56b7d68052b20f65c986133f5332e" >逼真的玻璃卡片悬停效果</a>
+                <a href="https://www.bilibili.com/video/BV1nV4y1t7KQ/?vd_source=97c56b7d68052b20f65c986133f5332e" >快速提升设计感 css滤镜应用/透明表单/玻璃效果</a>
+                <a>#版𝓱專業的設計</a>
+            </nav>
+            <p>
+                𝚇𝚂𝚂𝙷 𝙰𝙽𝙾𝙽
+            </p>
+        </div>
+        <div class="c"></div>
+        <div class="d"></div>
+    </div>
+</body>
+</html>
