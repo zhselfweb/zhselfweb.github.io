@@ -1,0 +1,185 @@
+
+@font-face {
+    font-family: 'title';
+    src: url('ThePeakFontBeta_V0_101.ttf') format('truetype'); /* 根据你的字体文件路径和格式调整 */
+
+}
+@font-face {
+    font-family: 'comment';
+    src: url('ChenYuluoyan-Thin.ttf') format('truetype'); /* 根据你的字体文件路径和格式调整 */
+
+}
+/* 应用到body或其他元素 */
+body {
+    font-family: 'YourCustomFont', Arial, sans-serif; /* 使用你自定义的字体，如果加载失败则使用后备字体 */
+}
+
+* {
+    user-select: none;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #111;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #eee;
+}
+
+.messages {
+    width: 90%;
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #222;
+    border-radius: 20px;
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+    border: 1px solid #333;
+}
+
+.messages h1 {
+    font-family: 'title';
+    font-size: 2.5em;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #ddd;
+    letter-spacing: 3px;
+}
+
+#messageBoard {
+    width: 100%;
+    text-align: left;
+}
+
+.message {
+    width: 95%;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #333;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+    transition: background-color 0.3s ease;
+}
+
+.message:hover {
+    background-color: #444;
+}
+
+.message::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background-image: radial-gradient(circle closest-side, rgba(255, 255, 255, 0.1), transparent); /* 添加轻微的光泽效果 */
+    transform: scale(0);
+    transition: transform 0.5s ease;
+}
+
+.message:hover::before {
+    transform: scale(2);
+}
+
+.message-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.2em;
+    color: #aaa;
+    transition: transform 0.3s ease;
+}
+
+.message:hover .message-info {
+    transform: translateY(-10px);
+}
+
+.info {
+    display: flex;
+    align-items: center;
+}
+
+.info img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid #fff;
+    margin-right: 10px;
+    transition: transform 0.3s ease;
+}
+
+.message:hover .info img {
+    transform: scale(1.1);
+}
+
+strong {
+    font-size: 1.2em;
+    letter-spacing: 2px;
+}
+
+.message-info span {
+    font-size: 0.8em;
+}
+
+.content {
+    font-family: 'comment';
+    color: #ccc; 
+    font-size: 2em;
+    margin-top: 10px;
+    transition: color 0.3s ease;
+    transition: font-size 0.3s ease;
+}
+
+.message:hover .content {
+    color: #ffffff; 
+    font-size: 3em;
+    transition: color 0.3s ease;
+    transition: font-size 0.3s ease;
+
+}
+
+@media (max-width: 768px) {
+    .messages {
+        padding: 20px;
+    }
+    .messages h1 {
+        font-size: 1.6em;
+    }
+    .message {
+        width: 100%;
+        margin: 15px auto;
+        padding: 15px;
+    }
+    .info img {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+@media (max-width: 480px) {
+    .messages {
+        margin: 20px auto;
+    }
+    .messages h1 {
+        font-size: 1.4em;
+    }
+    .message {
+        padding: 10px;
+    }
+    .info img {
+        width: 40px;
+        height: 40px;
+    }
+}
+

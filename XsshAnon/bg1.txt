@@ -1,0 +1,55 @@
+body {
+    /* 100%視窗高度 */
+    min-height: 100vh;
+    /* 彈性佈局 水平+垂直置中 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #161626;
+}
+
+body::before {
+    content: "";
+    /* 絕對定位 */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* 多層漸層背景 */
+    background: radial-gradient(circle at right 70%,
+            rgba(255, 255, 255, 0.8) 0%,
+            rgba(255, 255, 255, 0.5) 20%,
+            rgba(0, 0, 0, 0.2) 60%,
+            rgba(0, 0, 0, 0.5) 80%,
+            rgba(0, 0, 0, 0.7) 100%);
+    /* 將元素剪切為一個圓形【30%表示圓的直徑】【right 70%表示圓心位置】 */
+    clip-path: circle(30% at right 70%);
+    /* 添加陰影以增強立體感 */
+    box-shadow: inset 10px 10px 20px rgba(0, 0, 0, 0.5),
+        inset -10px -10px 20px rgba(255, 255, 255, 0.5);
+
+}
+
+body::after {
+    content: "";
+    /* 絕對定位 */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* 多層漸層背景 */
+    background: radial-gradient(circle at 10% 10%,
+            rgba(255, 255, 255, 0.8) 0%,
+            rgba(255, 255, 255, 0.5) 20%,
+            rgba(238, 156, 167, 0.2) 60%,
+            rgba(238, 156, 167, 0.5) 80%,
+            rgba(238, 156, 167, 0.7) 100%);
+    /* 將元素剪切為一個圓形【20%表示圓的直徑】【10% 10%表示圓心位置】 */
+    clip-path: circle(20% at 10% 10%);
+    /* 添加陰影以增強立體感 */
+    box-shadow: inset 10px 10px 20px rgba(238, 156, 167, 0.5),
+        inset -10px -10px 20px rgba(255, 255, 255, 0.5);
+
+}
