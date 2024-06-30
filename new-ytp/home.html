@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ytplayer~zh_ouo</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="icon" href="zhlogo.jpg">
+    <link rel="manifest" href="icon.json">
+    <link rel="stylesheet" type="text/css" href="ytplayer.css">
+
+</head>
+
+<body class="nightMode">
+    <nav class="pagelink">
+        <a href="https://www.instagram.com/zh_ouo/">此網站由zh製作</a>
+    </nav>
+    <header>
+        <h1 id="clearButton" title="清空搜尋框">𝚈𝚃 𝙿𝚕𝚊𝚢𝚎𝚛</h1>
+        <input type="text" id="videoURL" placeholder="輸入 YouTube 影片網址">
+        <button id="playVideoButton">播放影片</button>
+    </header>
+
+
+    <main>
+        <button id="toggleButton" class="bChange">切換鎖定</button>
+        <button id="back-to-top-btn">TOP</button>
+        <div class="border-container"></div>
+        <div id="playerWrapper">
+            <div id="player"></div>
+        </div>
+
+
+
+        <br><br>
+        <br><br>
+
+
+        <input type="text" id="searchInput" placeholder="搜尋歌手、歌名或類型...">
+
+
+        <!-- 播放模式 -->
+        <select id="playbackMode">
+            <option value="normal">正常播放</option>
+            <option value="repeat">單曲循環</option>
+            <option value="shuffle">隨機播放</option>
+        </select>
+
+
+
+
+
+
+
+        <table id="songTable">
+            <thead>
+                <tr>
+                    <th>歌名</th>
+                    <th>複製連結</th>
+                    <th>播放影片</th>
+                </tr>
+            </thead>
+            <tbody id="songList"></tbody>
+        </table>
+
+
+
+    </main>
+
+    <br><br><br>
+    <script src="ytplayer.js"></script>
+</body>
+
+</html>
