@@ -1,0 +1,15 @@
+{
+  "name": "𝚈𝚃 𝙿𝚕𝚊𝚢𝚎𝚛 𝚋𝚢-𝚣𝚑_𝚘𝚞𝚘 ",
+  "short_name": "𝚈𝚃 𝙿𝚕𝚊𝚢𝚎𝚛",
+  "icons": [
+    {
+      "src": "zhlogo.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "start_url": "https://zhselfweb.github.io/ytplayer/ytplayer.html",
+  "display": "standalone",
+  "theme_color": "#ffffff",
+  "background_color": "#000000"
+}
