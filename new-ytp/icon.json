@@ -8,7 +8,7 @@
       "sizes": "192x192"
     }
   ],
-  "start_url": "https://zhselfweb.github.io/ytplayer/ytplayer.html",
+  "start_url": "https://zhselfweb.github.io/new-ytp/home",
   "display": "standalone",
   "theme_color": "#ffffff",
   "background_color": "#000000"
