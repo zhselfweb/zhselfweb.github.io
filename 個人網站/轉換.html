@@ -24,12 +24,13 @@
             const result = lines.map(line => {
                 const match = line.match(/addSongToTable\("(.+?)", "(.+?)"\);/);
                 if (match) {
-                    return `{"name": "${match[1]}", "link": "${match[2]}"},`;
+                    return `{"name": "${match[1]}", "link": "${match[2]}"}`;
                 }
                 return '';
-            }).filter(line => line !== '').join('\n');
-            output.value = result;
-            navigator.clipboard.writeText(result).then(() => {
+            }).filter(line => line !== '').join(',\n');
+            const jsonArray = `[\n${result}\n]`;
+            output.value = jsonArray;
+            navigator.clipboard.writeText(jsonArray).then(() => {
                 alert('已複製到剪貼簿！');
             });
         }
