@@ -48,7 +48,6 @@ function loadSongs() {
             addSongToTable(song.name, song.link);
         });
     });
-
 }
 
 function addSongToTable(songName, songLink) {
@@ -71,9 +70,15 @@ function playSong(songLink) {
 
 function searchSongs() {
     var keyword = $('#searchInput').val().trim().toLowerCase().replace(/[^\w\s\u4E00-\u9FFF]/g, '').replace(/\s/g, '');
-    $('#songList tr').each(function () {
-        var songName = $(this).find('td').first().text().toLowerCase().replace(/[^\w\s\u4E00-\u9FFF]/g, '').replace(/\s/g, '');
-        $(this).toggle(songName.includes(keyword));
+    var converter = OpenCC.Converter({ from: 't2s', to: 's2t' });
+
+    converter(keyword).then(function (simplifiedKeyword) {
+        $('#songList tr').each(function () {
+            var songName = $(this).find('td').first().text().toLowerCase().replace(/[^\w\s\u4E00-\u9FFF]/g, '').replace(/\s/g, '');
+            converter(songName).then(function (simplifiedSongName) {
+                $(this).toggle(simplifiedSongName.includes(simplifiedKeyword));
+            }.bind(this));
+        });
     });
 }
 
@@ -87,7 +92,3 @@ function debounce(func, wait) {
         }, wait);
     };
 }
-
-
-
-
