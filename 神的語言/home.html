@@ -1,0 +1,119 @@
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+
+    <link rel="icon" href="godlogo.png" type="image/png">
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC&amp;display=swap" rel="stylesheet">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.1.0/css/swiper.min.css" rel="stylesheet" />
+
+    <link href="manifest.json" rel="manifest">
+
+    <meta name="title" content="神的語言轉換器">
+    <meta name="description" content="可以轉換神的語言">
+    <title>神的語言轉換器</title>
+
+
+    <link media="all" type="text/css" rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="not.css">
+    </style>
+</head>
+
+<body>
+
+    <div class="center">
+        <div class="d_bor">
+            <div style="display:flex">
+                <div style="margin: auto;">
+                    <h3 style="text-align: center;">神的語言</h3>
+                    <input type="text" id="number"
+                        style="display: flex; height: calc(1em + .75rem + 2px); text-align: center; width: 75%; margin: auto">
+                </div>
+            </div>
+
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <div style="margin: auto;cursor: pointer;" onclick="transfer_url('nhentai')">
+                            <input type="image" src="img/nhentai.png" alt="nhentai">
+                            <div style="text-align: center;">蝙蝠俠</div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div style="margin: auto;cursor: pointer;" onclick="transfer_url('wnacg')">
+                            <input type="image" src="img/wnacg.png" alt="wnacg">
+                            <div style="text-align: center;">照相機</div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div style="margin: auto;cursor: pointer;" onclick="transfer_url('pixiv')">
+                            <input type="image" src="img/pixiv.png" alt="pixiv">
+                            <div style="text-align: center;">purify</div>
+                        </div>
+                    </div>
+                    <div class="swiper-slide">
+                        <div style="margin: auto;cursor: pointer;" onclick="transfer_url('jm')">
+                            <input type="image" src="img/jm.png" alt="jm">
+                            <div style="text-align: center;">妹子</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+            </div>
+        </div>
+        <div style="height:50px;"></div>
+        <div class="d_bor" style="padding: 5px;">
+            <h1 style="text-align:center;  font-size:24px;">使用方式</h1>
+            <div style="padding: 5px;margin-bottom: 10px">將神的語言輸入在文字框中，點擊圖式即可轉換。</div>
+            <div style="text-align:center;">
+                <div class="lines">
+                    <div class="line"></div>
+                    <div style="margin: auto 10px; width: 100%">格式</div>
+                    <div class="line"></div>
+                </div>
+                <div style="padding: 5px;">蝙蝠俠：<div style="display: inline;color: rgb(231, 220, 154)">6碼</div>
+                </div>
+                <div style="padding: 5px;">照相機：<div style="display: inline;color: rgb(231, 220, 154)">5碼</div>
+                </div>
+                <div style="padding: 5px;">purify：<div style="display: inline;color: rgb(231, 220, 154)">8碼</div>
+                </div>
+                <div style="padding: 5px;">妹子：<div style="display: inline;color: rgb(231, 220, 154)">6碼</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="height:50px;"></div>
+
+        <div class="d_bor1" style="padding: 5px;">
+
+            <div class="container">
+                <h1>備忘錄</h1>
+                <input type="text" id="memoInput" placeholder="輸入">
+                <button onclick="saveMemo()">保存</button>
+                <button onclick="clearMemo()">清除</button>
+                <select id="clearOption">
+                    <option value="all">清除全部</option>
+                    <option value="last">清除最後一個</option>
+
+                </select>
+                <div id="memoList"></div>
+            </div>
+
+            <script src="not.js"></script>
+
+        </div>
+
+
+</body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.1.0/js/swiper.min.js"></script>
+<script src="main.js"></script>
+
+</html>

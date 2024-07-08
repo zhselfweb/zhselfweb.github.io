@@ -1,0 +1,16 @@
+{
+    "name": "神的語言轉換器",
+    "short_name": "神的語言轉換器",
+    "description": "可以轉換神的語言",
+    "icons": [
+        {
+            "src": "godlogo.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        }
+    ],
+    "start_url": "https://zhselfweb.github.io/神的語言/home.html",
+    "display": "fullscreen",
+    "theme_color": "#ffffff",
+    "background_color": "#000000"
+}
