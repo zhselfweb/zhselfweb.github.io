@@ -133,6 +133,12 @@ function searchSongs(keyword) {
 
 
 
+addSongToTable("把王菲弄哭的任素汐，自己作词作曲演唱《王招君》，不炫技太走心", "https://www.youtube.com/watch?v=_CCx3mXG6RE");
+addSongToTable("粉絲記事本 - 徐譽滕『當我抱着吉他再唱起黃家駒』【動態歌詞Lyrics】", "https://www.youtube.com/watch?v=Z0sW1ccttCQ");
+addSongToTable("【纯享】#汪苏泷 #单依纯《#如果爱忘了》若曾经的爱被遗忘 那就好好珍惜眼前人｜声生不息·家年华 Circle Of Sound EP12｜MangoTV", "https://www.youtube.com/watch?v=40iCGaUhTbE");
+addSongToTable("JVKE - golden hour (official music video)", "https://www.youtube.com/watch?v=PEM0Vs8jf1w");
+addSongToTable("王小帥 - 最近（原唱：李聖傑）『你想要的 我卻不能夠給你我全部，我能給的 卻又不是你想要擁有的。』【動態歌詞/Vietsub/Pinyin Lyrics】", "https://www.youtube.com/watch?v=QULEAfwK7wo");
+addSongToTable("《给我一首歌的时间》田一名完整翻唱版", "https://www.youtube.com/watch?v=pWcRB5PAVSk");
 addSongToTable("林志炫      鳳凰花開的路口     歌詞", "https://www.youtube.com/watch?v=y9OkB1m6BYY");
 addSongToTable("劉大壯 - 最【動態歌詞】「最最最 難忘回憶是與你 最最最 最後一吻的距離」♪", "https://www.youtube.com/watch?v=HmFhhfF68OU");
 addSongToTable("吉星出租 - 暮色迴響「神啊可不可以讓我感受一下 看在我們對彼此都放心不下」【動態歌詞/PinyinLyrics】♪", "https://www.youtube.com/watch?v=BvFAvLZrF3I");
@@ -166,7 +172,6 @@ addSongToTable("周杰倫 擱淺 歌詞（繁體中文）", "https://www.youtube
 addSongToTable("Architect", "https://www.youtube.com/watch?v=QkNzZUVToyM");
 addSongToTable("承桓 - 丟掉天分『後來我丟掉取悅你的天分，但這件事我曾比誰都認真。』【高音質|動態歌詞Lyrics】♫", "https://www.youtube.com/watch?v=9AcBlzom0fQ");
 addSongToTable("在加納共和國離婚", "https://www.youtube.com/watch?v=eACpNen3ZcI");
-addSongToTable("en - 在加納共和國離婚『只是覺得努力了那麽久，最後卻還是敗給不適合。』【高音質|動態歌詞Lyrics】♫ · 翻唱歌曲 (原唱:菲道爾/Dior大穎)", "https://www.youtube.com/watch?v=Dy0Uu0VcQw4");
 addSongToTable("ILLIT (아일릿) ‘Magnetic’ Official MV", "https://www.youtube.com/watch?v=Vk5-c_v4gMU");
 addSongToTable("趙雷 -《無法長大》- 成都 MV (高圓圓出演)", "https://www.youtube.com/watch?v=MAXeCR7iNmU");
 addSongToTable("廬州月", "https://www.youtube.com/watch?v=KWEWyewO3mg");
@@ -240,7 +245,6 @@ addSongToTable("JORKER XUE 薛之谦 2022 —的最佳歌曲 音乐播放列表 
 addSongToTable("en - 靜悄悄「世界突然變得好安靜 只剩心跳的聲音」【動態歌詞/PinyinLyrics】♪", "https://www.youtube.com/watch?v=yLuJ1GA_UWw");
 addSongToTable("皓凡 - 迷人的危險（深情版）「他不配站在你眼前 你的痛怎能看不見」【動態歌詞/PinyinLyrics】♪", "https://www.youtube.com/watch?v=uoRu2dgK0z8");
 addSongToTable("等什麼君 - 辭九門回憶『戲子多秋，可憐一處情深舊。』【動態歌詞Lyrics】", "https://www.youtube.com/watch?v=SpAzIb026bs");
-addSongToTable("【无损高音质】薛之谦 70首经典好听的歌曲合集 #薛之谦  #歌曲合集", "https://www.youtube.com/watch?v=dGNSD3uuxTA");
 addSongToTable("天外来物-薛之谦〖你是不是我的，你像天外来物一样求之不得〗〖抖音超火🔥〗〖动态歌词〗", "https://www.youtube.com/watch?v=T4eqDMRnWfc");
 addSongToTable("韓安旭 - 我害怕『我害怕身邊沒你 我害怕把你忘記，我害怕一個人醒來 在夜裡我又一次想你。』【動態歌詞/Vietsub/Pinyin Lyrics】", "https://www.youtube.com/watch?v=Nz6yWC33dVk");
 addSongToTable("周杰倫 青花瓷 歌詞", "https://www.youtube.com/watch?v=uf8HHCcbpFc");
@@ -320,7 +324,6 @@ addSongToTable("《不抛弃不放弃》ONER 斗罗大陆（Soul Land）史莱�
 addSongToTable("初月 - 雨是神的煙花「 你看啊 雨是神明賜在 世間的煙花」【動態歌詞/PinyinLyrics】♪", "https://www.youtube.com/watch?v=OEYI3DOJEOw");
 addSongToTable("火羊瞌睡了 - 夏天的风【動態歌詞/Lyrics Video】", "https://www.youtube.com/watch?v=hN7hpdQWS1E");
 addSongToTable("汪蘇瀧&徐良 - 後會無期【動態歌詞/Lyrics Video】", "https://www.youtube.com/watch?v=i2N8ap31B0I");
-addSongToTable("5zqian -《始終放不下》(Official Audio)", "https://www.youtube.com/watch?v=24KJa0nHMI0");
 addSongToTable("薛之謙 Joker Xue【紳士】官方完整版 MV", "https://www.youtube.com/watch?v=Ndp0sZ5LyvI");
 addSongToTable("张子豪 Wiz_H - 一般的一天 『一般的一天一般的一晚，一般的失眠到一栋楼的灯只下剩一盏。』【动态歌词/Pinyin Lyrics】[说唱听我的2]", "https://www.youtube.com/watch?v=tIPP18Q0r08");
 addSongToTable("YangChill - 星空 (official audio)", "https://www.youtube.com/watch?v=ipfhZHRtTGc");
