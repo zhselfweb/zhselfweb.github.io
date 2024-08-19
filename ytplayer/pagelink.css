@@ -1,6 +1,0 @@
-.pagelink a:hover {
-    background-color: rgba(100, 95, 64, 0.329);
-    color: rgb(177, 170, 170) !important;
-    font-weight: 800;
-    transition: background-color 0.2s 0s, color 0.2s 0s, ;
-}
