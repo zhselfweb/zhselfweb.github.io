@@ -1,0 +1,22 @@
+
+.container .card {
+    /* 相對定位 */
+    position: relative;
+    width: 280px;
+    height: 400px;
+    background-color: rgba(255, 255, 255, 0.1);
+    margin: 30px;
+    border-radius: 15px;
+    /* 陰影 */
+    box-shadow: 20px 20px 50px rgba(0, 0, 0, 0.5);
+    /* 溢出隱藏 */
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+    border-left: 1px solid rgba(255, 255, 255, 0.5);
+    /* 背景模糊 */
+    backdrop-filter: blur(5px);
+
+}

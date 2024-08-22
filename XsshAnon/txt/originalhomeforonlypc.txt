@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>xssh anon</title>
+    <link rel="icon" href="xsshlogo.png">
+    <link rel="manifest" href="icon.json">
+    <link rel="stylesheet" href="style.css">
+</head>
+<script src="vanilla-tilt.js"></script>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="content">
+                <h2>01</h2>
+                <h3>高中匿名版</h3>
+                <p>班級，姓名請打馬</p>
+                <a href="https://marshmallow-qa.com/y144zipsmqwb76a?t=VskPIt&utm_medium=url_text&utm_source=promotion" id="a" target="_blank">→</a>
+            </div>
+        </div>
+        <div class="card">
+            <div class="content">
+                <nav class="rule">
+                    <h2 style="transform: translateY(-15%);">02</h2>
+                    <h3>𝚇𝚂𝚂𝙷 𝙰𝙽𝙾𝙽</h3>
+                    <p>
+                        版規<br>
+
+                        請各位投稿時注意以下事項:
+                        <br>
+                        1.勿刷版 2.避免侮辱、霸凌言論
+                        <br>
+                        涉以上情況，皆不會投稿
+
+                    </p>
+                    <a href="source.html" id="a" class="ra" title="來源">→</a>
+                </nav>
+            </div>
+        </div>
+        <div class="card">
+            <div class="content">
+                <h2>03</h2>
+                <h3>國中匿名版</h3>
+                <p>班級，姓名請打馬</p>
+                <a href="https://marshmallow-qa.com/rbg49896qaf57ey" id="a" target="_blank">→</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        VanillaTilt.init(document.querySelectorAll(".card"), {
+            max: 5,  //最大傾斜度數
+            speed: 400,  //傾斜轉換的速度
+            glare: true,  //是否開啟眩光效果
+            "max-glare": 0.7  //最大眩光的不透明度
+        })
+    </script>
+</body>
+
+</html>
