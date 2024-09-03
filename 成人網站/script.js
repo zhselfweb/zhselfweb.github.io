@@ -10,7 +10,7 @@ document.getElementById('enter-button').addEventListener('click', function() {
 // 綁定“確認進入”按鈕的點擊事件
 document.getElementById('confirm-button').addEventListener('click', function() {
     // 確認進入網站
-    window.location.href = 'https://www.ttpc.mohw.gov.tw/public/news/handouts/a10e228ea3cc7856680920a38dd79f3a.pdf'; 
+    window.location.href = 'https://www.books.com.tw/products/CN10094106?srsltid=AfmBOorBEsii9z0x7frzqPwW6W82JiTIRx_4Gnm2uR5wnWlHrSWqtfou'; 
 });
 
 // 綁定“退出”按鈕的點擊事件
