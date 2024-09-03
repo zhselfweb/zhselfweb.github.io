@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>進入網站</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="bg.js"></script>
+</head>
+<body>
+
+
+    <div class="welcome-page button-container"> 
+        <div class="message">
+            <h1 id="lod-in">⚠️</h1>
+            <h1 id="lod-f" style="font-size: 20px; color: rgba(170, 68, 68, 0.719);">警告! 內有成人內容</h1>
+            <p id="loading">找尋線路中...</p>
+            <p id="found" style="display: none;">已找到線路</p>
+            <button id="enter-button">→</button>
+        </div>
+    </div>
+
+    <!-- 自定義的彈出視窗 -->
+    <div id="modal" class="modal button-container">
+        <div class="modal-content">
+            <p>你是否確定要進入網站？</p>
+            <button id="confirm-button" class="in">我保證已滿18歲，進入</button>
+            <button id="cancel-button" class="out">我未滿18歲，退出</button>
+        </div>
+    </div>
+
+
+    <script src="script.js"></script>
+    <script src="lod.js"></script>
+
+</body>
+</html>
