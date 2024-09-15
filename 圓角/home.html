@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>圖片導圓角工具</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>圖片導圓角工具</h1>
+        <input type="file" id="image-input" accept="image/*">
+        <input type="range" id="radius-input" min="0" max="100" value="0">
+        <label for="radius-input">圓角半徑: <span id="radius-value">0</span>px</label>
+        <canvas id="canvas"></canvas>
+        <button id="download-btn" style="display: none;">下載圖片</button>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

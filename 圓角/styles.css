@@ -1,0 +1,53 @@
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #000000; /* 黑色背景 */
+    color: #e0e0e0; /* 淺灰色文字 */
+    margin: 0;
+}
+
+.container {
+    text-align: center;
+    background-color: #1e1e1e; /* 深灰色背景 */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* 更強的陰影效果 */
+}
+
+input[type="range"], input[type="file"] {
+    width: 300px;
+    margin: 10px 0;
+    background-color: #333; /* 深灰色背景 */
+    color: #e0e0e0; /* 淺灰色文字 */
+    border: 1px solid #555; /* 更深的邊框顏色 */
+    border-radius: 5px;
+    padding: 5px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    background-color: #4CAF50; /* 按鈕顏色 */
+}
+
+canvas {
+    display: none;
+    margin-top: 20px;
+    border: 1px solid #444; /* 深灰色邊框 */
+}
+
+button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #333; /* 深灰色背景 */
+    color: #e0e0e0; /* 淺灰色文字 */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease; /* 平滑過渡效果 */
+}
+
+button:hover {
+    background-color: #555; /* 更深的灰色背景 */
+}
