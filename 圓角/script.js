@@ -49,6 +49,10 @@ function updateRoundedCorners() {
     const radius = parseInt(radiusInput.value);
     radiusValue.textContent = radius;
 
+    // 保留原始畫質的比例計算
+    const scaleX = image.width / canvas.width;
+    const scaleY = image.height / canvas.height;
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.save();
     ctx.beginPath();
@@ -64,7 +68,12 @@ function updateRoundedCorners() {
     ctx.closePath();
     ctx.clip();
 
-    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+    // 使用 drawImage 的其他參數來調整畫質
+    ctx.drawImage(
+        image,
+        0, 0, image.width, image.height, // 原圖的範圍
+        0, 0, canvas.width * scaleX, canvas.height * scaleY // 畫布上的範圍
+    );
     ctx.restore();
 }
 
