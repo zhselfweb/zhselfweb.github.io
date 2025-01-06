@@ -1,0 +1,316 @@
+* {
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    overflow-y: scroll;
+    overflow: auto;  /* 讓容器內的內容仍然可以滾動 */
+    scrollbar-width: none;  /* 隱藏滾動條 (對 Firefox 有效) */
+    -ms-overflow-style: none;  /* 隱藏滾動條 (對 IE/Edge 有效) */
+    overflow-x: hidden;
+    /* 禁止左右滾動 */
+    
+}
+*::-webkit-scrollbar{
+    display: none;
+}
+
+
+a {
+    text-decoration: none;  /* 移除底線 */
+    color: inherit;  /* 繼承父元素的顏色 */
+    background: none;  /* 移除背景 */
+    border: none;  /* 移除邊框 */
+    outline: none;  /* 移除焦點輪廓 */
+}
+
+
+.bggg {
+    width: 100%;
+    height: 100%;
+    --s: 200px;
+    /*10 the size */
+    --c1: #1d1d1d08;
+    --c2: #4e4f5110;
+    --c3: #3c3c3c10;
+
+    background: repeating-conic-gradient(from 30deg,
+            #0000 0 120deg,
+            var(--c3) 0 180deg) calc(0.5 * var(--s)) calc(0.5 * var(--s) * 0.577),
+        repeating-conic-gradient(from 30deg,
+            var(--c1) 0 60deg,
+            var(--c2) 0 120deg,
+            var(--c3) 0 180deg);
+    background-size: var(--s) calc(var(--s) * 0.577);
+}
+
+
+
+.filter-link {
+    display: block;  /* 使 a 標籤覆蓋整個 .filter-item */
+    text-decoration: none;  /* 移除超連結的底線 */
+    color: inherit;  /* 繼承父元素的文字顏色 */
+}
+
+.favorite-btn {
+    pointer-events: auto;  /* 確保書籤按鈕能正常點擊 */
+}
+
+
+@keyframes scaleAnimation {
+    0% {
+        transform: scale(1);
+        /* 初始大小 */
+    }
+
+    50% {
+        transform: scale(1.1);
+        /* 最大大小 */
+    }
+
+    100% {
+        transform: scale(1);
+        /* 回到原本大小 */
+    }
+}
+
+@keyframes scaleAndFadeIn {
+    0% {
+        transform: scale(0.9);
+        /* 初始大小 */
+        opacity: 0;
+        /* 開始時透明 */
+    }
+
+    20% {
+        transform: scale(0.91);
+        /* 最大大小 */
+        opacity: 0.1;
+        /* 完全顯示 */
+    }
+
+    40% {
+        transform: scale(0.93);
+        /* 回到原本大小 */
+        opacity: 0.5;
+        /* 保持完全顯示 */
+    }
+
+    60% {
+        transform: scale(0.96);
+        /* 最大大小 */
+        opacity: 0.7;
+        /* 完全顯示 */
+    }
+
+    80% {
+        transform: scale(0.98);
+        /* 回到原本大小 */
+        opacity: 0.8;
+        /* 保持完全顯示 */
+    }
+
+    100% {
+        transform: scale(1);
+        /* 回到原本大小 */
+        opacity: 1;
+        /* 保持完全顯示 */
+    }
+}
+
+/* 基本樣式設定 */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #121212;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+h1{
+    top: 20px;
+}
+/* 內容區域 */
+.app-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    overflow: hidden;
+}
+
+/* 毛玻璃效果 */
+.page {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+h1 {
+    text-align: center;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+/* 濾鏡列表 */
+.filter-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto;
+    max-height: calc(100000000000000vh - 0px);
+    /* 設定畫面最大高度，避免被擋住 */
+}
+
+
+
+/* .filter-item */
+.filter-item {
+    animation: scaleAndFadeIn 0.6s ease-in-out;
+    /* 漸入並縮放動畫 */
+    display: flex;
+    padding: 10px;
+    border-radius: 50px;
+    height: 75px;
+    margin-left: 10%;
+    margin-right: 10%;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: background-color 0.3s;
+}
+
+
+.filter-name{
+    transform: scale(0.85)
+}
+.filter-item:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.filter-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 20px;
+    object-fit: cover;
+    border: 1px solid #fff;
+    /* 白色邊框 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* 添加陰影來增強立體感 */
+    padding: 2px;
+    /* 增加圖片與邊框之間的間隔 */
+}
+
+
+.filter-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-grow: 1;
+}
+
+.filter-name {
+    font-size: 1.2rem;
+}
+
+/* 書籤圖示按鈕 */
+.favorite-btn {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    transition: transform 1.0s;
+}
+
+.favorite-btn:active {
+    animation: scaleAnimation 0.4s ease-in-out;
+    /* 使用動畫來處理縮放 */
+}
+
+.container input {
+    display: none;
+}
+
+.pin {
+    width: 15px;
+    height: auto;
+    transform: rotate(35deg);
+}
+
+.container {
+    width: 45px;
+    height: 45px;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 15px;
+    transition: all 0.4s ease-out;
+}
+
+.container input:checked~.pin {
+    fill: rgb(179, 139, 255);
+    stroke: white;
+}
+
+.container input:checked~.pin line {
+    stroke: rgb(179, 139, 255);
+}
+
+.container input:checked~.pin path {
+    stroke: rgb(179, 139, 255);
+}
+
+.container:hover {
+    background-color: rgb(244, 238, 255);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.041);
+}
+
+.container:active {
+    animation: scaleAnimation 1.0s ease-in-out;
+}
+
+
+
+/* 收藏頁面 */
+.favorite-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* 底部導航條 */
+.nav-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    background: linear-gradient(to bottom, rgba(18, 18, 18, 0) 0%, #1212128f 30%);
+    padding: 10px 0;
+}
+
+
+.nav-bar button {
+    background-color: transparent;
+    color: #fff;
+    font-size: 16px;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+
+.nav-bar button:hover {
+    color: #1b69bbcb;
+}
+
