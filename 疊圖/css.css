@@ -1,0 +1,146 @@
+:root {
+    --bg-color: #1a1a1a;
+    --panel-bg: #2d2d2d;
+    --accent-color: #4CAF50;
+    --text-color: #e0e0e0;
+}
+
+*{
+    user-select: none;
+}
+
+body {
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+
+#container {
+    position: relative;
+    width: 800px;
+    height: 800px;
+    margin: 20px auto;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+}
+
+.draggable-img {
+    position: absolute;
+    cursor: move;
+    transition: all 0.3s ease;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+#controls {
+    width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background: var(--panel-bg);
+    border-radius: 8px;
+}
+
+#preview-list {
+    list-style: none;
+    padding: 0;
+    min-height: 100px;
+    background: var(--panel-bg);
+    border-radius: 8px;
+    margin: 20px auto;
+    width: 300px;
+}
+
+.layer-item {
+    padding: 12px;
+    margin: 8px;
+    background: #3d3d3d;
+    border-radius: 4px;
+    cursor: move;
+    transition: transform 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.layer-item:hover {
+    transform: translateX(5px);
+    background: #4d4d4d;
+}
+
+.layer-handle {
+    width: 20px;
+    height: 20px;
+    background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="%234CAF50" xmlns="http://www.w3.org/2000/svg"><path d="M9 5h2v2H9zm0 4h2v2H9zm0 4h2v2H9zm4-8h2v2h-2zm0 4h2v2h-2zm0 4h2v2h-2z"/></svg>');
+}
+
+input[type="range"] {
+    width: 400px;
+    height: 4px;
+    background: #4d4d4d;
+    border-radius: 2px;
+    appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--accent-color);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+}
+
+button {
+    background: linear-gradient(145deg, #4CAF50, #45a049);
+    border: none;
+    padding: 10px 25px;
+    color: white;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-left: 100px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+}
+
+.file-input {
+    position: relative;
+    display: inline-block;
+    margin: 20px auto;
+    display: block;
+}
+
+.file-input input[type="file"] {
+
+    opacity: 0;
+    width: 200px;
+    height: 40px;
+    position: absolute;
+    cursor: pointer;
+}
+
+.file-input label {
+
+    margin-left: 50%;
+    transform: translateX(-50%);
+    background: var(--panel-bg);
+    padding: 12px 30px;
+    width: 300px;
+    border-radius: 25px;
+    display: flex;
+    gap: 10px;
+}
+
+.file-input label::before {
+    content: '📷';
+    font-size: 18px;
+}

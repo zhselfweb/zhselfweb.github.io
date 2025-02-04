@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>疊圖</title>
+    <link rel="stylesheet" href="css.css">
+</head>
+
+<body>
+    <div class="file-input">
+        <input type="file" id="file-input" multiple accept="image/*">
+        <label for="file-input">選擇圖片</label>
+    </div>
+
+    <div id="controls">
+        <div style="display: flex; gap: 20px; align-items: center">
+            <div>
+                <label>向下偏移：</label>
+                <input type="range" id="offset-control" min="0" max="150" value="0">
+            </div>
+            <button id="download-btn">下載</button>
+        </div>
+    </div>
+
+    <div id="container"></div>
+    <ul id="preview-list"></ul>
+
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script src="js.js"></script>
+     
+    </script>
+</body>
+
+</html>
