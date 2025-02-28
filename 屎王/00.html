@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="icon.png">
+    <title>屎王傳奇</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <header>
+            <a href="home.html" class="logo"><i class="fas fa-crown"></i>屎王傳奇</a>
+            <button class="theme-toggle" id="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </header>
+
+        <div class="hero">
+            <h1>探索未知的傳奇 </h1>
+            <p>輸入正確的名稱，揭開隱藏的秘密。<br> 這名字背後有一段不為人知的故事。</p>
+        </div>
+
+        <div class="search-container">
+            <input type="text" class="search-box" id="search-input" placeholder="請輸入其名稱...">
+            <button class="search-btn" id="search-btn">探索</button>
+        </div>
+
+        <div class="error-message" id="error-message">
+            名稱不正確！請重新輸入。
+        </div>
+
+        <div class="result-container" id="result-container">
+            <div class="video-container">
+                <!-- 影片標題 -->
+                <div class="video-title" id="video-title">屎王的傳奇故事</div>
+                
+                <!-- 多個影片源 -->
+                <video id="video-1" class="active">
+                    <source src="video1.mp4" type="video/mp4">
+                    您的瀏覽器不支援影片標籤。
+                </video>
+                <video id="video-2">
+                    <source src="video2.mp4" type="video/mp4">
+                    您的瀏覽器不支援影片標籤。
+                </video>
+                <video id="video-3">
+                    <source src="video3.mp4" type="video/mp4">
+                    您的瀏覽器不支援影片標籤。
+                </video>
+                
+                <!-- 影片切換箭頭 -->
+                <div class="video-arrows">
+                    <div class="video-arrow" id="prev-video">
+                        <i class="fas fa-chevron-left"></i>
+                    </div>
+                    <div class="video-arrow" id="next-video">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+                
+                <!-- 影片導航點 -->
+                <div class="video-nav">
+                    <div class="video-dot active" data-index="1"></div>
+                    <div class="video-dot" data-index="2"></div>
+                    <div class="video-dot" data-index="3"></div>
+                </div>
+                
+                <!-- 進度條 -->
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                
+                <!-- 控制按鈕 -->
+                <div class="video-controls">
+                    <div class="video-control-btn" id="play-pause">
+                        <i class="fas fa-pause"></i>
+                    </div>
+                    <div class="video-control-btn" id="mute-unmute">
+                        <i class="fas fa-volume-up"></i>
+                    </div>
+                    <div class="video-control-btn" id="fullscreen">
+                        <i class="fas fa-expand"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-container">
+                <h2 class="info-title">屎王</h2>
+                
+                <!-- 影片選擇按鈕 -->
+                <div class="video-selector">
+                    <button class="video-btn active" data-index="1">
+                        <i class="fas fa-film"></i> 傳奇故事
+                    </button>
+                    <button class="video-btn" data-index="2">
+                        <i class="fas fa-trophy"></i> 成就展示
+                    </button>
+                    <button class="video-btn" data-index="3">
+                        <i class="fas fa-star"></i> 精彩時刻
+                    </button>
+                    <!-- <button class="upload-btn" data-index="4">
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSdtb7-Jcqn4wZmO02jCOWW5yfDeLnAIVbAgEOS_AuktL3v2xA/viewform?usp=dialog" class="social-icon" target="_blank" style="text-decoration: none;"><i class="fa-solid fa-cloud-arrow-up"></i> 投稿</a>
+                        
+                    </button> -->
+                </div>
+                
+                <div class="tag-container">
+                    <span class="tag">傳奇人物</span>
+                    <span class="tag">勇氣可嘉</span>
+                    <span class="tag">特殊才能</span>
+                    <span class="tag">國際知名</span>
+                </div>
+                <p class="info-content">
+                    屎王，一個在特殊領域中享有盛名的傳奇人物。他以獨特的才能和不同尋常的專業領域而聞名。屎王的故事始於<span style="color: brown;">2025/2/24 星期一</span> 的一個平凡的遊覽車上，但他的堅持和勇氣使他在這個特殊領域中脫穎而出。
+                </p>
+                <p class="info-content">
+                    在他的職業生涯中，屎王克服了無數挑戰，改變了人們對這個領域的傳統看法。他的創新方法和深度理解為整個行業帶來了革命性的變化。許多人追隨他的腳步，但很少有人能達到他的高度。
+                </p>
+                <p class="info-content">
+                    屎王的影響力已經超越了他的專業領域，延伸到了更廣泛的文化和社會層面。他的名字已成為卓越和專業的代名詞，他的故事激勵著無數後來者勇敢追尋自己的夢想。
+                </p>
+                <button class="back-btn" id="back-btn"><i class="fas fa-arrow-left"></i> 返回</button>
+            </div>
+        </div>
+
+        <footer>
+            <div class="social-icons">
+                <a href="https://www.instagram.com/han._.0.0" class="social-icon" target="_blank"><i class="fab fa-instagram"></i></a>
+            </div>
+            <p>&copy; 2025 屎王傳奇</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+    </body>
+    </html>

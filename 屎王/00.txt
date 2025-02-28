@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>神秘之地</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --accent-color: #fd79a8;
+            --text-primary: #2d3436;
+            --text-secondary: #636e72;
+            --bg-primary: #f5f6fa;
+            --bg-secondary: #dfe6e9;
+            --card-bg: #ffffff;
+            --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            --transition-speed: 0.5s;
+            --transition-curve: cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #9c88ff;
+            --secondary-color: #8c7ae6;
+            --accent-color: #ff6b81;
+            --text-primary: #f5f6fa;
+            --text-secondary: #dfe6e9;
+            --bg-primary: #2d3436;
+            --bg-secondary: #1e272e;
+            --card-bg: #353b48;
+            --card-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color var(--transition-speed) var(--transition-curve),
+                        color var(--transition-speed) var(--transition-curve);
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background-color var(--transition-speed) var(--transition-curve);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            margin-bottom: 3rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s var(--transition-curve), 
+                        background-color 0.3s var(--transition-curve);
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(30deg) scale(1.1);
+            background-color: var(--secondary-color);
+            color: var(--bg-primary);
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeUp 1s var(--transition-curve) forwards;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 25%;
+            width: 50%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 4px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .search-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            position: relative;
+            transform: translateY(30px);
+            opacity: 0;
+            animation: fadeUp 1s var(--transition-curve) 0.2s forwards;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 1.2rem 1.5rem;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            box-shadow: var(--card-shadow);
+            outline: none;
+            transition: all 0.3s var(--transition-curve);
+        }
+
+        .search-box:focus {
+            box-shadow: 0 0 0 3px var(--primary-color);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s var(--transition-curve);
+        }
+
+        .search-btn:hover {
+            background-color: var(--accent-color);
+            transform: translateY(-50%) scale(1.05);
+        }
+
+        .result-container {
+            display: none;
+            width: 100%;
+            max-width: 900px;
+            margin-top: 3rem;
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.5s var(--transition-curve);
+        }
+
+        .result-container.active {
+            display: block;
+            animation: scaleIn 0.6s var(--transition-curve) forwards;
+        }
+
+        .video-container {
+            width: 100%;
+            position: relative;
+            padding-top: 56.25%; /* 16:9 比例 */
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        .video-container video.active {
+            opacity: 1;
+        }
+
+        /* 影片導航控制 */
+        .video-nav {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            z-index: 10;
+        }
+
+        .video-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s var(--transition-curve);
+        }
+
+        .video-dot.active {
+            background-color: var(--accent-color);
+            transform: scale(1.3);
+            box-shadow: 0 0 10px var(--accent-color);
+        }
+
+        .video-title {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.5s var(--transition-curve);
+        }
+
+        .video-title.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .video-arrows {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+
+        .video-arrow {
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s var(--transition-curve);
+        }
+
+        .video-container:hover .video-arrow {
+            opacity: 0.8;
+        }
+
+        .video-arrow:hover {
+            background-color: var(--primary-color);
+            transform: scale(1.1);
+            opacity: 1;
+        }
+
+        .video-arrow i {
+            font-size: 1.5rem;
+        }
+
+        .info-container {
+            padding: 2rem;
+        }
+
+        .info-title {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-color);
+            position: relative;
+            display: inline-block;
+        }
+
+        .info-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 3px;
+        }
+
+        .info-content {
+            line-height: 1.8;
+            color: var(--text-primary);
+            margin-bottom: 2rem;
+        }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .tag {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s var(--transition-curve);
+        }
+
+        .tag:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            background-color: var(--accent-color);
+        }
+
+        .video-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .video-btn {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+            border: none;
+            border-radius: 10px;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s var(--transition-curve);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .video-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(108, 92, 231, 0.3);
+        }
+
+        .video-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .video-btn i {
+            font-size: 1.2rem;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            gap: 10px;
+            transition: all 0.3s var(--transition-curve);
+        }
+
+        .back-btn:hover {
+            background-color: var(--accent-color);
+            transform: translateX(-5px);
+        }
+
+        .error-message {
+            display: none;
+            background-color: #ff7675;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            margin-top: 1.5rem;
+            text-align: center;
+            font-weight: 500;
+            animation: shake 0.5s var(--transition-curve);
+            box-shadow: 0 5px 15px rgba(255, 118, 117, 0.3);
+        }
+
+        footer {
+            margin-top: auto;
+            width: 100%;
+            text-align: center;
+            padding: 2rem 0;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 1rem;
+        }
+
+        .social-icon {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            transition: all 0.3s var(--transition-curve);
+        }
+
+        .social-icon:hover {
+            color: var(--primary-color);
+            transform: translateY(-3px);
+        }
+
+        /* 動畫效果 */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.5;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-1000px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* 自訂視頻進度條 */
+        .progress-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background-color: rgba(255, 255, 255, 0.2);
+            z-index: 10;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            transition: width 0.1s linear;
+        }
+
+        /* 自訂影片控制項 */
+        .video-controls {
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-container:hover .video-controls {
+            opacity: 1;
+        }
+
+        .video-control-btn {
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s var(--transition-curve);
+        }
+
+        .video-control-btn:hover {
+            background-color: var(--primary-color);
+            transform: scale(1.1);
+        }
+
+        /* 媒體查詢 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .info-title {
+                font-size: 2rem;
+            }
+
+            .search-btn {
+                padding: 0.8rem 1.5rem;
+                font-size: 0.9rem;
+            }
+
+            .video-arrows {
+                padding: 0 10px;
+            }
+
+            .video-arrow {
+                width: 40px;
+                height: 40px;
+            }
+
+            .video-btn {
+                padding: 0.7rem 1.2rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .search-box {
+                padding: 1rem;
+                font-size: 1rem;
+            }
+
+            .search-btn {
+                padding: 0.7rem 1.2rem;
+                font-size: 0.85rem;
+            }
+
+            .info-container {
+                padding: 1.5rem;
+            }
+
+            .info-title {
+                font-size: 1.8rem;
+            }
+
+            .video-selector {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .video-arrow {
+                width: 35px;
+                height: 35px;
+            }
+
+            .video-arrow i {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <header>
+            <a href="#" class="logo"><i class="fas fa-crown"></i> 神秘王國</a>
+            <button class="theme-toggle" id="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </header>
+
+        <div class="hero">
+            <h1>探索未知的傳奇</h1>
+            <p>輸入正確的名稱，揭開隱藏的秘密。每個名字背後都有一段不為人知的故事。</p>
+        </div>
+
+        <div class="search-container">
+            <input type="text" class="search-box" id="search-input" placeholder="請輸入秘密名稱...">
+            <button class="search-btn" id="search-btn">探索</button>
+        </div>
+
+        <div class="error-message" id="error-message">
+            名稱不正確！請重新輸入正確的秘密名稱。
+        </div>
+
+        <div class="result-container" id="result-container">
+            <div class="video-container">
+                <!-- 影片標題 -->
+                <div class="video-title" id="video-title">屎王的傳奇故事</div>
+                
+                <!-- 多個影片源 -->
+                <video id="video-1" class="active">
+                    <source src="video1.mp4" type="video/mp4">
+                    您的瀏覽器不支援影片標籤。
+                </video>
+                <video id="video-2">
+                    <source src="video2.mp4" type="video/mp4">
+                    您的瀏覽器不支援影片標籤。
+                </video>
+                <video id="video-3">
+                    <source src="video3.mp4" type="video/mp4">
+                    您的瀏覽器不支援影片標籤。
+                </video>
+                
+                <!-- 影片切換箭頭 -->
+                <div class="video-arrows">
+                    <div class="video-arrow" id="prev-video">
+                        <i class="fas fa-chevron-left"></i>
+                    </div>
+                    <div class="video-arrow" id="next-video">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+                
+                <!-- 影片導航點 -->
+                <div class="video-nav">
+                    <div class="video-dot active" data-index="1"></div>
+                    <div class="video-dot" data-index="2"></div>
+                    <div class="video-dot" data-index="3"></div>
+                </div>
+                
+                <!-- 進度條 -->
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                
+                <!-- 控制按鈕 -->
+                <div class="video-controls">
+                    <div class="video-control-btn" id="play-pause">
+                        <i class="fas fa-pause"></i>
+                    </div>
+                    <div class="video-control-btn" id="mute-unmute">
+                        <i class="fas fa-volume-up"></i>
+                    </div>
+                    <div class="video-control-btn" id="fullscreen">
+                        <i class="fas fa-expand"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-container">
+                <h2 class="info-title">屎王</h2>
+                
+                <!-- 影片選擇按鈕 -->
+                <div class="video-selector">
+                    <button class="video-btn active" data-index="1">
+                        <i class="fas fa-film"></i> 傳奇故事
+                    </button>
+                    <button class="video-btn" data-index="2">
+                        <i class="fas fa-trophy"></i> 成就展示
+                    </button>
+                    <button class="video-btn" data-index="3">
+                        <i class="fas fa-star"></i> 精彩時刻
+                    </button>
+                </div>
+                
+                <div class="tag-container">
+                    <span class="tag">傳奇人物</span>
+                    <span class="tag">神秘領域</span>
+                    <span class="tag">特殊才能</span>
+                    <span class="tag">國際知名</span>
+                </div>
+                <p class="info-content">
+                    屎王，一個在特殊領域中享有盛名的傳奇人物。他以獨特的才能和不同尋常的專業領域而聞名。屎王的故事始於一個平凡的開始，但他的堅持和獨特視角使他在這個特殊領域中脫穎而出。
+                </p>
+                <p class="info-content">
+                    在他的職業生涯中，屎王克服了無數挑戰，改變了人們對這個領域的傳統看法。他的創新方法和深度理解為整個行業帶來了革命性的變化。許多人追隨他的腳步，但很少有人能達到他的高度。
+                </p>
+                <p class="info-content">
+                    屎王的影響力已經超越了他的專業領域，延伸到了更廣泛的文化和社會層面。他的名字已成為卓越和專業的代名詞，他的故事激勵著無數後來者勇敢追尋自己的夢想。
+                </p>
+                <button class="back-btn" id="back-btn"><i class="fas fa-arrow-left"></i> 返回</button>
+            </div>
+        </div>
+
+        <footer>
+            <div class="social-icons">
+                <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+            </div>
+            <p>&copy; 2025 神秘王國. 版權所有.</p>
+        </footer>
+    </div>
+
+    <script>
+        // 主題切換功能
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = themeToggle.querySelector('i');
+        
+        let currentTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        
+        if (currentTheme === 'dark') {
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        }
+    
+        themeToggle.addEventListener('click', () => {
+            if (currentTheme === 'light') {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+                currentTheme = 'dark';
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+                currentTheme = 'light';
+            }
+            localStorage.setItem('theme', currentTheme);
+            createParticles(); // 主題變更時更新粒子效果
+        });
+    
+        // 搜尋功能相關元素
+        const searchInput = document.getElementById('search-input');
+        const searchBtn = document.getElementById('search-btn');
+        const resultContainer = document.getElementById('result-container');
+        const errorMessage = document.getElementById('error-message');
+        const backBtn = document.getElementById('back-btn');
+        
+        // 影片元素
+        const videos = [
+            document.getElementById('video-1'),
+            document.getElementById('video-2'),
+            document.getElementById('video-3')
+        ];
+        
+        // 影片標題
+        const videoTitle = document.getElementById('video-title');
+        
+        // 影片標題列表
+        const videoTitles = [
+            "屎王的傳奇故事",
+            "屎王的輝煌成就",
+            "屎王的精彩時刻"
+        ];
+        
+        // 目前活動的影片索引
+        let activeVideoIndex = 0;
+        
+        // 進度條元素
+        const progressBar = document.getElementById('progress-bar');
+    
+        // 切換影片函數
+        function switchVideo(index) {
+            // 隱藏所有影片並暫停播放
+            videos.forEach(video => {
+                video.classList.remove('active');
+                video.pause();
+            });
+            
+            // 顯示選擇的影片
+            videos[index].classList.add('active');
+            
+            // 更新影片導航點
+            document.querySelectorAll('.video-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === index);
+            });
+            
+            // 更新影片選擇按鈕
+            document.querySelectorAll('.video-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+            
+            // 更新標題並添加動畫效果
+            videoTitle.textContent = videoTitles[index];
+            videoTitle.classList.remove('active');
+            setTimeout(() => {
+                videoTitle.classList.add('active');
+            }, 50);
+            
+            // 播放新影片
+            videos[index].play();
+            
+            // 更新當前影片索引
+            activeVideoIndex = index;
+            
+            // 重置進度條
+            progressBar.style.width = '0%';
+        }
+        
+        // 上一個影片按鈕
+        document.getElementById('prev-video').addEventListener('click', () => {
+            let newIndex = activeVideoIndex - 1;
+            if (newIndex < 0) newIndex = videos.length - 1;
+            switchVideo(newIndex);
+        });
+        
+        // 下一個影片按鈕
+        document.getElementById('next-video').addEventListener('click', () => {
+            let newIndex = activeVideoIndex + 1;
+            if (newIndex >= videos.length) newIndex = 0;
+            switchVideo(newIndex);
+        });
+        
+        // 影片導航點點擊事件
+        document.querySelectorAll('.video-dot').forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                switchVideo(index);
+            });
+        });
+        
+        // 影片選擇按鈕點擊事件
+        document.querySelectorAll('.video-btn').forEach((btn, index) => {
+            btn.addEventListener('click', () => {
+                switchVideo(index);
+            });
+        });
+    
+        // 搜尋按鈕點擊事件
+        searchBtn.addEventListener('click', performSearch);
+        
+        // 鍵盤事件：按下 Enter 鍵觸發搜尋
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+        
+        // 執行搜尋的函數
+        function performSearch() {
+            const query = searchInput.value.trim().toLowerCase();
+            
+            if (query === '屎王') {
+                // 搜尋成功
+                errorMessage.style.display = 'none';
+                resultContainer.classList.add('active');
+                switchVideo(0); // 預設顯示第一個影片
+                
+                // 滾動到結果區
+                setTimeout(() => {
+                    resultContainer.scrollIntoView({ behavior: 'smooth' });
+                }, 300);
+            } else {
+                // 搜尋失敗
+                errorMessage.style.display = 'block';
+                resultContainer.classList.remove('active');
+                
+                // 錯誤訊息動畫
+                errorMessage.style.animation = 'none';
+                setTimeout(() => {
+                    errorMessage.style.animation = 'shake 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55)';
+                }, 10);
+            }
+        }
+        
+        // 返回按鈕事件
+        backBtn.addEventListener('click', () => {
+            resultContainer.classList.remove('active');
+            videos.forEach(video => {
+                video.pause(); // 暫停所有影片
+            });
+            searchInput.value = ''; // 清空搜尋欄
+            
+            // 滾動回頂部
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    
+        // 粒子背景效果
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const colors = currentTheme === 'light' 
+                ? ['#6c5ce7', '#a29bfe', '#fd79a8', '#00cec9', '#81ecec']
+                : ['#9c88ff', '#8c7ae6', '#ff6b81', '#00cec9', '#81ecec'];
+            
+            particlesContainer.innerHTML = '';
+            
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                const size = Math.random() * 20 + 5;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.backgroundColor = color;
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.opacity = Math.random() * 0.5 + 0.1;
+                
+                const duration = Math.random() * 20 + 10;
+                const delay = Math.random() * 5;
+                
+                particle.style.animation = `float ${duration}s ${delay}s infinite linear`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        // 初始化粒子效果
+        createParticles();
+    
+        // 更新進度條
+        videos.forEach(video => {
+            video.addEventListener('timeupdate', () => {
+                if (video.classList.contains('active')) {
+                    const percent = (video.currentTime / video.duration) * 100;
+                    progressBar.style.width = `${percent}%`;
+                }
+            });
+        });
+
+        const playPauseBtn = document.getElementById('play-pause');
+
+playPauseBtn.addEventListener('click', () => {
+    const activeVideo = videos[activeVideoIndex];
+    if (activeVideo.paused) {
+        activeVideo.play();
+        playPauseBtn.querySelector('i').classList.remove('fa-play');
+        playPauseBtn.querySelector('i').classList.add('fa-pause');
+    } else {
+        activeVideo.pause();
+        playPauseBtn.querySelector('i').classList.remove('fa-pause');
+        playPauseBtn.querySelector('i').classList.add('fa-play');
+    }
+});
+
+// 動態更新圖標
+videos.forEach(video => {
+    video.addEventListener('play', () => {
+        if (video.classList.contains('active')) {
+            playPauseBtn.querySelector('i').classList.remove('fa-play');
+            playPauseBtn.querySelector('i').classList.add('fa-pause');
+        }
+    });
+    video.addEventListener('pause', () => {
+        if (video.classList.contains('active')) {
+            playPauseBtn.querySelector('i').classList.remove('fa-pause');
+            playPauseBtn.querySelector('i').classList.add('fa-play');
+        }
+    });
+});
+
+const muteUnmuteBtn = document.getElementById('mute-unmute');
+
+muteUnmuteBtn.addEventListener('click', () => {
+    const activeVideo = videos[activeVideoIndex];
+    activeVideo.muted = !activeVideo.muted;
+    if (activeVideo.muted) {
+        muteUnmuteBtn.querySelector('i').classList.remove('fa-volume-up');
+        muteUnmuteBtn.querySelector('i').classList.add('fa-volume-mute');
+    } else {
+        muteUnmuteBtn.querySelector('i').classList.remove('fa-volume-mute');
+        muteUnmuteBtn.querySelector('i').classList.add('fa-volume-up');
+    }
+});
+
+// 動態更新圖標
+videos.forEach(video => {
+    video.addEventListener('volumechange', () => {
+        if (video.classList.contains('active')) {
+            if (video.muted) {
+                muteUnmuteBtn.querySelector('i').classList.remove('fa-volume-up');
+                muteUnmuteBtn.querySelector('i').classList.add('fa-volume-mute');
+            } else {
+                muteUnmuteBtn.querySelector('i').classList.remove('fa-volume-mute');
+                muteUnmuteBtn.querySelector('i').classList.add('fa-volume-up');
+            }
+        }
+    });
+});
+
+const fullscreenBtn = document.getElementById('fullscreen');
+
+fullscreenBtn.addEventListener('click', () => {
+    const activeVideo = videos[activeVideoIndex];
+    if (activeVideo.requestFullscreen) {
+        activeVideo.requestFullscreen();
+    } else if (activeVideo.mozRequestFullScreen) { // Firefox
+        activeVideo.mozRequestFullScreen();
+    } else if (activeVideo.webkitRequestFullscreen) { // Chrome, Safari, Opera
+        activeVideo.webkitRequestFullscreen();
+    } else if (activeVideo.msRequestFullscreen) { // IE/Edge
+        activeVideo.msRequestFullscreen();
+    }
+});
+
+// 假設這是在顯示視頻後執行的代碼
+const activeVideo = videos[activeVideoIndex];
+activeVideo.play(); // 開始播放
+playPauseBtn.querySelector('i').classList.remove('fa-play');
+playPauseBtn.querySelector('i').classList.add('fa-pause');
+
+if (activeVideo.muted) {
+    muteUnmuteBtn.querySelector('i').classList.remove('fa-volume-up');
+    muteUnmuteBtn.querySelector('i').classList.add('fa-volume-mute');
+} else {
+    muteUnmuteBtn.querySelector('i').classList.remove('fa-volume-mute');
+    muteUnmuteBtn.querySelector('i').classList.add('fa-volume-up');
+}
+
+    </script>
+    </body>
+    </html>
+
