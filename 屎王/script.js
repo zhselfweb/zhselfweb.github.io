@@ -135,7 +135,8 @@
         // 執行搜尋的函數
         function performSearch() {
             const query = searchInput.value.trim().toLowerCase();
-            const validQueries = ['屎王', '屎','han','炸','遊覽車','畢旅','傳奇','吳鴻瀚','拉屎']; // 這裡加入你想要的正確詞
+            const validQueries = ['屎王', '屎', '拉屎', '炸屎', '糞便', '便便', '臭臭', '屎尿', '黃金', '屎皇', '屎帝', '屎尊', '屎聖', '屎霸', '屎主', '屎君', '軟屎', '硬屎', '水屎', '臭屎', '黑屎', '黃屎', '綠屎', '熱屎', '冰屎', '噴屎', '丟屎', '炸屎', '甩屎', '踩屎', '吞屎', '滾屎', '屎之巔', '屎中之王', '屎界傳奇', '萬屎之祖', 'han', '遊覽車', '畢旅', '傳奇', '吳鴻瀚', '吳鴻翰'];
+
             if (validQueries.includes(query)) {
                 // 搜尋成功
                 errorMessage.style.display = 'none';
