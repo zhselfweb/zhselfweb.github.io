@@ -56,9 +56,10 @@
             padding: 0;
             box-sizing: border-box;
         }
+
         body::-webkit-scrollbar {
-    display: none;
-  }
+            display: none;
+        }
 
         body {
             font-family: 'Noto Sans TC', sans-serif;
@@ -405,47 +406,47 @@
             margin-right: 10px;
         } */
 
- .threads-btn {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-    width: 200px;
-    height: 60px;
-    border-radius: 50px;
-    background: linear-gradient(45deg, #111, #444);
-    color: white;
-    font-weight: 700;
-    text-decoration: none;
-    font-size: 1.2rem;
-    position: relative;
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
+        .threads-btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 200px;
+            height: 60px;
+            border-radius: 50px;
+            background: linear-gradient(45deg, #111, #444);
+            color: white;
+            font-weight: 700;
+            text-decoration: none;
+            font-size: 1.2rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
 
-.threads-btn:hover {
-    transform: translateY(-5px) scale(1.05);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-}
+        .threads-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
 
-.threads-btn:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: 0.5s;
-}
+        .threads-btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
 
-.threads-btn:hover:before {
-    left: 100%;
-}
+        .threads-btn:hover:before {
+            left: 100%;
+        }
 
-.threads-icon {
-    margin-right: 10px;
-}
+        .threads-icon {
+            margin-right: 10px;
+        }
 
 
 
@@ -509,13 +510,21 @@
 
         @media (max-width: 1700px) {
             .section-title {
-
                 left: 45%
             }
+
+            .navbar {
+                height: 70px;
+            }
         }
+
         @media (max-width: 990px) {
             .section-title {
                 left: 40%
+            }
+
+            .navbar {
+                height: 70px;
             }
         }
 
@@ -523,6 +532,10 @@
         @media (max-width: 768px) {
             .hero-title {
                 font-size: 2.5rem;
+            }
+
+            .navbar {
+                height: 70px;
             }
 
             .section {
@@ -547,33 +560,86 @@
             }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 665px) {
             .hero-title {
                 font-size: 2rem;
+                word-wrap: break-word;
+                /* 防止長文字超出螢幕 */
+
             }
 
             .hero-subtitle {
                 font-size: 1rem;
+                word-wrap: break-word;
+                /* 防止長文字超出螢幕 */
+
+                padding: 0 10px;
+                /* 避免邊緣文字過長 */
+            }
+
+            .typing-effect {
+                font-size: 1rem;
+                word-wrap: break-word;
+                /* 防止長文字超出螢幕 */
+
+                padding: 0 10px;
+                /* 避免邊緣文字過長 */
+            }
+
+            .navbar {
+                height: 50px;
             }
 
             .section-title {
                 font-size: 2rem;
-                left: 40%
+                left: 40%;
             }
+
             .hero-buttons {
-                flex-direction: column;
+                /* flex-direction: column; */
                 gap: 1rem;
+                width: 50%;
+                /* 確保按鈕容器不會超出螢幕 */
+                align-items: center;
+                /* 按鈕置中 */
             }
 
             .button {
-                width: 100%;
+                width: 80%;
+                /* 使按鈕不會超過螢幕寬度 */
                 text-align: center;
+                padding: 10px 0;
+                /* 增加按鈕內邊距 */
+                box-sizing: border-box;
+                /* 包括 padding 在內的寬度計算 */
             }
 
             .skill-card {
                 transform: none !important;
             }
         }
+
+
+        @media (max-width: 350px) {
+            .hero-buttons {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 385px) {
+            .hero-subtitle {
+                font-size: 0.7rem;
+                word-wrap: break-word;
+                /* 防止長文字超出螢幕 */
+
+                padding: 0 10px;
+                /* 避免邊緣文字過長 */
+            }
+        }
+
+
+
+
 
         /* Scroll Animation */
         .reveal {
@@ -653,7 +719,7 @@
 <body>
     <div class="container">
         <!-- 頂部導航 -->
-        <nav class="navbar" >
+        <nav class="navbar">
             <a href="#top" class="logo">羽</a>
             <div class="theme-toggle">
                 <div class="toggle-ball">🌙</div>
@@ -673,9 +739,10 @@
         <!-- Hero Section -->
         <section class="hero" id="top">
             <div class="hero-content">
-                <h1 class="hero-title" >𝒵𝒽</h1>
+                <h1 class="hero-title">𝒵𝒽</h1>
                 <p class="hero-subtitle">一位平凡的台灣高中牲，興趣網頁開發與視覺設計</p>
                 <p class="typing-effect"> 擅長前端和 Python。執著簡約且高質感的UI ，偏好黑色系以及流暢的交互視覺效果。</p>
+                
                 <div class="hero-buttons">
                     <a href="#skills" class="button">探索技能</a>
                     <a href="#threads" class="button">關注我</a>
@@ -685,7 +752,7 @@
 
         <!-- Skills Section -->
         <section id="skills" class="section">
-            <h2 class="section-title reveal" >技能</h2>
+            <h2 class="section-title reveal">技能</h2>
             <div class="skills-container">
                 <div class="skill-card reveal">
                     <div class="skill-icon">🖥️</div>
@@ -711,12 +778,12 @@
                 <h2 class="cta-title">想了解更多？</h2>
                 <p class="cta-text">歡迎關注我的 Threads，與我交流討論！</p>
                 <a href="https://www.threads.net/@zh_ouo" class="threads-btn" target="_blank">
- 
-        
-                            <i class="fa-brands fa-threads"></i> &emsp;zh_ouo
-                        </a>
-                        
-                    
+
+
+                    <i class="fa-brands fa-threads"></i> &emsp;zh_ouo
+                </a>
+
+
 
             </div>
         </section>
@@ -727,6 +794,23 @@
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
     <script>
+        function adjustTextForSmallScreens() {
+            const typingEffectParagraph = document.querySelector('.typing-effect');
+
+            if (window.innerWidth < 650) {
+                typingEffectParagraph.innerHTML = `擅長前端和 Python。<br>
+執著簡約且高質感的UI ，<br>
+偏好黑色系以及流暢的交互視覺效果。`;
+            } else {
+                typingEffectParagraph.innerHTML = `擅長前端和 Python。執著簡約且高質感的UI ，偏好黑色系以及流暢的交互視覺效果。`;
+            }
+        }
+
+        // 監聽螢幕大小改變
+        window.addEventListener('resize', adjustTextForSmallScreens);
+
+        adjustTextForSmallScreens();
+
         // 主題切換
         const themeToggle = document.querySelector('.theme-toggle');
         const toggleBall = document.querySelector('.toggle-ball');
