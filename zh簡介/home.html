@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>zh_ouo 簡介</title>
+    <link rel="icon" href="zhlogo.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&family=Zen+Antique&display=swap"
+        rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@300;400;700&family=Ma+Shan+Zheng&display=swap"
+        rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'ChenYuluoyan';
+            src:
+                url('ChenYuluoyan-Thin.ttf') format('truetype');
+            font-weight: 100;
+            font-style: normal;
+        }
+
+
+        :root {
+            --primary-color: #121212;
+            --secondary-color: #333333;
+            --accent-color: #00c8ff;
+            --text-color: #f0f0f0;
+            --background-color: #0a0a0a;
+            --card-bg: rgba(30, 30, 30, 0.7);
+            --glass-bg: rgba(25, 25, 25, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --transition: all 0.4s ease-in-out;
+        }
+
+        [data-theme="light"] {
+            --primary-color: #f0f0f0;
+            --secondary-color: #e0e0e0;
+            --accent-color: #0088ff;
+            --text-color: #121212;
+            --background-color: #ffffff;
+            --card-bg: rgba(240, 240, 240, 0.7);
+            --glass-bg: rgba(255, 255, 255, 0.6);
+            --glass-border: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body::-webkit-scrollbar {
+    display: none;
+  }
+
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            transition: var(--transition);
+        }
+
+        .container {
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* 背景粒子效果 */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+
+        /* 頂部導航 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background: var(--glass-bg);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            font-family: 'ChenYuluoyan', sans-serif;
+            font-size: 2.3rem;
+            color: var(--accent-color);
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: width 0.3s ease;
+        }
+
+        .logo:hover::after {
+            width: 100%;
+        }
+
+        .theme-toggle {
+            width: 60px;
+            height: 30px;
+            background: var(--primary-color);
+            border-radius: 30px;
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid var(--glass-border);
+        }
+
+        .toggle-ball {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            top: 2px;
+            left: 3px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            transition: var(--transition);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            color: var(--primary-color);
+        }
+
+        .theme-toggle.active .toggle-ball {
+            left: 33px;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            padding: 0 5%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            max-width: 600px;
+            z-index: 1;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 1s forwards 0.5s;
+        }
+
+        .hero-title {
+            font-family: 'Noto Serif TC', serif;
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(120deg, var(--text-color), var(--accent-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .typing-effect {
+            position: relative;
+            font-weight: 300;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid var(--accent-color);
+            width: 0;
+            animation: typing 4s steps(40) forwards, blink 0.75s step-end infinite;
+            animation-delay: 1.5s;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .button {
+            padding: 0.8rem 2rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            color: var(--text-color);
+            font-family: 'Noto Sans TC', sans-serif;
+            font-weight: 700;
+            text-decoration: none;
+            transition: var(--transition);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--accent-color);
+            z-index: -1;
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .button:hover {
+            color: var(--primary-color);
+        }
+
+        .button:hover::before {
+            transform: scaleX(1);
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Content Sections */
+        .section {
+            padding: 8rem 5%;
+            position: relative;
+        }
+
+        .section-title {
+            left: 40%;
+            font-family: 'Noto Serif TC', serif;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--accent-color);
+            transform: scaleX(0.3);
+            transition: transform 0.5s ease;
+        }
+
+        .section-title:hover::after {
+            transform: scaleX(1);
+        }
+
+        .skills-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .skill-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            border: 1px solid var(--glass-border);
+            padding: 2rem;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transform: perspective(1000px) rotateY(0deg);
+            transform-style: preserve-3d;
+        }
+
+        .skill-card:hover {
+            transform: perspective(1000px) rotateY(10deg) translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            border-color: var(--accent-color);
+        }
+
+        .skill-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent-color);
+        }
+
+        .skill-title {
+            font-family: 'Noto Serif TC', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .skill-description {
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        /* threads CTA Section */
+        .cta-section {
+            padding: 6rem 5%;
+            text-align: center;
+            position: relative;
+        }
+
+        .cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 4rem;
+            background: var(--glass-bg);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .cta-title {
+            font-family: 'Noto Serif TC', serif;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-text {
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            line-height: 1.6;
+        }
+
+        /* .threads-btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 200px;
+            height: 60px;
+            border-radius: 50px;
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            color: white;
+            font-weight: 700;
+            text-decoration: none;
+            font-size: 1.2rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .threads-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .threads-btn:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .threads-btn:hover:before {
+            left: 100%;
+        }
+
+        .threads-icon {
+            margin-right: 10px;
+        } */
+
+ .threads-btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+    height: 60px;
+    border-radius: 50px;
+    background: linear-gradient(45deg, #111, #444);
+    color: white;
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 1.2rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.threads-btn:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.threads-btn:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: 0.5s;
+}
+
+.threads-btn:hover:before {
+    left: 100%;
+}
+
+.threads-icon {
+    margin-right: 10px;
+}
+
+
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes typing {
+            from {
+                width: 0
+            }
+
+            to {
+                width: 100%
+            }
+        }
+
+        @keyframes blink {
+
+            from,
+            to {
+                border-color: transparent
+            }
+
+            50% {
+                border-color: var(--accent-color)
+            }
+        }
+
+        @keyframes floatAnimation {
+            0% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* 響應式設計 */
+
+        @media (max-width: 1700px) {
+            .section-title {
+
+                left: 45%
+            }
+        }
+        @media (max-width: 990px) {
+            .section-title {
+                left: 40%
+            }
+        }
+
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .section {
+                padding: 5rem 5%;
+            }
+
+            .section-title {
+                font-size: 2rem;
+                left: 40%
+            }
+
+            .skills-container {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-content {
+                padding: 2rem;
+            }
+
+            .cta-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+                left: 40%
+            }
+            .hero-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .button {
+                width: 100%;
+                text-align: center;
+            }
+
+            .skill-card {
+                transform: none !important;
+            }
+        }
+
+        /* Scroll Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 流體背景 */
+        .fluid-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .fluid {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vmin;
+            height: 80vmin;
+            background: linear-gradient(120deg, var(--accent-color), #7928ca);
+            border-radius: 45% 55% 70% 30% / 30% 40% 60% 70%;
+            filter: blur(60px);
+            opacity: 0.3;
+            animation: fluid 15s linear infinite;
+        }
+
+        .fluid:nth-child(2) {
+            width: 60vmin;
+            height: 60vmin;
+            background: linear-gradient(240deg, var(--accent-color), #ff0080);
+            animation-delay: -5s;
+            animation-duration: 20s;
+            opacity: 0.2;
+        }
+
+        .fluid:nth-child(3) {
+            width: 40vmin;
+            height: 40vmin;
+            background: linear-gradient(360deg, #7928ca, var(--accent-color));
+            animation-delay: -10s;
+            animation-duration: 25s;
+            opacity: 0.1;
+        }
+
+        @keyframes fluid {
+            0% {
+                border-radius: 45% 55% 70% 30% / 30% 40% 60% 70%;
+            }
+
+            33% {
+                border-radius: 70% 30% 45% 55% / 60% 70% 30% 40%;
+            }
+
+            66% {
+                border-radius: 30% 60% 70% 40% / 50% 60% 30% 70%;
+            }
+
+            100% {
+                border-radius: 45% 55% 70% 30% / 30% 40% 60% 70%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 頂部導航 -->
+        <nav class="navbar" >
+            <a href="#top" class="logo">羽</a>
+            <div class="theme-toggle">
+                <div class="toggle-ball">🌙</div>
+            </div>
+        </nav>
+
+        <!-- 背景粒子效果 -->
+        <div id="particles-js"></div>
+
+        <!-- 流體背景 -->
+        <div class="fluid-container">
+            <div class="fluid"></div>
+            <div class="fluid"></div>
+            <div class="fluid"></div>
+        </div>
+
+        <!-- Hero Section -->
+        <section class="hero" id="top">
+            <div class="hero-content">
+                <h1 class="hero-title" >𝒵𝒽</h1>
+                <p class="hero-subtitle">一位平凡的台灣高中牲，興趣網頁開發與視覺設計</p>
+                <p class="typing-effect"> 擅長前端和 Python。執著簡約且高質感的UI ，偏好黑色系以及流暢的交互視覺效果。</p>
+                <div class="hero-buttons">
+                    <a href="#skills" class="button">探索技能</a>
+                    <a href="#threads" class="button">關注我</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="section">
+            <h2 class="section-title reveal" >技能</h2>
+            <div class="skills-container">
+                <div class="skill-card reveal">
+                    <div class="skill-icon">🖥️</div>
+                    <h3 class="skill-title">前端開發</h3>
+                    <p class="skill-description">會寫 HTML、CSS 和 JavaScript🙃，專注於直覺且美觀的使用者介面，追求流暢的用戶體驗與視覺設計。</p>
+                </div>
+                <div class="skill-card reveal">
+                    <div class="skill-icon">🐍</div>
+                    <h3 class="skill-title">Python 開發</h3>
+                    <p class="skill-description">熟悉 Python 編程，嗯... 就醬</p>
+                </div>
+                <div class="skill-card reveal">
+                    <div class="skill-icon">🎨</div>
+                    <h3 class="skill-title">視覺設計</h3>
+                    <p class="skill-description">具備敏銳的設計感，專注於創造簡約而高質感的作品，注重細節、排版及色彩運用，打造獨特視覺體驗。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- threads CTA Section -->
+        <section id="threads" class="cta-section">
+            <div class="cta-content reveal">
+                <h2 class="cta-title">想了解更多？</h2>
+                <p class="cta-text">歡迎關注我的 Threads，與我交流討論！</p>
+                <a href="https://www.threads.net/@zh_ouo" class="threads-btn" target="_blank">
+ 
+        
+                            <i class="fa-brands fa-threads"></i> &emsp;zh_ouo
+                        </a>
+                        
+                    
+
+            </div>
+        </section>
+
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // 主題切換
+        const themeToggle = document.querySelector('.theme-toggle');
+        const toggleBall = document.querySelector('.toggle-ball');
+        let isDark = true;
+
+        themeToggle.addEventListener('click', () => {
+            document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            themeToggle.classList.toggle('active');
+            toggleBall.innerHTML = isDark ? '☀️' : '🌙';
+            isDark = !isDark;
+        });
+
+        // 按鈕漣漪效果
+        const buttons = document.querySelectorAll('.button');
+        buttons.forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                let x = e.clientX - e.target.offsetLeft;
+                let y = e.clientY - e.target.offsetTop;
+
+                let ripple = document.createElement('span');
+                ripple.className = 'ripple';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+
+                this.appendChild(ripple);
+
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+
+        // 滾動顯示動畫
+        function reveal() {
+            const reveals = document.querySelectorAll('.reveal');
+
+            for (let i = 0; i < reveals.length; i++) {
+                const windowHeight = window.innerHeight;
+                const revealTop = reveals[i].getBoundingClientRect().top;
+                const revealPoint = 150;
+
+                if (revealTop < windowHeight - revealPoint) {
+                    reveals[i].classList.add('active');
+                }
+            }
+        }
+
+        window.addEventListener('scroll', reveal);
+        reveal(); // 初始檢查
+
+        // 平滑滾動
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // 粒子背景
+        particlesJS('particles-js', {
+            "particles": {
+                "number": {
+                    "value": 80,
+                    "density": {
+                        "enable": true,
+                        "value_area": 800
+                    }
+                },
+                "color": {
+                    "value": "#00c8ff"
+                },
+                "shape": {
+                    "type": "circle",
+                    "stroke": {
+                        "width": 0,
+                        "color": "#000000"
+                    },
+                    "polygon": {
+                        "nb_sides": 5
+                    }
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": false,
+                    "anim": {
+                        "enable": false,
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "size": {
+                    "value": 3,
+                    "random": true,
+                    "anim": {
+                        "enable": false,
+                        "speed": 40,
+                        "size_min": 0.1,
+                        "sync": false
+                    }
+                },
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#00c8ff",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 2,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "grab"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 140,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "bubble": {
+                        "distance": 400,
+                        "size": 40,
+                        "duration": 2,
+                        "opacity": 8,
+                        "speed": 3
+                    },
+                    "repulse": {
+                        "distance": 200,
+                        "duration": 0.4
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                    "remove": {
+                        "particles_nb": 2
+                    }
+                }
+            },
+            "retina_detect": true
+        });
+    </script>
+</body>
+
+</html>
