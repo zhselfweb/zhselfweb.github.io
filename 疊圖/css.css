@@ -1,46 +1,92 @@
+/* 全局变量 */
 :root {
     --bg-color: #1a1a1a;
     --panel-bg: #2d2d2d;
+    --panel-hover: #3d3d3d;
     --accent-color: #4CAF50;
+    --accent-hover: #45a049;
     --text-color: #e0e0e0;
+    --shadow-color: rgba(76, 175, 80, 0.3);
+    --border-radius-sm: 4px;
+    --border-radius-md: 8px;
+    --border-radius-lg: 25px;
 }
 
-*{
+/* 基础样式重置 */
+* {
     user-select: none;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
     background: var(--bg-color);
     color: var(--text-color);
-    font-family: 'Arial', sans-serif;
+    font-family: 'Arial', 'Microsoft YaHei', sans-serif;
     margin: 0;
     padding: 20px;
+    min-height: 100vh;
 }
 
+/* 主容器 */
 #container {
     position: relative;
     width: 800px;
-    height: 800px;
+    min-height: 600px;
+    height: auto;
+    max-width: 100%;
     margin: 20px auto;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 0 20px rgba(76, 175, 80, 0.3);
+    border-radius: var(--border-radius-md);
+    overflow: visible;
+    box-shadow: 0 0 20px var(--shadow-color);
+    background-color: rgba(0, 0, 0, 0.2);
+    transition: height 0.3s ease;
 }
 
+/* 可拖动图片 */
 .draggable-img {
     position: absolute;
     cursor: move;
     transition: all 0.3s ease;
-    border-radius: 4px;
+    border-radius: var(--border-radius-sm);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
+/* 控制面板 */
 #controls {
     width: 800px;
+    max-width: 100%;
     margin: 20px auto;
     padding: 20px;
     background: var(--panel-bg);
-    border-radius: 8px;
+    border-radius: var(--border-radius-md);
+}
+
+.controls-container {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-grow: 1;
+}
+
+/* 图层管理面板 */
+.layers-panel {
+    width: 800px;
+    max-width: 100%;
+    margin: 20px auto;
+}
+
+.layers-panel h3 {
+    margin-bottom: 10px;
+    color: var(--accent-color);
 }
 
 #preview-list {
@@ -48,21 +94,22 @@ body {
     padding: 0;
     min-height: 100px;
     background: var(--panel-bg);
-    border-radius: 8px;
-    margin: 20px auto;
-    width: 300px;
+    border-radius: var(--border-radius-md);
+    margin: 0;
+    overflow: hidden;
 }
 
 .layer-item {
     padding: 12px;
     margin: 8px;
-    background: #3d3d3d;
-    border-radius: 4px;
+    background: var(--panel-hover);
+    border-radius: var(--border-radius-sm);
     cursor: move;
-    transition: transform 0.2s;
+    transition: transform 0.2s, background-color 0.2s;
     display: flex;
     align-items: center;
     gap: 10px;
+    justify-content: space-between;
 }
 
 .layer-item:hover {
@@ -74,10 +121,13 @@ body {
     width: 20px;
     height: 20px;
     background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 24 24" fill="%234CAF50" xmlns="http://www.w3.org/2000/svg"><path d="M9 5h2v2H9zm0 4h2v2H9zm0 4h2v2H9zm4-8h2v2h-2zm0 4h2v2h-2zm0 4h2v2h-2z"/></svg>');
+    flex-shrink: 0;
 }
 
+/* 表单元素样式 */
 input[type="range"] {
-    width: 400px;
+    width: 100%;
+    max-width: 400px;
     height: 4px;
     background: #4d4d4d;
     border-radius: 2px;
@@ -95,16 +145,16 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 button {
-    background: linear-gradient(145deg, #4CAF50, #45a049);
+    background: linear-gradient(145deg, var(--accent-color), var(--accent-hover));
     border: none;
     padding: 10px 25px;
     color: white;
-    border-radius: 25px;
+    border-radius: var(--border-radius-lg);
     cursor: pointer;
     transition: all 0.3s;
-    margin-left: 100px;
     text-transform: uppercase;
     letter-spacing: 1px;
+    font-weight: bold;
 }
 
 button:hover {
@@ -112,35 +162,83 @@ button:hover {
     box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
 }
 
+button:active {
+    transform: translateY(0);
+}
+
+/* 文件输入样式 */
 .file-input {
     position: relative;
-    display: inline-block;
-    margin: 20px auto;
     display: block;
+    max-width: 400px;
+    margin: 20px auto;
 }
 
 .file-input input[type="file"] {
-
     opacity: 0;
-    width: 200px;
-    height: 40px;
+    width: 100%;
+    height: 100%;
     position: absolute;
+    top: 0;
+    left: 0;
     cursor: pointer;
+    z-index: 2;
 }
 
 .file-input label {
-
-    margin-left: 50%;
-    transform: translateX(-50%);
     background: var(--panel-bg);
     padding: 12px 30px;
-    width: 300px;
-    border-radius: 25px;
+    width: 100%;
+    border-radius: var(--border-radius-lg);
     display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 10px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.file-input label:hover {
+    background: var(--panel-hover);
 }
 
 .file-input label::before {
     content: '📷';
     font-size: 18px;
+}
+
+/* 响应式设计 */
+@media (max-width: 840px) {
+    #container, #controls, .layers-panel {
+        width: 100%;
+    }
+    
+    .controls-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    button {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+/* 添加到现有CSS中 */
+.visibility-toggle {
+    background: none;
+    border: none;
+    padding: 5px;
+    color: var(--text-color);
+    cursor: pointer;
+    margin-left: auto;
+    font-size: 16px;
+    border-radius: var(--border-radius-sm);
+    transition: all 0.2s ease;
+}
+
+.visibility-toggle:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: none;
+    box-shadow: none;
 }
