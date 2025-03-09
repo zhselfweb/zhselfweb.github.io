@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="zh-TW">
 <head>
-    <title>疊圖</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>疊圖工具</title>
     <link rel="stylesheet" href="css.css">
 </head>
-
 <body>
     <div class="file-input">
         <input type="file" id="file-input" multiple accept="image/*">
@@ -13,22 +13,24 @@
     </div>
 
     <div id="controls">
-        <div style="display: flex; gap: 20px; align-items: center">
-            <div>
-                <label>向下偏移：</label>
+        <div class="controls-container">
+            <div class="slider-container">
+                <label for="offset-control">向下偏移：</label>
                 <input type="range" id="offset-control" min="0" max="150" value="0">
+                <span id="offset-value">0</span>
             </div>
-            <button id="download-btn">下載</button>
+            <button id="download-btn" aria-label="下載合成圖片">下載</button>
         </div>
     </div>
 
-    <div id="container"></div>
-    <ul id="preview-list"></ul>
+    <div id="container" aria-label="圖片預覽區域"></div>
+    
+    <div class="layers-panel">
+        <h3>圖層管理</h3>
+        <ul id="preview-list" aria-label="圖層列表"></ul>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <script src="js.js"></script>
-     
-    </script>
 </body>
-
 </html>
