@@ -248,7 +248,7 @@ async function handleDownload() {
     document.body.appendChild(loadingMsg);
 
     try {
-        // 筛选出可见的图片
+        // 筛选出可见的图片，保持原始顺序
         const visibleImages = images.filter(img => img.visible !== false);
         
         if (visibleImages.length === 0) {
@@ -263,48 +263,56 @@ async function handleDownload() {
         // 导出比例
         const exportScale = 2;
         
-        // 找出最后一个可见图片的位置和高度
-        const visibleIndices = visibleImages.map(img => images.indexOf(img));
-        const lastVisibleIndex = Math.max(...visibleIndices);
-        const lastVisibleImg = images[lastVisibleIndex];
+        // 计算每个可见图片的信息
+        const imageDataList = [];
         
-        // 找出第一个可见图片的索引和图片对象
-        const firstVisibleIndex = Math.min(...visibleIndices);
-        const firstVisibleImg = images[firstVisibleIndex];
+        // 重要：从0开始重新计算偏移量，忽略隐藏的图片
+        visibleImages.forEach((img, visibleIndex) => {
+            // 使用与预览完全相同的缩放逻辑
+            const scale = Math.min(
+                container.offsetWidth / img.originalWidth,
+                600 / img.originalHeight
+            ) * 0.8;
+            
+            // 计算预览尺寸
+            const width = img.originalWidth * scale;
+            const height = img.originalHeight * scale;
+            
+            // 关键修改：使用可见图片的索引计算偏移，而不是原始索引
+            const offset = currentOffset * visibleIndex;
+            
+            // 保存数据
+            imageDataList.push({
+                img: img,
+                originalIndex: images.indexOf(img), // 保留原始索引用于调试
+                visibleIndex: visibleIndex, // 在可见图片中的索引
+                previewWidth: width,
+                previewHeight: height,
+                previewOffset: offset,
+                bottom: offset + height  // 记录底部位置
+            });
+        });
         
-        // 计算预览缩放比例
-        const previewScaleFirst = Math.min(
+        // 寻找最后一张图片（底部位置最低的图片）
+        const lastImage = imageDataList.reduce((prev, current) => {
+            return (current.bottom > prev.bottom) ? current : prev;
+        }, imageDataList[0]);
+        
+        // 使用第一张可见图片的宽度作为基准
+        const firstVisibleImg = visibleImages[0];
+        const firstImgScale = Math.min(
             container.offsetWidth / firstVisibleImg.originalWidth,
             600 / firstVisibleImg.originalHeight
         ) * 0.8;
+        const firstImgWidth = firstVisibleImg.originalWidth * firstImgScale;
         
-        const previewScaleLast = Math.min(
-            container.offsetWidth / lastVisibleImg.originalWidth,
-            600 / lastVisibleImg.originalHeight
-        ) * 0.8;
+        // 设置画布尺寸
+        canvas.width = firstImgWidth * exportScale;
+        canvas.height = lastImage.bottom * exportScale;  // 精确匹配最低点
         
-        // 计算第一张和最后一张图片在预览中的尺寸
-        const firstImgPreviewWidth = firstVisibleImg.originalWidth * previewScaleFirst;
-        const lastImgPreviewHeight = lastVisibleImg.originalHeight * previewScaleLast;
-        
-        // 设置画布宽度为第一张图片的宽度
-        const canvasWidth = firstImgPreviewWidth * exportScale;
-        
-        // 计算最后一张图片的底部位置
-        const lastImgOffset = currentOffset * lastVisibleIndex;
-        const lastImgBottom = lastImgOffset + lastImgPreviewHeight;
-        
-        // 计算画布高度 - 使用最后一张图片的底部位置
-        // 添加一个很小的边距确保内容完全显示
-        const canvasHeight = lastImgBottom * exportScale + 10;
-        
-        canvas.width = canvasWidth;
-        canvas.height = canvasHeight;
-        
-        console.log(`画布尺寸: ${canvas.width}x${canvas.height}`);
-        console.log(`导出比例: ${exportScale}`);
-        console.log(`第一个可见图片索引: ${firstVisibleIndex}, 最后一个: ${lastVisibleIndex}`);
-        console.log(`最后一张图片底部位置: ${lastImgBottom} -> ${canvasHeight}`);
+        console.log(`画布尺寸: ${canvas.width} x ${canvas.height}`);
+        console.log(`最底部图层：${lastImage.img.id}, 底部位置: ${lastImage.bottom}`);
+        console.log(`可见图片数量: ${visibleImages.length}, 总图片数量: ${images.length}`);
         
         // 确保所有图片加载完毕
         await Promise.all(visibleImages.map(img =>
@@ -314,35 +322,23 @@ async function handleDownload() {
             })
         ));
 
-        // 清除背景 (透明)
+        // 清除背景
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // 按照预览的层叠顺序绘制（从底到顶）
-        visibleImages.slice().reverse().forEach(img => {
-            const originalIndex = images.indexOf(img);
+        // 按从底到顶的顺序绘制
+        imageDataList.slice().reverse().forEach(data => {
+            // 计算导出尺寸和位置
+            const exportWidth = data.previewWidth * exportScale;
+            const exportHeight = data.previewHeight * exportScale;
+            const exportOffset = data.previewOffset * exportScale;
+            const exportX = (canvas.width - exportWidth) / 2;
             
-            // 使用与预览相同的缩放算法
-            const previewScale = Math.min(
-                container.offsetWidth / img.originalWidth,
-                600 / img.originalHeight
-            ) * 0.8;
-            
-            // 计算在预览中的尺寸和偏移
-            const previewWidth = img.originalWidth * previewScale;
-            const previewHeight = img.originalHeight * previewScale;
-            const previewOffset = currentOffset * originalIndex;
-            
-            // 计算导出时的尺寸和位置
-            const exportWidth = previewWidth * exportScale;
-            const exportHeight = previewHeight * exportScale;
-            const exportOffset = previewOffset * exportScale;
-            const exportX = (canvasWidth - exportWidth) / 2;
-            
-            console.log(`图层 ${img.id} (索引${originalIndex}): 偏移=${previewOffset}->${exportOffset}, 尺寸=${previewWidth}x${previewHeight}->${exportWidth}x${exportHeight}`);
+            console.log(`绘制图层 ${data.img.id}: 原始索引=${data.originalIndex}, 可见索引=${data.visibleIndex}`);
+            console.log(`位置(${exportX}, ${exportOffset}), 尺寸${exportWidth}x${exportHeight}`);
             
             // 绘制图片
             ctx.drawImage(
-                img.element,
+                data.img.element,
                 exportX, exportOffset,
                 exportWidth, exportHeight
             );
