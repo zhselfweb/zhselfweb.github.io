@@ -241,21 +241,75 @@ async function handleDownload() {
         return;
     }
 
+    // 显示加载指示器
+    const loadingMsg = document.createElement('div');
+    loadingMsg.textContent = '正在生成圖片...';
+    loadingMsg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.8);color:white;padding:20px;border-radius:10px;z-index:9999;';
+    document.body.appendChild(loadingMsg);
+
     try {
+        // 筛选出可见的图片
+        const visibleImages = images.filter(img => img.visible !== false);
+        
+        if (visibleImages.length === 0) {
+            alert('沒有可見的圖片可供下載');
+            return;
+        }
+
         // 创建画布
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-
-        // 计算画布尺寸 - 使用容器的当前高度或计算高度
-        const maxBottom = Math.max(...images.map((img, index) => 
-            currentOffset * index + img.scaledHeight
+        
+        // 计算导出比例（固定值，使导出图片有足够分辨率）
+        const exportScale = 2;
+        
+        // 计算画布尺寸 - 与预览容器宽度相同，但高度基于内容
+        const canvasWidth = container.offsetWidth * exportScale;
+        
+        // 第一步：计算每个图像的预览缩放比例、尺寸和位置
+        const imageData = visibleImages.map((img) => {
+            const originalIndex = images.indexOf(img);
+            
+            // 使用与预览完全相同的算法计算缩放比例
+            const previewScale = Math.min(
+                container.offsetWidth / img.originalWidth,
+                600 / img.originalHeight
+            ) * 0.8;
+            
+            // 计算预览中的尺寸
+            const previewWidth = img.originalWidth * previewScale;
+            const previewHeight = img.originalHeight * previewScale;
+            
+            // 计算预览中的偏移
+            const previewOffset = currentOffset * originalIndex;
+            
+            return {
+                img: img,
+                originalIndex: originalIndex,
+                previewScale: previewScale,
+                previewWidth: previewWidth,
+                previewHeight: previewHeight,
+                previewOffset: previewOffset,
+                // 导出时的尺寸 = 预览尺寸 * 导出比例
+                exportWidth: previewWidth * exportScale,
+                exportHeight: previewHeight * exportScale,
+                // 导出时的偏移 = 预览偏移 * 导出比例
+                exportOffset: previewOffset * exportScale
+            };
+        });
+        
+        // 计算画布所需高度
+        const maxBottom = Math.max(...imageData.map(data => 
+            data.exportOffset + data.exportHeight
         ));
-
-        canvas.width = container.offsetWidth;
-        canvas.height = maxBottom + 50; // 添加一些底部边距
-
+        
+        canvas.width = canvasWidth;
+        canvas.height = maxBottom + (50 * exportScale); // 添加底部边距
+        
+        console.log(`画布尺寸: ${canvas.width} x ${canvas.height}`);
+        
         // 确保所有图片加载完毕
-        await Promise.all(images.map(img =>
+        await Promise.all(visibleImages.map(img =>
             new Promise(resolve => {
                 if (img.element.complete) resolve();
                 else img.element.onload = resolve;
@@ -265,28 +319,38 @@ async function handleDownload() {
         // 清除背景 (透明)
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // 使用反转顺序，先绘制底层，再依序叠加上层
-        images.slice().reverse().forEach((img, indexReversed) => {
-            const originalIndex = images.length - 1 - indexReversed;
-            const offset = currentOffset * originalIndex;
-
+        // 按照预览中的层叠顺序绘制（从底层到顶层）
+        imageData.slice().reverse().forEach((data) => {
+            console.log(`导出图层：${data.img.id}, 索引: ${data.originalIndex}`, 
+                      `预览偏移: ${data.previewOffset}, 导出偏移: ${data.exportOffset}`,
+                      `预览尺寸: ${data.previewWidth}x${data.previewHeight}`,
+                      `导出尺寸: ${data.exportWidth}x${data.exportHeight}`);
+            
+            // 中心对齐图片
+            const x = (canvas.width - data.exportWidth) / 2;
+            const y = data.exportOffset;
+            
+            // 绘制图片
             ctx.drawImage(
-                img.element,
-                (canvas.width - img.scaledWidth) / 2,
-                offset,
-                img.scaledWidth,
-                img.scaledHeight
+                data.img.element,
+                x, y,
+                data.exportWidth, 
+                data.exportHeight
             );
         });
 
         // 生成下载链接
         const link = document.createElement('a');
         link.download = `疊圖-${Date.now()}.png`;
-        link.href = canvas.toDataURL('image/png');
+        link.href = canvas.toDataURL('image/png', 1.0);
         link.click();
+        
     } catch (error) {
         console.error('下載圖片時發生錯誤:', error);
         alert('下載失敗，請重試');
+    } finally {
+        // 移除加载指示器
+        document.body.removeChild(loadingMsg);
     }
 }
 
