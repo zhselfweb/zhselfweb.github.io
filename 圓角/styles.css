@@ -1,53 +1,152 @@
 body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: #000000; /* 黑色背景 */
-    color: #e0e0e0; /* 淺灰色文字 */
+    font-family: 'Arial', sans-serif;
     margin: 0;
+    padding: 20px;
+    background-color: #121212;
+    color: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
 }
 
 .container {
-    text-align: center;
-    background-color: #1e1e1e; /* 深灰色背景 */
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* 更強的陰影效果 */
+    max-width: 800px;
+    width: 100%;
+    padding: 30px;
+    background-color: #1e1e1e;
+    border-radius: 15px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-input[type="range"], input[type="file"] {
-    width: 300px;
-    margin: 10px 0;
-    background-color: #333; /* 深灰色背景 */
-    color: #e0e0e0; /* 淺灰色文字 */
-    border: 1px solid #555; /* 更深的邊框顏色 */
+h1 {
+    text-align: center;
+    color: #ffffff;
+    margin-bottom: 20px;
+}
+
+.upload-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+#upload-btn {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#upload-btn:hover {
+    background-color: #444;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+.settings-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.slider-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.slider-container label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.slider-value {
+    font-weight: bold;
+    color: #ffffff;
+}
+
+input[type="range"] {
+    width: 100%;
+    height: 6px;
+    background: #555;
+    outline: none;
     border-radius: 5px;
-    padding: 5px;
+    appearance: none;
+    -webkit-appearance: none;
 }
 
 input[type="range"]::-webkit-slider-thumb {
-    background-color: #4CAF50; /* 按鈕顏色 */
-}
-
-canvas {
-    display: none;
-    margin-top: 20px;
-    border: 1px solid #444; /* 深灰色邊框 */
-}
-
-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #333; /* 深灰色背景 */
-    color: #e0e0e0; /* 淺灰色文字 */
-    border: none;
-    border-radius: 5px;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #ffffff;
     cursor: pointer;
-    transition: background-color 0.3s ease; /* 平滑過渡效果 */
+    transition: all 0.3s ease;
 }
 
-button:hover {
-    background-color: #555; /* 更深的灰色背景 */
+input[type="range"]::-webkit-slider-thumb:hover {
+    background: #e0e0e0;
+    transform: scale(1.2);
+}
+
+.preview-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+#preview-canvas {
+    max-width: 100%;
+    background-color: #2a2a2a;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: none;
+}
+
+#download-btn {
+    background-color: #2a6fdb;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: none;
+}
+
+#download-btn:hover {
+    background-color: #3a7feb;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+.placeholder {
+    width: 100%;
+    height: 300px;
+    border: 2px dashed #555;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #888;
+    font-size: 18px;
+}
+
+.file-input {
+    display: none;
 }
