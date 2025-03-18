@@ -1,85 +1,125 @@
-const imageInput = document.getElementById('image-input');
-const radiusInput = document.getElementById('radius-input');
+// 獲取DOM元素
+const fileInput = document.getElementById('file-input');
+const uploadBtn = document.getElementById('upload-btn');
+const radiusSlider = document.getElementById('radius-slider');
 const radiusValue = document.getElementById('radius-value');
-const canvas = document.getElementById('canvas');
+const previewCanvas = document.getElementById('preview-canvas');
+const placeholder = document.getElementById('placeholder');
 const downloadBtn = document.getElementById('download-btn');
-const ctx = canvas.getContext('2d');
-let image = new Image();
-const MAX_WIDTH = 500; // 定義圖片最大寬度
-const MAX_HEIGHT = 500; // 定義圖片最大高度
 
-imageInput.addEventListener('change', handleImageUpload);
-radiusInput.addEventListener('input', updateRoundedCorners);
-downloadBtn.addEventListener('click', downloadImage);
+// 設置canvas繪圖上下文
+const ctx = previewCanvas.getContext('2d');
 
-function handleImageUpload(event) {
-    const file = event.target.files[0];
-    if (!file) return;
+// 儲存原始圖片資訊
+let originalImage = null;
+let imageWidth = 0;
+let imageHeight = 0;
 
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        image.src = e.target.result;
-        image.onload = function() {
-            const dimensions = getAdjustedDimensions(image.width, image.height);
-            canvas.width = dimensions.width;
-            canvas.height = dimensions.height;
-            updateRoundedCorners();
-            canvas.style.display = 'block';
-            downloadBtn.style.display = 'inline-block';
+// 添加一個變量保存原始檔名
+let originalFileName = '';
+
+// 監聽上傳按鈕點擊事件
+uploadBtn.addEventListener('click', () => {
+    fileInput.click();
+});
+
+// 監聽檔案選擇事件
+fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file && file.type.includes('image')) {
+        // 保存原始檔名（去掉副檔名）
+        originalFileName = file.name.replace(/\.[^/.]+$/, "");
+        
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+            originalImage = new Image();
+            originalImage.onload = () => {
+                // 調整圖片大小，最大寬高為500像素，保持原比例
+                const maxDimension = 500;
+                if (originalImage.width > maxDimension || originalImage.height > maxDimension) {
+                    if (originalImage.width > originalImage.height) {
+                        imageWidth = maxDimension;
+                        imageHeight = (originalImage.height / originalImage.width) * maxDimension;
+                    } else {
+                        imageHeight = maxDimension;
+                        imageWidth = (originalImage.width / originalImage.height) * maxDimension;
+                    }
+                } else {
+                    imageWidth = originalImage.width;
+                    imageHeight = originalImage.height;
+                }
+
+                // 設置canvas大小
+                previewCanvas.width = imageWidth;
+                previewCanvas.height = imageHeight;
+
+                // 隱藏提示文字，顯示canvas和下載按鈕
+                placeholder.style.display = 'none';
+                previewCanvas.style.display = 'block';
+                downloadBtn.style.display = 'block';
+
+                // 繪製圖片
+                drawImageWithRadius(parseInt(radiusSlider.value));
+            };
+            originalImage.src = event.target.result;
         };
-    };
-    reader.readAsDataURL(file);
-}
 
-function getAdjustedDimensions(width, height) {
-    const aspectRatio = width / height;
-    if (width > MAX_WIDTH || height > MAX_HEIGHT) {
-        if (width > height) {
-            width = MAX_WIDTH;
-            height = width / aspectRatio;
-        } else {
-            height = MAX_HEIGHT;
-            width = height * aspectRatio;
-        }
+        reader.readAsDataURL(file);
     }
-    return { width, height };
-}
+});
 
-function updateRoundedCorners() {
-    const radius = parseInt(radiusInput.value);
-    radiusValue.textContent = radius;
+// 監聽滑動條變化事件
+radiusSlider.addEventListener('input', () => {
+    const radius = parseInt(radiusSlider.value);
+    radiusValue.textContent = `${radius}px`;
 
-    // 保留原始畫質的比例計算
-    const scaleX = image.width / canvas.width;
-    const scaleY = image.height / canvas.height;
+    if (originalImage) {
+        drawImageWithRadius(radius);
+    }
+});
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+// 繪製帶圓角的圖片
+function drawImageWithRadius(radius) {
+    // 清除canvas
+    ctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+
+    // 保存畫布狀態
     ctx.save();
+
+    // 確保圓角半徑不超過圖片寬高的一半
+    const maxRadius = Math.min(imageWidth, imageHeight) / 2;
+    const actualRadius = Math.min(radius, maxRadius);
+
+    // 創建圓角路徑
     ctx.beginPath();
-    ctx.moveTo(radius, 0);
-    ctx.lineTo(canvas.width - radius, 0);
-    ctx.quadraticCurveTo(canvas.width, 0, canvas.width, radius);
-    ctx.lineTo(canvas.width, canvas.height - radius);
-    ctx.quadraticCurveTo(canvas.width, canvas.height, canvas.width - radius, canvas.height);
-    ctx.lineTo(radius, canvas.height);
-    ctx.quadraticCurveTo(0, canvas.height, 0, canvas.height - radius);
-    ctx.lineTo(0, radius);
-    ctx.quadraticCurveTo(0, 0, radius, 0);
+    ctx.moveTo(actualRadius, 0);
+    ctx.lineTo(imageWidth - actualRadius, 0);
+    ctx.quadraticCurveTo(imageWidth, 0, imageWidth, actualRadius);
+    ctx.lineTo(imageWidth, imageHeight - actualRadius);
+    ctx.quadraticCurveTo(imageWidth, imageHeight, imageWidth - actualRadius, imageHeight);
+    ctx.lineTo(actualRadius, imageHeight);
+    ctx.quadraticCurveTo(0, imageHeight, 0, imageHeight - actualRadius);
+    ctx.lineTo(0, actualRadius);
+    ctx.quadraticCurveTo(0, 0, actualRadius, 0);
     ctx.closePath();
+
+    // 裁剪區域
     ctx.clip();
 
-    // 使用 drawImage 的其他參數來調整畫質
-    ctx.drawImage(
-        image,
-        0, 0, image.width, image.height, // 原圖的範圍
-        0, 0, canvas.width * scaleX, canvas.height * scaleY // 畫布上的範圍
-    );
+    // 繪製圖片
+    ctx.drawImage(originalImage, 0, 0, imageWidth, imageHeight);
+
+    // 恢復畫布狀態
     ctx.restore();
 }
 
-function downloadImage() {
+// 監聽下載按鈕點擊事件
+downloadBtn.addEventListener('click', () => {
+    // 創建一個臨時連結
     const link = document.createElement('a');
-    link.href = canvas.toDataURL();
-    link.download = 'rounded-image.png';
+    // 使用原始檔名+0作為下載檔名
+    link.download = originalFileName ? `${originalFileName}0.png` : '圓角圖片.png';
+    link.href = previewCanvas.toDataURL('image/png');
     link.click();
-}
+});
