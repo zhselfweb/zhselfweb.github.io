@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <title>YouTube 影片分析 - 設置</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .api-guide {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            line-height: 1.6;
+        }
+
+        .get-api-link {
+            display: inline-block;
+            margin-top: 10px;
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        .get-api-link:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: #ff5555;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>YouTube 影片分析</h1>
+        <div class="setup-card">
+            <h2>設置您的 YouTube API Key</h2>
+            <p>在開始使用前，請輸入您的 YouTube Data API Key：</p>
+
+            <div class="search-box">
+                <input type="text" id="apiKeyInput" placeholder="輸入您的 YouTube API Key...">
+                <button id="saveApiBtn">儲存並繼續</button>
+            </div>
+
+            <div class="error-message" id="errorMessage">請輸入有效的 API Key</div>
+
+            <div class="api-guide">
+                <p>還沒有 API Key？請按照以下步驟獲取：</p>
+                <ol>
+                    <li>前往 Google Cloud Console</li>
+                    <li>啟用 YouTube Data API v3</li>
+                    <li>創建 API 金鑰</li>
+                </ol>
+                <a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com?hl=zh-TW&inv=1&invt=AbsMXA&project=ytsearch-406218"
+                    target="_blank" class="get-api-link">
+                    點擊這裡獲取 API Key
+                </a>
+            </div>
+        </div>
+    </div>
+    <script src="setup.js"></script>
+</body>
+
+</html>
