@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍋</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 背景装饰元素 -->
+    <div class="decoration"></div>
+    <div class="decoration"></div>
+    
+    <!-- 背景粒子 -->
+    <div id="particles-js"></div>
+    
+    <div class="container">
+        <!-- 左侧专辑信息区域 -->
+        <div class="album-section">
+            <div class="album-container">
+                <img src="2.jpg" alt="Album Cover" class="album-cover">
+            </div>
+            
+            <div class="song-info">
+                <h1 class="song-title">Lemon🍋 中文版</h1>
+                <p class="song-artist">時代少年團</p>
+                
+                <!-- 音频可视化 -->
+                <div class="visualizer" id="visualizer">
+                    <!-- 通过JS生成音频条 -->
+                </div>
+                
+                <div class="song-progress">
+                    <div class="progress-container" id="progressContainer">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    <div class="time-info">
+                        <span id="currentTime">0:00</span>
+                        <span id="totalTime">2:00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 右侧歌词区域 -->
+        <div class="lyrics-section">
+            <h2 class="section-title">
+                <i class="fas fa-music"></i>
+                Lyrics
+            </h2>
+            
+            <div class="lyrics-container" id="lyricsContainer">
+                <!-- 歌词将通过JavaScript动态添加 -->
+            </div>
+            
+            <div class="controls">
+                <div class="main-controls">
+                    <button class="control-btn" id="shuffleBtn">
+                        <i class="fas fa-random"></i>
+                    </button>
+                    <button class="control-btn">
+                        <i class="fas fa-step-backward"></i>
+                    </button>
+                    <button class="control-btn play-btn" id="playBtn">
+                        <i class="fas fa-play" id="playIcon"></i>
+                    </button>
+                    <button class="control-btn">
+                        <i class="fas fa-step-forward"></i>
+                    </button>
+                    <button class="control-btn" id="repeatBtn">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                </div>
+                
+                <div class="additional-controls">
+                    <button class="control-btn heart-btn">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <div class="volume-container">
+                        <i class="fas fa-volume-up"></i>
+                        <div class="volume-bar" id="volumeBar">
+                            <div class="volume-level" id="volumeLevel"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 粒子效果库 -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
