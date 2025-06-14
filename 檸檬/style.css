@@ -678,6 +678,121 @@ body {
         font-size: 24px;
     }
 }
+@media (max-width: 450px) {
+
+    .album-container {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .song-title {
+        font-size: 24px;
+    }
+    
+    .song-artist {
+        font-size: 16px;
+    }
+    
+    .lyric-line {
+        font-size: 14px;
+    }
+    
+    .main-controls {
+        gap: 13px;
+    }
+    
+    .section-title {
+        font-size: 22px;
+    }
+}
+
+@media (max-width: 430px) {
+
+    
+    .album-container {
+        width: 110px;
+        height: 110px;
+    }
+    
+    .song-title {
+        font-size: 20px;
+    }
+    
+    .song-artist {
+        font-size: 14px;
+    }
+    
+    .lyric-line {
+        font-size: 13px;
+    }
+    
+    .main-controls {
+        gap: 11px;
+    }
+    
+    .section-title {
+        font-size: 20px;
+    }
+ }   
+    @media (max-width: 420px) {
+
+    
+        .album-container {
+            width: 95px;
+            height: 95px;
+        }
+        
+        .song-title {
+            font-size: 20px;
+        }
+        
+        .song-artist {
+            font-size: 14px;
+        }
+        
+        .lyric-line {
+            font-size: 13px;
+        }
+        
+        .main-controls {
+            gap: 11px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+        }
+    }
+    
+    @media (max-width: 410px) {
+
+    
+        .album-container {
+            width: 85px;
+            height: 85px;
+        }
+        
+        .song-title {
+            font-size: 20px;
+        }
+        
+        .song-artist {
+            font-size: 14px;
+        }
+        
+        .lyric-line {
+            font-size: 13px;
+        }
+        
+        .main-controls {
+            gap: 11px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+        }
+    }
+    
+
 
 .decoration {
     position: fixed;
