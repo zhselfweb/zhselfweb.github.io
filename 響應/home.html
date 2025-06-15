@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>響應式寬度顯示器</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #111;
+      color: #fff;
+      font-family: "Segoe UI", sans-serif;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .container {
+      background-color: #1e1e1e;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 0 20px #00bcd4;
+      max-width: 90%;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #00e5ff;
+    }
+
+    #width {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .hint {
+      margin-top: 1rem;
+      font-size: 1rem;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>裝置寬度建議值</h1>
+    <p id="width"></p>
+    <p class="hint">請根據下列數值設計您的 media query 🎨</p>
+  </div>
+
+  <script>
+    function updateWidth() {
+      const width = window.innerWidth;
+      document.getElementById("width").textContent = `${width}px`;
+    }
+
+    window.addEventListener("resize", updateWidth);
+    window.addEventListener("load", updateWidth);
+  </script>
+</body>
+</html>
