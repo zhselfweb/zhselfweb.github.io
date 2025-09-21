@@ -5,7 +5,7 @@ const CACHE_NAME = `homework-tracker-${CACHE_VERSION}`;
 // 需要緩存的資源
 const ASSETS_TO_CACHE = [
     '/',
-    'home.html',
+    'index.html',
     'js/data.js',
     'js/utils.js',
     'js/components.js',
@@ -145,4 +145,5 @@ self.addEventListener('notificationclick', (event) => {
                 return clients.openWindow(urlToOpen);
             })
     );
+
 });
