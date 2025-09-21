@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#111827">
+    <meta name="description" content="(￣y▽,￣)╭ ">
+    <!-- PWA安裝相關 -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/icon-180.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="q(≧▽≦q)">
+    <meta name="application-name" content="q(≧▽≦q)">
+    <title>q(≧▽≦q)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入Google字體 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="icon" href="assets/icon.png" />
+    <link rel="stylesheet" href="css/styles.css">
+
+
+        <style>
+            /* 自定義樣式和動畫 */
+            .ripple {
+                position: absolute;
+                border-radius: 50%;
+                background-color: rgba(255, 255, 255, 0.3);
+                transform: scale(0);
+                animation: ripple 0.6s linear;
+            }
+    
+            @keyframes ripple {
+                to {
+                    transform: scale(4);
+                    opacity: 0;
+                }
+            }
+        </style>
+    </head>
+    
+    <body class="bg-dark-400 text-light-100 font-sans min-h-screen">
+        <!-- 頁頭 -->
+        <header id="header"
+            class="py-3 px-4 bg-dark-300/80 backdrop-blur-md fixed top-0 left-0 right-0 z-40 transition-all duration-300">
+            <div class="flex justify-between items-center">
+                <h1 class="text-xl font-bold"></h1>
+                <div class="flex items-center space-x-3">
+                    <button id="searchBtn" class="p-2 rounded-full hover:bg-dark-200 transition-colors">
+
+                    </button>
+                    <button id="notificationsBtn" class="p-2 rounded-full hover:bg-dark-200 transition-colors relative">
+                        <i class="fa fa-smile text-light-300"></i>
+                        <span id="notificationBadge"
+                            ></span>
+                    </button>
+                </div>
+            </div>
+    
+            <!-- 搜索框 (預設隱藏) -->
+            <div id="searchContainer" class="mt-3 -translate-y-full transition-transform duration-300">
+                <div class="relative">
+                    <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-light-300/70"></i>
+                    <input type="text" id="searchInput" placeholder="搜尋作業..."
+                        class=" bg-dark-200 border border-dark-100 rounded-full py-2 pl-10 pr-4 text-light-100 focus:outline-none focus:border-primary transition-colors">
+                </div>
+            </div>
+        </header>
+    
+        <!-- 主內容區 -->
+        <main class="container mx-auto pt-20 pb-24 px-4">
+            <!-- 首頁視圖 -->
+            <section id="homeView">
+                <!-- 統計卡片 -->
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="bg-dark-300 rounded-xl p-4 border border-dark-100">
+                        <p class="text-light-300/70 text-sm mb-1">待完成作業</p>
+                        <div class="flex items-end">
+                            <span id="pendingCount" class="text-2xl font-bold">0</span>
+                            <span class="text-accent text-sm ml-2 mb-1"><i class="fa fa-exclamation-circle"></i> <span
+                                    id="urgentCount">0</span></span>
+                        </div>
+                    </div>
+                    <div class="bg-dark-300 rounded-xl p-4 border border-dark-100">
+                        <p class="text-light-300/70 text-sm mb-1">今日截止</p>
+                        <div class="flex items-center">
+                            <span id="todayCount" class="text-2xl font-bold">0</span>
+                            
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- 科目篩選 -->
+                <div class="mb-6">
+                    <h2 class="text-lg font-semibold mb-3">科目篩選</h2>
+                    <div id="subjectFilters" class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide"></div>
+                </div>
+    
+                <!-- 日期篩選 -->
+                <div class="mb-6">
+                    <h2 class="text-lg font-semibold mb-3">日期篩選</h2>
+                    <div id="dateFilters" class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide"></div>
+                </div>
+    
+                <!-- 待完成作業 -->
+                <div class="mb-8">
+                    <h2 class="text-lg font-semibold mb-3">待完成作業</h2>
+                    <div id="pendingHomeworkContainer" class="space-y-3"></div>
+                </div>
+    
+                <!-- 已完成作業 -->
+                <div>
+                    <h2 class="text-lg font-semibold mb-3">已完成作業</h2>
+                    <div id="completedHomeworkContainer" class="space-y-3"></div>
+                </div>
+            </section>
+    
+            <!-- 日曆視圖 (預設隱藏) -->
+            <section id="calendarView" class="hidden">
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-semibold">作業日程</h2>
+                        <div class="flex items-center space-x-2">
+                            <button id="prevWeek" class="p-2 rounded-full hover:bg-dark-200 transition-colors">
+                                <i class="fa fa-chevron-left text-light-300"></i>
+                            </button>
+                            <span id="currentWeekRange" class="text-sm text-light-300/80"></span>
+                            <button id="nextWeek" class="p-2 rounded-full hover:bg-dark-200 transition-colors">
+                                <i class="fa fa-chevron-right text-light-300"></i>
+                            </button>
+                        </div>
+                    </div>
+    
+                    <!-- 星期標題 -->
+                    <div class="grid grid-cols-7 gap-1 mb-1" id="calendarDays">
+                        <div class="text-center text-xs text-light-300/70 py-2">一</div>
+                        <div class="text-center text-xs text-light-300/70 py-2">二</div>
+                        <div class="text-center text-xs text-light-300/70 py-2">三</div>
+                        <div class="text-center text-xs text-light-300/70 py-2">四</div>
+                        <div class="text-center text-xs text-light-300/70 py-2">五</div>
+                        <div class="text-center text-xs text-light-300/70 py-2">六</div>
+                        <div class="text-center text-xs text-light-300/70 py-2">日</div>
+                    </div>
+    
+                    <!-- 日曆格子 -->
+                    <div id="calendarGrid" class="grid grid-cols-7 gap-1"></div>
+                </div>
+    
+                <!-- 當日作業 -->
+                <div>
+                    <h3 id="selectedDateTitle" class="text-lg font-semibold mb-3"></h3>
+                    <div id="dailyHomeworkContainer"></div>
+                </div>
+            </section>
+        </main>
+    
+        <!-- 底部導航 -->
+        <footer class="fixed bottom-0 left-0 right-0 bg-dark-300 border-t border-dark-100 py-2 px-6 z-40">
+            <div class="flex justify-around">
+                <button class="flex flex-col items-center justify-center py-1 text-primary relative" id="homeNav">
+                    <i class="fa fa-home text-lg mb-1"></i>
+                    <span class="text-xs">首頁</span>
+                </button>
+                <button
+                    class="flex flex-col items-center justify-center py-1 text-light-300/70 hover:text-light-100 transition-colors duration-200 relative"
+                    id="calendarNav">
+                    <i class="fa fa-calendar text-lg mb-1"></i>
+                    <span class="text-xs">日程</span>
+                </button>
+            </div>
+        </footer>
+    
+        <!-- 作業詳細資訊模態框 (預設隱藏) -->
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300"
+            id="detailModal">
+            <div class="bg-dark-300 rounded-2xl w-full max-w-md max-h-[80vh] overflow-y-auto transform scale-95 transition-transform duration-300"
+                id="modalContent">
+                <div class="p-5 border-b border-dark-100">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="bg-primary/20 text-primary text-xs font-medium px-2.5 py-0.5 rounded-full"
+                            id="modalSubject">國文</span>
+                        <button id="closeModal" class="text-light-300 hover:text-light-100 p-1 btn-effect">
+                            <i class="fa fa-times"></i>
+                        </button>
+                    </div>
+    
+                    <h3 class="text-xl font-semibold text-light-100 mb-2" id="modalTitle">課文背誦與筆記</h3>
+                    <div class="flex items-center text-sm text-light-300/70">
+                        <i class="fa fa-calendar-o mr-1"></i>
+                        <span id="modalDueDate">今天 22:00 截止</span>
+                    </div>
+                </div>
+    
+                <div class="p-5">
+                    <h4 class="text-light-100 font-medium mb-2">作業內容</h4>
+                    <p class="text-light-300 mb-5" id="modalContentText">背誦第5課全文，並完成課後練習題1-5題。注意書寫整潔，練習題需寫出完整解答過程。</p>
+    
+                    <h4 class="text-light-100 font-medium mb-2">補充說明</h4>
+                    <p class="text-light-300 mb-5" id="modalAdditionalInfo">課文背誦將於明天課堂上抽查，請務必準備。練習題需使用課堂發放的作業紙書寫。</p>
+    
+                    <div class="flex space-x-3">
+                        <button
+                            class="flex-1 bg-primary hover:bg-primary/90 text-white rounded-lg py-3 font-medium transition-colors duration-200 btn-effect"
+                            id="completeInModal">
+                            標記為已完成
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- 緊急作業通知模態框 (預設隱藏) -->
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300 hidden"
+            id="urgentModal">
+            <div
+                class="bg-dark-300 rounded-2xl w-full max-w-md max-h-[80vh] overflow-y-auto transform scale-95 transition-transform duration-300">
+                <div class="p-5 border-b border-dark-100 flex justify-between items-center">
+                    <h3 class="text-xl font-semibold text-light-100">即將截止的作業</h3>
+                    <button id="closeUrgentModal" class="text-light-300 hover:text-light-100 p-1 btn-effect">
+                        <i class="fa fa-times"></i>
+                    </button>
+                </div>
+    
+                <div id="urgentModalContent" class="max-h-[60vh] overflow-y-auto">
+                    <!-- 緊急作業將由JavaScript動態生成 -->
+                </div>
+            </div>
+        </div>
+    
+        <!-- 安裝應用提示 (預設隱藏) -->
+        <div class="fixed bottom-20 right-5 bg-dark-300 border border-dark-100 rounded-full p-3 shadow-lg z-50 hidden"
+            id="installPrompt">
+            <button
+                class="flex items-center space-x-2 bg-primary hover:bg-primary/90 text-white rounded-full px-4 py-2 font-medium transition-colors duration-200 btn-effect"
+                id="installApp">
+                <i class="fa fa-download"></i>
+                <span>安裝App</span>
+            </button>
+        </div>
+    
+        <!-- 模塊化JavaScript -->
+        <script src="js/data.js"></script>
+        <script src="js/utils.js"></script>
+        <script src="js/components.js"></script>
+        <script src="js/notifications.js"></script>
+        <script src="js/app.js"></script>
+        <script>
+            // 初始化應用
+            window.addEventListener('DOMContentLoaded', initApp);
+        </script>
+    </body>
+    
+    </html>
