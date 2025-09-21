@@ -3,7 +3,7 @@ const subjects = [
     { id: 'c', name: '愉快的國文', icon: 'fa-book', color: 'bg-red-500/20 text-red-400', day: 'saturday' },
     { id: 'mp', name: '狼師(進度)', icon: 'fa-calculator', color: 'bg-blue-500/20 text-blue-400', day: 'tuesday' },
     { id: 'mr', name: '狼師(複習)', icon: 'fa-calculator', color: 'bg-indigo-500/20 text-indigo-400', day: 'saturday' },
-    { id: 'b', name: '打嗝', icon: 'fa-bacteria', color: 'bg-green-500/20 text-green-400', day: 'sunday' }
+    { id: 'b', name: '好吵的生物', icon: 'fa-bacteria', color: 'bg-green-500/20 text-green-400', day: 'sunday' }
 ];
 
 // 作业数据
@@ -58,4 +58,5 @@ const homeworkData = [
         details: '啊啊啊啊啊啊啊啊啊啊啊',
         additionalInfo: '無聊的高斯局'
     }
+
 ];
