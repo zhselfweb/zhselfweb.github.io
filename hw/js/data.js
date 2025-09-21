@@ -1,4 +1,4 @@
-// 科目数据
+// 科目
 const subjects = [
     { id: 'c', name: '愉快的國文', icon: 'fa-book', color: 'bg-red-500/20 text-red-400', day: 'saturday' },
     { id: 'mp', name: '狼師(進度)', icon: 'fa-calculator', color: 'bg-blue-500/20 text-blue-400', day: 'tuesday' },
@@ -6,7 +6,7 @@ const subjects = [
     { id: 'b', name: '好吵的生物', icon: 'fa-bacteria', color: 'bg-green-500/20 text-green-400', day: 'sunday' }
 ];
 
-// 作业数据
+// 作業
 const homeworkData = [
     {
         id: 1,
@@ -50,13 +50,14 @@ const homeworkData = [
     },
     {
         id: 5,
-        subject: 'mp',
-        title: '數學(進度)',
+        subject: 'mr',
+        title: '數學(複習)',
         description: '指對數60~79',
-        dueDate: '2025/9/23',
+        dueDate: '2025/9/27',
         isCompleted: false,
         details: '啊啊啊啊啊啊啊啊啊啊啊',
         additionalInfo: '無聊的高斯局'
     }
 
 ];
+
