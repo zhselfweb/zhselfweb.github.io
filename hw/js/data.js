@@ -57,7 +57,18 @@ const homeworkData = [
         isCompleted: false,
         details: '啊啊啊啊啊啊啊啊啊啊啊',
         additionalInfo: '無聊的高斯局'
+    },
+    {
+        id: 6,
+        subject: 'mp',
+        title: '數學(進度)',
+        description: '51~54(例題8不寫),56,57 + 考卷3題',
+        dueDate: '2025/9/30',
+        isCompleted: false,
+        details: '極限與函數',
+        additionalInfo: '無聊的高斯局'
     }
 
 ];
+
 
