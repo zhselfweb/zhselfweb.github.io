@@ -60,6 +60,13 @@
                 </h2>
 
                 <form id="homeworkForm" class="space-y-5">
+                    <!-- ID輸入 -->
+                    <div>
+                        <label for="homeworkId" class="block text-sm font-medium text-gray-700 mb-1">作業ID</label>
+                        <input type="number" id="homeworkId" name="homeworkId" min="1"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus">
+                        <p class="text-xs text-neutral mt-1">留空將自動生成唯一ID</p>
+                    </div>
                     <!-- 科目選擇 -->
                     <div>
                         <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">科目 <span
@@ -287,7 +294,7 @@
                 return homework;
             };
 
-            // 檢查重複作業
+            // 檢查重複作業（科目、標題、截止日相同）
             const checkDuplicate = (homework) => {
                 return homeworkData.some(item =>
                     item.subject === homework.subject &&
@@ -296,11 +303,33 @@
                 );
             };
 
-            // 生成唯一ID
+            // 檢查ID是否已存在
+            const isIdExists = (id) => {
+                return homeworkData.some(item => item.id === id);
+            };
+
+            // 生成唯一ID（基於現有最大ID+1）
             const generateId = () => {
-                return homeworkData.length > 0
-                    ? Math.max(...homeworkData.map(item => item.id)) + 1
-                    : 1;
+                if (homeworkData.length === 0) return 1;
+                const maxId = Math.max(...homeworkData.map(item => item.id));
+                return maxId + 1;
+            };
+
+            // 獲取最終ID（優先使用用戶輸入，若重複則自動生成）
+            const getFinalId = (userInputId) => {
+                // 用戶未輸入ID或輸入非數字，自動生成
+                if (!userInputId || isNaN(userInputId)) {
+                    return generateId();
+                }
+
+                const numericId = Number(userInputId);
+                // 用戶輸入的ID已存在，自動生成下一個可用ID
+                if (isIdExists(numericId)) {
+                    return generateId();
+                }
+
+                // 用戶輸入的ID有效且未重複，直接使用
+                return numericId;
             };
 
             return {
@@ -309,7 +338,9 @@
                 getHomeworkData,
                 addHomework,
                 checkDuplicate,
-                generateId
+                isIdExists,    // 新增：檢查ID是否存在
+                generateId,
+                getFinalId      // 新增：計算最終使用的ID
             };
         })();
 
@@ -399,10 +430,11 @@
 
         // 模組化設計 - DOM操作模組
         const DomModule = (() => {
-            // DOM元素
+            // DOM元素（新增ID輸入框）
             const elements = {
                 form: document.getElementById('homeworkForm'),
                 subjectSelect: document.getElementById('subject'),
+                homeworkIdInput: document.getElementById('homeworkId'), // 新增：ID輸入框
                 titleInput: document.getElementById('title'),
                 descriptionInput: document.getElementById('description'),
                 dueDateInput: document.getElementById('dueDate'),
@@ -448,17 +480,17 @@
                     const card = document.createElement('div');
                     card.className = 'border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer';
                     card.innerHTML = `
-                        <div class="flex items-center mb-2">
-                            <div class="w-8 h-8 rounded-full ${subject.color} flex items-center justify-center mr-3">
-                                <i class="fa ${subject.icon}"></i>
-                            </div>
-                            <h3 class="font-medium">${subject.name}</h3>
-                        </div>
-                        <div class="text-sm text-neutral">
-                            <p>ID: ${subject.id}</p>
-                            <p>星期: ${dayMap[subject.day] || subject.day}</p>
-                        </div>
-                    `;
+                <div class="flex items-center mb-2">
+                    <div class="w-8 h-8 rounded-full ${subject.color} flex items-center justify-center mr-3">
+                        <i class="fa ${subject.icon}"></i>
+                    </div>
+                    <h3 class="font-medium">${subject.name}</h3>
+                </div>
+                <div class="text-sm text-neutral">
+                    <p>ID: ${subject.id}</p>
+                    <p>星期: ${dayMap[subject.day] || subject.day}</p>
+                </div>
+            `;
                     card.addEventListener('click', () => {
                         elements.subjectSelect.value = subject.id;
                         elements.subjectSelect.dispatchEvent(new Event('change'));
@@ -531,11 +563,14 @@
                     : phrase;
             };
 
-            // 更新預覽區
+            // 更新預覽區（支援手動輸入ID）
             const updatePreview = () => {
                 const formData = new FormData(elements.form);
+                // 獲取最終ID（優先使用用戶輸入，否則自動生成）
+                const finalId = DataModule.getFinalId(formData.get('homeworkId'));
+
                 const homework = {
-                    id: DataModule.generateId(),
+                    id: finalId, // 使用處理後的ID
                     subject: formData.get('subject') || '',
                     title: formData.get('title') || '',
                     description: formData.get('description') || '',
@@ -563,17 +598,17 @@
                 elements.duplicateWarning.classList.toggle('hidden', !show);
             };
 
-            // 加載歷史記錄到頁面
+            // 加載歷史記錄到頁面（編輯時填充ID）
             const loadHistoryToDOM = () => {
                 const history = UtilityModule.History.load();
                 elements.historyList.innerHTML = '';
 
                 if (history.length === 0) {
                     elements.historyList.innerHTML = `
-                        <div class="text-center text-neutral py-6 text-sm">
-                            暫無歷史記錄
-                        </div>
-                    `;
+                <div class="text-center text-neutral py-6 text-sm">
+                    暫無歷史記錄
+                </div>
+            `;
                     return;
                 }
 
@@ -584,27 +619,28 @@
                     const historyItem = document.createElement('div');
                     historyItem.className = 'border rounded-lg p-3 hover:bg-gray-50 transition-colors';
                     historyItem.innerHTML = `
-                        <div class="flex justify-between items-start mb-2">
-                            <div class="font-medium">${item.title}</div>
-                            <div class="text-xs text-neutral">${date.toLocaleString()}</div>
-                        </div>
-                        <div class="text-sm text-neutral mb-2">
-                            <span class="inline-block px-2 py-0.5 rounded text-xs ${subject.color} mr-2">${subject.name}</span>
-                            截止: ${item.dueDate}
-                        </div>
-                        <div class="flex justify-end gap-2">
-                            <button class="text-xs text-primary hover:text-primary/80 edit-history">
-                                <i class="fa fa-edit mr-1"></i>編輯
-                            </button>
-                            <button class="text-xs text-neutral hover:text-gray-600 copy-history">
-                                <i class="fa fa-copy mr-1"></i>複製
-                            </button>
-                        </div>
-                    `;
+                <div class="flex justify-between items-start mb-2">
+                    <div class="font-medium">${item.title}</div>
+                    <div class="text-xs text-neutral">${date.toLocaleString()}</div>
+                </div>
+                <div class="text-sm text-neutral mb-2">
+                    <span class="inline-block px-2 py-0.5 rounded text-xs ${subject.color} mr-2">${subject.name}</span>
+                    截止: ${item.dueDate}
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button class="text-xs text-primary hover:text-primary/80 edit-history">
+                        <i class="fa fa-edit mr-1"></i>編輯
+                    </button>
+                    <button class="text-xs text-neutral hover:text-gray-600 copy-history">
+                        <i class="fa fa-copy mr-1"></i>複製
+                    </button>
+                </div>
+            `;
 
-                    // 編輯歷史記錄
+                    // 編輯歷史記錄（新增ID填充）
                     historyItem.querySelector('.edit-history').addEventListener('click', () => {
                         elements.subjectSelect.value = item.subject;
+                        elements.homeworkIdInput.value = item.id; // 填充ID
                         elements.titleInput.value = item.title;
                         elements.descriptionInput.value = item.description;
 
@@ -658,7 +694,7 @@
                 // 科目選擇變化事件
                 elements.subjectSelect.addEventListener('change', handleSubjectChange);
 
-                // 表單輸入變化事件
+                // 表單輸入變化事件（包含ID輸入檢查）
                 elements.form.addEventListener('input', handleFormInputChange);
                 elements.form.addEventListener('change', handleFormInputChange);
 
@@ -699,12 +735,27 @@
                 DomModule.updatePreview();
             };
 
-            // 處理表單輸入變化
+            // 處理表單輸入變化（新增ID重複檢查）
             const handleFormInputChange = () => {
                 DomModule.updatePreview();
 
-                // 檢查重複
+                // 檢查ID是否重複
                 const formData = new FormData(elements.form);
+                const userId = formData.get('homeworkId');
+                if (userId && !isNaN(userId)) {
+                    const isDuplicateId = DataModule.isIdExists(Number(userId));
+                    if (isDuplicateId) {
+                        DomModule.showCopyMessage('此ID已存在，將自動生成新ID', 'text-orange-500');
+                    } else {
+                        // 清除ID重複提示（如果之前顯示過）
+                        if (!elements.copyMessage.classList.contains('hidden') &&
+                            elements.copyMessage.textContent.includes('此ID已存在')) {
+                            elements.copyMessage.classList.add('hidden');
+                        }
+                    }
+                }
+
+                // 檢查作業內容是否重複（原有邏輯）
                 const homework = {
                     subject: formData.get('subject') || '',
                     title: formData.get('title') || '',
@@ -715,13 +766,16 @@
                 DomModule.toggleDuplicateWarning(isDuplicate);
             };
 
-            // 處理表單提交
+            // 處理表單提交（使用最終ID）
             const handleFormSubmit = (e) => {
                 e.preventDefault();
 
                 const formData = new FormData(elements.form);
+                // 獲取最終ID（優先使用用戶輸入，重複則自動生成）
+                const finalId = DataModule.getFinalId(formData.get('homeworkId'));
+
                 const homework = {
-                    id: DataModule.generateId(),
+                    id: finalId,  // 使用處理後的ID
                     subject: formData.get('subject'),
                     title: formData.get('title'),
                     description: formData.get('description'),
@@ -731,7 +785,7 @@
                     additionalInfo: formData.get('additionalInfo') || ''
                 };
 
-                // 檢查重複
+                // 檢查重複作業
                 if (DataModule.checkDuplicate(homework)) {
                     if (!confirm('偵測到可能重複的作業，是否仍要新增？')) {
                         return;
@@ -771,14 +825,15 @@
                 }
             };
 
-            // 處理重置按鈕
+            // 處理重置按鈕（調整ID輸入框重置邏輯）
             const handleReset = () => {
-                // 保留科目選擇
+                // 保留科目選擇，清空ID輸入框
                 const subjectId = elements.subjectSelect.value;
 
                 // 延遲執行，確保表單已重置
                 setTimeout(() => {
                     elements.subjectSelect.value = subjectId;
+                    elements.homeworkIdInput.value = '';  // 清空ID輸入框
                     if (subjectId) {
                         // 重新觸發科目選擇事件，恢復相關設置
                         elements.subjectSelect.dispatchEvent(new Event('change'));
@@ -799,7 +854,6 @@
                 initEvents
             };
         })();
-
         // 初始化應用
         const initApp = () => {
             // 初始化DOM
