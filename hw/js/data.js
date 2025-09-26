@@ -12,7 +12,7 @@ const homeworkData = [
         id: 1,
         subject: 'c',
         title: '國文',
-        description: '紅123~128,133,139~142；綠89,90,95,116,117；國寫:尊重',
+        description: '紅123~128,133,139~142；綠89,90,96,166,167；國寫:尊重',
         dueDate: '2025/9/27',
         isCompleted: false,
         details: '第11回，快哉庭，赤壁賦；國寫:尊重',
@@ -70,6 +70,7 @@ const homeworkData = [
     }
 
 ];
+
 
 
 
