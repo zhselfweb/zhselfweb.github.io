@@ -44,8 +44,8 @@ function isUrgent(dueDate) {
     const now = new Date();
     const diffInHours = (due - now) / (1000 * 60 * 60);
     
-    // 剩余时间不足24小时且尚未截止
-    return diffInHours > 0 && diffInHours < 24;
+    // 剩余时间不足36小时且尚未截止
+    return diffInHours > 0 && diffInHours < 36;
 }
 
 /**
