@@ -5,7 +5,7 @@ const CACHE_NAME = `homework-tracker-${CACHE_VERSION}`;
 // 需要緩存的資源
 const ASSETS_TO_CACHE = [
     '/',
-    'index.html',
+    'home.html',
     'js/data.js',
     'js/utils.js',
     'js/components.js',
@@ -92,8 +92,8 @@ function checkAndSendNotifications(homeworkData) {
         const timeDiff = dueDate - now;
         const hoursDiff = timeDiff / (1000 * 60 * 60);
         
-        // 檢查是否在24小時內且尚未過期
-        if (hoursDiff > 0 && hoursDiff <= 24) {
+        // 檢查是否在36小時內且尚未過期
+        if (hoursDiff > 0 && hoursDiff <= 36) {
             notifications.push({
                 id: homework.id,
                 title: `作業即將截止: ${homework.title}`,
@@ -145,5 +145,4 @@ self.addEventListener('notificationclick', (event) => {
                 return clients.openWindow(urlToOpen);
             })
     );
-
 });
