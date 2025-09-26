@@ -16,7 +16,7 @@ const homeworkData = [
         dueDate: '2025/9/27',
         isCompleted: false,
         details: '第11回，快哉庭，赤壁賦；國寫:尊重',
-        additionalInfo: '難過的不熟局'
+        additionalInfo: '怎麼有人出國啦(°ー° )'
     },
     {
         id: 2,
@@ -70,5 +70,6 @@ const homeworkData = [
     }
 
 ];
+
 
 
