@@ -67,10 +67,19 @@ const homeworkData = [
         isCompleted: false,
         details: '極限與函數',
         additionalInfo: '無聊的高斯局'
+    },
+    {
+        id: 7,
+        subject: 'mr',
+        title: '數學(複習)',
+        description: '指數、對數函數上課講義 p77~93',
+        dueDate: '2025/10/4',
+        isCompleted: false,
+        details: '',
+        additionalInfo: '難過的不熟局'
     }
 
+
 ];
-
-
 
 
