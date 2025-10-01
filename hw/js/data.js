@@ -77,9 +77,20 @@ const homeworkData = [
         isCompleted: false,
         details: '',
         additionalInfo: '難過的不熟局'
-    }
+    },
+    {
+    id: 8,
+    subject: 'mp',
+    title: '數學(進度)',
+    description: '65 66 74 88',
+    dueDate: '2025/10/7',
+    isCompleted: false,
+    details: '極限',
+    additionalInfo: '考試超絕犯蠢'
+}
 
 
 ];
+
 
 
