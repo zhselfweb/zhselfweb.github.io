@@ -87,10 +87,18 @@ const homeworkData = [
     isCompleted: false,
     details: '極限',
     additionalInfo: '考試超絕犯蠢'
+},
+{
+    id: 9,
+    subject: 'c',
+    title: '國文',
+    description: '紅 148~152, 156, 159, 168~172；綠(一) 87, 88, 92~95, 168, 169；國寫：沒有上進心有錯嗎',
+    dueDate: '2025/10/4',
+    isCompleted: false,
+    details: '太多了吧',
+    additionalInfo: '又有人消失了'
 }
 
-
 ];
-
 
 
