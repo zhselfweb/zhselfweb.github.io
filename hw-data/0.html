@@ -366,7 +366,7 @@
             const getNextWeekday = (targetWeekday) => {
                 const today = new Date();
                 const currentWeekday = today.getDay();
-                const daysToAdd = (targetWeekday - currentWeekday + 7) % 7 || 7;
+                const daysToAdd = (targetWeekday - currentWeekday + 6) % 7 || 7;
 
                 const nextDate = new Date(today);
                 nextDate.setDate(today.getDate() + daysToAdd);
