@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作業資訊錄入工具</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5',
+                        secondary: '#10B981',
+                        neutral: '#64748B',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .card-shadow {
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            }
+            .input-focus {
+                @apply focus:ring-2 focus:ring-primary/50 focus:border-primary focus:outline-none;
+            }
+            .btn-effect {
+                @apply transition-all duration-300 hover:shadow-lg active:scale-95;
+            }
+            .phrase-btn {
+                @apply px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-md transition-colors;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 min-h-screen font-sans text-gray-800">
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+        <!-- 頁面標題 -->
+        <header class="mb-8 text-center">
+            <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-gray-800 mb-2">作業資訊錄入工具</h1>
+            <p class="text-neutral">快速錄入作業資訊並生成指定格式</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- 輸入表單區域 -->
+            <div class="bg-white rounded-xl p-6 card-shadow">
+                <h2 class="text-xl font-semibold mb-6 flex items-center">
+                    <i class="fa fa-pencil-square-o text-primary mr-2"></i>作業資訊輸入
+                </h2>
+
+                <form id="homeworkForm" class="space-y-5">
+                    <!-- ID輸入 -->
+                    <div>
+                        <label for="homeworkId" class="block text-sm font-medium text-gray-700 mb-1">作業ID</label>
+                        <input type="number" id="homeworkId" name="homeworkId" min="1"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus">
+                        <p class="text-xs text-neutral mt-1">留空將自動生成唯一ID</p>
+                    </div>
+                    <!-- 科目選擇 -->
+                    <div>
+                        <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">科目 <span
+                                class="text-red-500">*</span></label>
+                        <div class="relative">
+                            <select id="subject" name="subject" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus appearance-none">
+                                <option value="">請選擇科目</option>
+                                <!-- 科目選項將通過JS動態生成 -->
+                            </select>
+                            <div
+                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                <i class="fa fa-chevron-down text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 標題 -->
+                    <div>
+                        <label for="title" class="block text-sm font-medium text-gray-700 mb-1">標題 <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" id="title" name="title" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus">
+                    </div>
+
+                    <!-- 描述 -->
+                    <div>
+                        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">描述 <span
+                                class="text-red-500">*</span></label>
+                        <input type="text" id="description" name="description" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus">
+                    </div>
+
+                    <!-- 截止日期 -->
+                    <div>
+                        <label for="dueDate" class="block text-sm font-medium text-gray-700 mb-1">截止日期 <span
+                                class="text-red-500">*</span></label>
+                        <input type="date" id="dueDate" name="dueDate" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus">
+                        <p id="dateHint" class="text-xs text-neutral mt-1"></p>
+                    </div>
+
+                    <!-- 詳細內容 -->
+                    <div>
+                        <label for="details" class="block text-sm font-medium text-gray-700 mb-1">詳細內容</label>
+                        <textarea id="details" name="details" rows="2"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus"></textarea>
+                    </div>
+
+                    <!-- 附加資訊 -->
+                    <div>
+                        <label for="additionalInfo" class="block text-sm font-medium text-gray-700 mb-1">附加資訊</label>
+                        <textarea id="additionalInfo" name="additionalInfo" rows="2"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg input-focus"></textarea>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <button type="button" class="phrase-btn" data-phrase="難過的不熟局">難過的不熟局</button>
+                            <button type="button" class="phrase-btn" data-phrase="無聊的高斯局">無聊的高斯局</button>
+                            <button type="button" class="phrase-btn" data-phrase="愉快的不用不熟局">愉快的不用不熟局</button>
+                        </div>
+                    </div>
+
+                    <!-- 完成狀態 -->
+                    <div class="flex items-center">
+                        <input type="checkbox" id="isCompleted" name="isCompleted"
+                            class="h-4 w-4 text-primary border-gray-300 rounded input-focus">
+                        <label for="isCompleted" class="ml-2 block text-sm text-gray-700">已完成</label>
+                    </div>
+
+                    <!-- 操作按鈕 -->
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <button type="submit" id="generateBtn"
+                            class="bg-primary text-white px-6 py-2.5 rounded-lg font-medium btn-effect flex items-center">
+                            <i class="fa fa-magic mr-2"></i>生成格式
+                        </button>
+                        <button type="reset" id="resetBtn"
+                            class="bg-gray-200 text-gray-700 px-6 py-2.5 rounded-lg font-medium btn-effect flex items-center">
+                            <i class="fa fa-refresh mr-2"></i>重置
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 預覽和歷史區域 -->
+            <div class="flex flex-col gap-6">
+                <!-- 格式預覽 -->
+                <div class="bg-white rounded-xl p-6 card-shadow flex-1">
+                    <h2 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fa fa-code text-primary mr-2"></i>格式預覽
+                    </h2>
+                    <div class="relative">
+                        <pre id="jsonPreview"
+                            class="bg-gray-50 p-4 rounded-lg text-sm overflow-auto max-h-[250px] border border-gray-200">// 生成的格式將顯示在這裡
+{
+    id: ,
+    subject: '',
+    title: '',
+    description: '',
+    dueDate: '',
+    isCompleted: false,
+    details: '',
+    additionalInfo: ''
+}</pre>
+                        <button id="copyBtn"
+                            class="absolute top-3 right-3 bg-gray-200 hover:bg-gray-300 text-gray-700 p-2 rounded-lg btn-effect">
+                            <i class="fa fa-copy"></i>
+                        </button>
+                    </div>
+                    <div id="copyMessage" class="mt-2 text-sm hidden"></div>
+                    <div id="duplicateWarning" class="mt-2 text-sm text-red-500 hidden">
+                        <i class="fa fa-exclamation-triangle mr-1"></i>可能已存在相同作業，請確認！
+                    </div>
+                </div>
+
+                <!-- 歷史記錄 -->
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-semibold flex items-center">
+                            <i class="fa fa-history text-primary mr-2"></i>歷史記錄
+                        </h2>
+                        <button id="clearHistory" class="text-sm text-neutral hover:text-red-500 btn-effect">
+                            <i class="fa fa-trash-o mr-1"></i>清空
+                        </button>
+                    </div>
+                    <div id="historyList" class="space-y-3 max-h-[250px] overflow-y-auto">
+                        <div class="text-center text-neutral py-6 text-sm">
+                            暫無歷史記錄
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 科目信息展示 -->
+        <div class="mt-10 bg-white rounded-xl p-6 card-shadow">
+            <h2 class="text-xl font-semibold mb-6 flex items-center">
+                <i class="fa fa-book text-primary mr-2"></i>可用科目
+            </h2>
+            <div id="subjectsList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- 科目卡片將通過JS動態生成 -->
+            </div>
+        </div>
+
+        <footer class="mt-12 text-center text-neutral text-sm pb-6">
+            <p>作業資訊錄入工具 &copy; 2025</p>
+        </footer>
+    </div>
+
+    <script>
+        // 模組化設計 - 資料管理模組
+        const DataModule = (() => {
+            // 科目資料
+            const subjects = [
+                { id: 'c', name: '愉快的國文', icon: 'fa-book', color: 'bg-red-500/20 text-red-400', day: 'saturday' },
+                { id: 'mp', name: '狼師(進度)', icon: 'fa-calculator', color: 'bg-blue-500/20 text-blue-400', day: 'tuesday' },
+                { id: 'mr', name: '狼師(複習)', icon: 'fa-calculator', color: 'bg-indigo-500/20 text-indigo-400', day: 'saturday' },
+                { id: 'b', name: '好吵的生物', icon: 'fa-bacteria', color: 'bg-green-500/20 text-green-400', day: 'sunday' }
+            ];
+
+            // 作業資料
+            let homeworkData = [
+                {
+                    id: 1,
+                    subject: 'c',
+                    title: '國文',
+                    description: '紅123~128,133,139~142；綠89,90,95,116,117；國寫:尊重',
+                    dueDate: '2025/9/27',
+                    isCompleted: false,
+                    details: '第11回，快哉庭，赤壁賦；國寫:尊重',
+                    additionalInfo: '難過的不熟局'
+                },
+                {
+                    id: 2,
+                    subject: 'b',
+                    title: '生物',
+                    description: '27,29,33',
+                    dueDate: '2025/10/5',
+                    isCompleted: false,
+                    details: '光合作用，呼吸作用，染色質體，細胞週期，細胞分裂',
+                    additionalInfo: '愉快的不用不熟局'
+                },
+                {
+                    id: 3,
+                    subject: 'mp',
+                    title: '數學(進度)',
+                    description: '8,9,28~32',
+                    dueDate: '2025/9/23',
+                    isCompleted: false,
+                    details: '極限與函數',
+                    additionalInfo: '無聊的高斯局'
+                },
+                {
+                    id: 4,
+                    subject: 'mr',
+                    title: '數學(複習)',
+                    description: '15級分上26~30回，下31~46回',
+                    dueDate: '2025/10/25',
+                    isCompleted: false,
+                    details: '啊啊啊啊啊啊啊啊啊啊啊',
+                    additionalInfo: '無聊的高斯局'
+                },
+                {
+                    id: 5,
+                    subject: 'mp',
+                    title: '數學(進度)',
+                    description: '指對數60~79',
+                    dueDate: '2025/9/23',
+                    isCompleted: false,
+                    details: '啊啊啊啊啊啊啊啊啊啊啊',
+                    additionalInfo: '無聊的高斯局'
+                }
+            ];
+
+            // 取得所有科目
+            const getSubjects = () => [...subjects];
+
+            // 取得科目資訊
+            const getSubjectById = (id) => subjects.find(s => s.id === id) || null;
+
+            // 取得作業資料
+            const getHomeworkData = () => [...homeworkData];
+
+            // 新增作業
+            const addHomework = (homework) => {
+                homeworkData.push(homework);
+                return homework;
+            };
+
+            // 檢查重複作業（科目、標題、截止日相同）
+            const checkDuplicate = (homework) => {
+                return homeworkData.some(item =>
+                    item.subject === homework.subject &&
+                    item.title === homework.title &&
+                    item.dueDate === homework.dueDate
+                );
+            };
+
+            // 檢查ID是否已存在
+            const isIdExists = (id) => {
+                return homeworkData.some(item => item.id === id);
+            };
+
+            // 生成唯一ID（基於現有最大ID+1）
+            const generateId = () => {
+                if (homeworkData.length === 0) return 1;
+                const maxId = Math.max(...homeworkData.map(item => item.id));
+                return maxId + 1;
+            };
+
+            // 獲取最終ID（優先使用用戶輸入，若重複則自動生成）
+            const getFinalId = (userInputId) => {
+                // 用戶未輸入ID或輸入非數字，自動生成
+                if (!userInputId || isNaN(userInputId)) {
+                    return generateId();
+                }
+
+                const numericId = Number(userInputId);
+                // 用戶輸入的ID已存在，自動生成下一個可用ID
+                if (isIdExists(numericId)) {
+                    return generateId();
+                }
+
+                // 用戶輸入的ID有效且未重複，直接使用
+                return numericId;
+            };
+
+            return {
+                getSubjects,
+                getSubjectById,
+                getHomeworkData,
+                addHomework,
+                checkDuplicate,
+                isIdExists,    // 新增：檢查ID是否存在
+                generateId,
+                getFinalId      // 新增：計算最終使用的ID
+            };
+        })();
+
+        // 模組化設計 - 工具函數模組
+        const UtilityModule = (() => {
+            // 格式化日期為YYYY/MM/DD
+            const formatDate = (dateString) => {
+                if (!dateString) return '';
+                const date = new Date(dateString);
+                // 直接使用數字，不補零
+                return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
+            };
+
+            // 轉換日期為ISO格式(YYYY-MM-DD)
+            const toIsoDate = (dateString) => {
+                if (!dateString) return '';
+                const [year, month, day] = dateString.split('/');
+                return `${year}-${month}-${day}`;
+            };
+
+            // 計算下一個目標星期的日期
+            // 星期對照: 0=周日, 1=周一, ..., 6=周六
+            const getNextWeekday = (targetWeekday) => {
+                const today = new Date();
+                const currentWeekday = today.getDay();
+                const daysToAdd = (targetWeekday - currentWeekday + 7) % 7 || 7;
+
+                const nextDate = new Date(today);
+                nextDate.setDate(today.getDate() + daysToAdd);
+
+                return nextDate.toISOString().split('T')[0];
+            };
+
+            // 生成指定格式的字串(無引號鍵名，單引號字串)
+            const generateCustomFormat = (data) => {
+                return `{
+    id: ${data.id},
+    subject: '${data.subject || ''}',
+    title: '${data.title || ''}',
+    description: '${data.description || ''}',
+    dueDate: '${data.dueDate || ''}',
+    isCompleted: ${data.isCompleted},
+    details: '${data.details || ''}',
+    additionalInfo: '${data.additionalInfo || ''}'
+}`;
+            };
+
+            // 歷史記錄管理
+            const History = {
+                // 保存到歷史記錄
+                save: (homework) => {
+                    let history = JSON.parse(localStorage.getItem('homeworkHistory') || '[]');
+                    history.unshift({
+                        ...homework,
+                        timestamp: new Date().toISOString()
+                    });
+
+                    // 限制歷史記錄數量
+                    if (history.length > 10) {
+                        history = history.slice(0, 10);
+                    }
+
+                    localStorage.setItem('homeworkHistory', JSON.stringify(history));
+                    return history;
+                },
+
+                // 加載歷史記錄
+                load: () => {
+                    return JSON.parse(localStorage.getItem('homeworkHistory') || '[]');
+                },
+
+                // 清空歷史記錄
+                clear: () => {
+                    localStorage.removeItem('homeworkHistory');
+                    return [];
+                }
+            };
+
+            return {
+                formatDate,
+                toIsoDate,
+                getNextWeekday,
+                generateCustomFormat,
+                History
+            };
+        })();
+
+        // 模組化設計 - DOM操作模組
+        const DomModule = (() => {
+            // DOM元素（新增ID輸入框）
+            const elements = {
+                form: document.getElementById('homeworkForm'),
+                subjectSelect: document.getElementById('subject'),
+                homeworkIdInput: document.getElementById('homeworkId'), // 新增：ID輸入框
+                titleInput: document.getElementById('title'),
+                descriptionInput: document.getElementById('description'),
+                dueDateInput: document.getElementById('dueDate'),
+                dateHint: document.getElementById('dateHint'),
+                detailsInput: document.getElementById('details'),
+                additionalInfoInput: document.getElementById('additionalInfo'),
+                isCompletedInput: document.getElementById('isCompleted'),
+                jsonPreview: document.getElementById('jsonPreview'),
+                copyBtn: document.getElementById('copyBtn'),
+                copyMessage: document.getElementById('copyMessage'),
+                duplicateWarning: document.getElementById('duplicateWarning'),
+                historyList: document.getElementById('historyList'),
+                clearHistoryBtn: document.getElementById('clearHistory'),
+                resetBtn: document.getElementById('resetBtn'),
+                subjectsList: document.getElementById('subjectsList')
+            };
+
+            // 初始化科目選擇下拉框
+            const initSubjectSelect = () => {
+                const subjects = DataModule.getSubjects();
+                elements.subjectSelect.innerHTML = '<option value="">請選擇科目</option>';
+
+                subjects.forEach(subject => {
+                    const option = document.createElement('option');
+                    option.value = subject.id;
+                    option.textContent = subject.name;
+                    elements.subjectSelect.appendChild(option);
+                });
+            };
+
+            // 初始化科目列表展示
+            const initSubjectsList = () => {
+                const subjects = DataModule.getSubjects();
+                elements.subjectsList.innerHTML = '';
+
+                const dayMap = {
+                    'saturday': '周六',
+                    'tuesday': '周二',
+                    'sunday': '周日'
+                };
+
+                subjects.forEach(subject => {
+                    const card = document.createElement('div');
+                    card.className = 'border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer';
+                    card.innerHTML = `
+                <div class="flex items-center mb-2">
+                    <div class="w-8 h-8 rounded-full ${subject.color} flex items-center justify-center mr-3">
+                        <i class="fa ${subject.icon}"></i>
+                    </div>
+                    <h3 class="font-medium">${subject.name}</h3>
+                </div>
+                <div class="text-sm text-neutral">
+                    <p>ID: ${subject.id}</p>
+                    <p>星期: ${dayMap[subject.day] || subject.day}</p>
+                </div>
+            `;
+                    card.addEventListener('click', () => {
+                        elements.subjectSelect.value = subject.id;
+                        elements.subjectSelect.dispatchEvent(new Event('change'));
+                    });
+                    elements.subjectsList.appendChild(card);
+                });
+            };
+
+            // 更新標題根據選擇的科目
+            const updateTitleFromSubject = (subjectId) => {
+                if (!subjectId) {
+                    elements.titleInput.value = '';
+                    return;
+                }
+
+                const subject = DataModule.getSubjectById(subjectId);
+                if (subject) {
+                    let prefix = '';
+                    if (subject.name.includes('國文')) prefix = '國文';
+                    else if (subject.name.includes('狼師(進度)')) prefix = '數學(進度)';
+                    else if (subject.name.includes('狼師(複習)')) prefix = '數學(複習)';
+                    else if (subject.name.includes('生物')) prefix = '生物';
+
+                    elements.titleInput.value = prefix;
+                }
+            };
+
+            // 設置描述模板（國文專用）
+            const setChineseDescriptionTemplate = () => {
+                elements.descriptionInput.value = '紅 XX~XX；綠 XX~XX；國寫：XX';
+            };
+
+            // 設置默認日期根據科目
+            const setDefaultDateBySubject = (subjectId) => {
+                let targetWeekday; // 0=周日, 1=周一, ..., 6=周六
+                let hintText = '';
+
+                switch (subjectId) {
+                    case 'c': // 國文 - 下周六
+                        targetWeekday = 6;
+                        hintText = '國文默認截止日為下周六';
+                        break;
+                    case 'mp': // 狼師(進度) - 下周二
+                        targetWeekday = 2;
+                        hintText = '狼師(進度)默認截止日為下周二';
+                        break;
+                    case 'mr': // 狼師(複習) - 下周六
+                        targetWeekday = 6;
+                        hintText = '狼師(複習)默認截止日為下周六';
+                        break;
+                    case 'b': // 生物 - 下周日
+                        targetWeekday = 0;
+                        hintText = '生物默認截止日為下周日';
+                        break;
+                    default:
+                        hintText = '';
+                        return;
+                }
+
+                const nextDate = UtilityModule.getNextWeekday(targetWeekday);
+                elements.dueDateInput.value = nextDate;
+                elements.dateHint.textContent = hintText;
+            };
+
+            // 插入常用短語到附加資訊
+            const insertPhrase = (phrase) => {
+                const currentValue = elements.additionalInfoInput.value;
+                elements.additionalInfoInput.value = currentValue
+                    ? `${currentValue}；${phrase}`
+                    : phrase;
+            };
+
+            // 更新預覽區（支援手動輸入ID）
+            const updatePreview = () => {
+                const formData = new FormData(elements.form);
+                // 獲取最終ID（優先使用用戶輸入，否則自動生成）
+                const finalId = DataModule.getFinalId(formData.get('homeworkId'));
+
+                const homework = {
+                    id: finalId, // 使用處理後的ID
+                    subject: formData.get('subject') || '',
+                    title: formData.get('title') || '',
+                    description: formData.get('description') || '',
+                    dueDate: UtilityModule.formatDate(formData.get('dueDate')),
+                    isCompleted: formData.get('isCompleted') === 'on',
+                    details: formData.get('details') || '',
+                    additionalInfo: formData.get('additionalInfo') || ''
+                };
+
+                elements.jsonPreview.textContent = UtilityModule.generateCustomFormat(homework);
+            };
+
+            // 顯示複製消息
+            const showCopyMessage = (text, colorClass) => {
+                elements.copyMessage.textContent = text;
+                elements.copyMessage.className = `mt-2 text-sm ${colorClass} block`;
+
+                setTimeout(() => {
+                    elements.copyMessage.classList.add('hidden');
+                }, 2000);
+            };
+
+            // 顯示/隱藏重複警告
+            const toggleDuplicateWarning = (show) => {
+                elements.duplicateWarning.classList.toggle('hidden', !show);
+            };
+
+            // 加載歷史記錄到頁面（編輯時填充ID）
+            const loadHistoryToDOM = () => {
+                const history = UtilityModule.History.load();
+                elements.historyList.innerHTML = '';
+
+                if (history.length === 0) {
+                    elements.historyList.innerHTML = `
+                <div class="text-center text-neutral py-6 text-sm">
+                    暫無歷史記錄
+                </div>
+            `;
+                    return;
+                }
+
+                history.forEach(item => {
+                    const subject = DataModule.getSubjectById(item.subject) || { name: '未知科目', color: 'bg-gray-500/20 text-gray-400' };
+                    const date = new Date(item.timestamp);
+
+                    const historyItem = document.createElement('div');
+                    historyItem.className = 'border rounded-lg p-3 hover:bg-gray-50 transition-colors';
+                    historyItem.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <div class="font-medium">${item.title}</div>
+                    <div class="text-xs text-neutral">${date.toLocaleString()}</div>
+                </div>
+                <div class="text-sm text-neutral mb-2">
+                    <span class="inline-block px-2 py-0.5 rounded text-xs ${subject.color} mr-2">${subject.name}</span>
+                    截止: ${item.dueDate}
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button class="text-xs text-primary hover:text-primary/80 edit-history">
+                        <i class="fa fa-edit mr-1"></i>編輯
+                    </button>
+                    <button class="text-xs text-neutral hover:text-gray-600 copy-history">
+                        <i class="fa fa-copy mr-1"></i>複製
+                    </button>
+                </div>
+            `;
+
+                    // 編輯歷史記錄（新增ID填充）
+                    historyItem.querySelector('.edit-history').addEventListener('click', () => {
+                        elements.subjectSelect.value = item.subject;
+                        elements.homeworkIdInput.value = item.id; // 填充ID
+                        elements.titleInput.value = item.title;
+                        elements.descriptionInput.value = item.description;
+
+                        // 轉換日期格式
+                        elements.dueDateInput.value = UtilityModule.toIsoDate(item.dueDate);
+                        elements.detailsInput.value = item.details || '';
+                        elements.additionalInfoInput.value = item.additionalInfo || '';
+                        elements.isCompletedInput.checked = item.isCompleted;
+
+                        updatePreview();
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    });
+
+                    // 複製歷史記錄
+                    historyItem.querySelector('.copy-history').addEventListener('click', () => {
+                        const { timestamp, ...homework } = item;
+                        const text = UtilityModule.generateCustomFormat(homework);
+                        navigator.clipboard.writeText(text).then(() => {
+                            showCopyMessage('歷史項複製成功！', 'text-green-500');
+                        }).catch(err => {
+                            showCopyMessage('複製失敗，請手動複製', 'text-red-500');
+                            console.error('複製失敗:', err);
+                        });
+                    });
+
+                    elements.historyList.appendChild(historyItem);
+                });
+            };
+
+            return {
+                elements,
+                initSubjectSelect,
+                initSubjectsList,
+                updateTitleFromSubject,
+                setChineseDescriptionTemplate,
+                setDefaultDateBySubject,
+                insertPhrase,
+                updatePreview,
+                showCopyMessage,
+                toggleDuplicateWarning,
+                loadHistoryToDOM
+            };
+        })();
+
+        // 模組化設計 - 事件處理模組
+        const EventModule = (() => {
+            const { elements } = DomModule;
+
+            // 初始化所有事件監聽
+            const initEvents = () => {
+                // 科目選擇變化事件
+                elements.subjectSelect.addEventListener('change', handleSubjectChange);
+
+                // 表單輸入變化事件（包含ID輸入檢查）
+                elements.form.addEventListener('input', handleFormInputChange);
+                elements.form.addEventListener('change', handleFormInputChange);
+
+                // 表單提交事件
+                elements.form.addEventListener('submit', handleFormSubmit);
+
+                // 複製按鈕點擊事件
+                elements.copyBtn.addEventListener('click', handleCopyClick);
+
+                // 清空歷史記錄按鈕事件
+                elements.clearHistoryBtn.addEventListener('click', handleClearHistory);
+
+                // 重置按鈕事件
+                elements.resetBtn.addEventListener('click', handleReset);
+
+                // 常用短語按鈕事件
+                document.querySelectorAll('.phrase-btn').forEach(btn => {
+                    btn.addEventListener('click', handlePhraseClick);
+                });
+            };
+
+            // 處理科目選擇變化
+            const handleSubjectChange = () => {
+                const subjectId = elements.subjectSelect.value;
+
+                // 更新標題
+                DomModule.updateTitleFromSubject(subjectId);
+
+                // 設置國文描述模板
+                if (subjectId === 'c') {
+                    DomModule.setChineseDescriptionTemplate();
+                }
+
+                // 設置默認日期
+                DomModule.setDefaultDateBySubject(subjectId);
+
+                // 更新預覽
+                DomModule.updatePreview();
+            };
+
+            // 處理表單輸入變化（新增ID重複檢查）
+            const handleFormInputChange = () => {
+                DomModule.updatePreview();
+
+                // 檢查ID是否重複
+                const formData = new FormData(elements.form);
+                const userId = formData.get('homeworkId');
+                if (userId && !isNaN(userId)) {
+                    const isDuplicateId = DataModule.isIdExists(Number(userId));
+                    if (isDuplicateId) {
+                        DomModule.showCopyMessage('此ID已存在，將自動生成新ID', 'text-orange-500');
+                    } else {
+                        // 清除ID重複提示（如果之前顯示過）
+                        if (!elements.copyMessage.classList.contains('hidden') &&
+                            elements.copyMessage.textContent.includes('此ID已存在')) {
+                            elements.copyMessage.classList.add('hidden');
+                        }
+                    }
+                }
+
+                // 檢查作業內容是否重複（原有邏輯）
+                const homework = {
+                    subject: formData.get('subject') || '',
+                    title: formData.get('title') || '',
+                    dueDate: UtilityModule.formatDate(formData.get('dueDate'))
+                };
+
+                const isDuplicate = DataModule.checkDuplicate(homework);
+                DomModule.toggleDuplicateWarning(isDuplicate);
+            };
+
+            // 處理表單提交（使用最終ID）
+            const handleFormSubmit = (e) => {
+                e.preventDefault();
+
+                const formData = new FormData(elements.form);
+                // 獲取最終ID（優先使用用戶輸入，重複則自動生成）
+                const finalId = DataModule.getFinalId(formData.get('homeworkId'));
+
+                const homework = {
+                    id: finalId,  // 使用處理後的ID
+                    subject: formData.get('subject'),
+                    title: formData.get('title'),
+                    description: formData.get('description'),
+                    dueDate: UtilityModule.formatDate(formData.get('dueDate')),
+                    isCompleted: formData.get('isCompleted') === 'on',
+                    details: formData.get('details') || '',
+                    additionalInfo: formData.get('additionalInfo') || ''
+                };
+
+                // 檢查重複作業
+                if (DataModule.checkDuplicate(homework)) {
+                    if (!confirm('偵測到可能重複的作業，是否仍要新增？')) {
+                        return;
+                    }
+                }
+
+                // 新增作業
+                DataModule.addHomework(homework);
+
+                // 更新預覽
+                elements.jsonPreview.textContent = UtilityModule.generateCustomFormat(homework);
+
+                // 保存到歷史
+                UtilityModule.History.save(homework);
+                DomModule.loadHistoryToDOM();
+
+                // 顯示成功消息
+                DomModule.showCopyMessage('作業資訊已生成！', 'text-green-500');
+            };
+
+            // 處理複製按鈕點擊
+            const handleCopyClick = () => {
+                const text = elements.jsonPreview.textContent;
+                navigator.clipboard.writeText(text).then(() => {
+                    DomModule.showCopyMessage('複製成功！', 'text-green-500');
+                }).catch(err => {
+                    DomModule.showCopyMessage('複製失敗，請手動複製', 'text-red-500');
+                    console.error('複製失敗:', err);
+                });
+            };
+
+            // 處理清空歷史記錄 
+            const handleClearHistory = () => {
+                if (confirm('確定要清空所有歷史記錄嗎？')) {
+                    UtilityModule.History.clear();
+                    DomModule.loadHistoryToDOM();
+                }
+            };
+
+            // 處理重置按鈕（調整ID輸入框重置邏輯）
+            const handleReset = () => {
+                // 保留科目選擇，清空ID輸入框
+                const subjectId = elements.subjectSelect.value;
+
+                // 延遲執行，確保表單已重置
+                setTimeout(() => {
+                    elements.subjectSelect.value = subjectId;
+                    elements.homeworkIdInput.value = '';  // 清空ID輸入框
+                    if (subjectId) {
+                        // 重新觸發科目選擇事件，恢復相關設置
+                        elements.subjectSelect.dispatchEvent(new Event('change'));
+                    } else {
+                        DomModule.updatePreview();
+                    }
+                }, 0);
+            };
+
+            // 處理常用短語點擊
+            const handlePhraseClick = (e) => {
+                const phrase = e.currentTarget.getAttribute('data-phrase');
+                DomModule.insertPhrase(phrase);
+                DomModule.updatePreview();
+            };
+
+            return {
+                initEvents
+            };
+        })();
+        // 初始化應用
+        const initApp = () => {
+            // 初始化DOM
+            DomModule.initSubjectSelect();
+            DomModule.initSubjectsList();
+            DomModule.loadHistoryToDOM();
+            DomModule.updatePreview();
+
+            // 初始化事件
+            EventModule.initEvents();
+        };
+
+        // 頁面加載完成後初始化
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+
+</html>
