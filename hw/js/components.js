@@ -478,7 +478,7 @@ function openHomeworkDetail(homeworkId) {
     document.getElementById('modalSubject').className = `${subject.color} text-xs font-medium px-2.5 py-0.5 rounded-full`;
     document.getElementById('modalTitle').textContent = homework.title;
     document.getElementById('modalDueDate').textContent = `${homework.dueDate} 截止`;
-    document.getElementById('modalContentText').textContent = homework.details;
+    document.getElementById('modalContentText').innerHTML = homework.details.replace(/\n/g, '<br>');
     document.getElementById('modalAdditionalInfo').textContent = homework.additionalInfo;
     
     // 设置完成按钮事件
