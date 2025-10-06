@@ -177,7 +177,9 @@
 * {
     user-select: none;
 }
-
+.sea{
+    width: 75%;
+}
 /* 添加到您的样式表中 */
 #header {
     /* 确保头部有明确的高度 */
