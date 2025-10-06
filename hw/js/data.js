@@ -83,7 +83,7 @@ const homeworkData = [
     subject: 'mp',
     title: '數學(進度)',
     description: '65 66 74 88',
-    dueDate: '2025/10/7',
+    dueDate: '2025/10/4',
     isCompleted: false,
     details: '極限',
     additionalInfo: '考試超絕犯蠢'
@@ -107,6 +107,26 @@ const homeworkData = [
     isCompleted: false,
     details: '紅(三) 1~4, 11~12, 18~20, 25, 26\n綠(一) 170, 171\n綠(二) 15~17 \n國寫：緊張的時刻',
     additionalInfo: '又一堆作業🥲'
+},
+{
+    id: 11,
+    subject: 'mr',
+    title: '數學(複習)',
+    description: '總複習作業 (2)',
+    dueDate: '2025/10/11',
+    isCompleted: false,
+    details: '題號:\n4, 7, 8, 9, 10~13\n17, 21, 23, 25~41\n51~58, 68, 69, 71~73',
+    additionalInfo: ''
+},
+{
+    id: 12,
+    subject: 'b',
+    title: '生物',
+    description: '37 38 40~42 49~51 63',
+    dueDate: '2025/10/12',
+    isCompleted: false,
+    details: '37 38 40~42 49~51 63',
+    additionalInfo: '有人要補到死'
 }
 
 ];
