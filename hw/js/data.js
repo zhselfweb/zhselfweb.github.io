@@ -127,6 +127,26 @@ const homeworkData = [
     isCompleted: false,
     details: '極限',
     additionalInfo: '考試超絕犯蠢'
+},
+{
+    id: 14,
+    subject: 'c',
+    title: '國文',
+    description: '紅P32-36 .40 .42.46-49; 綠(1) P.172-173 ; 綠(2) p.25; 國寫: 我看尼古拉斯溫頓',
+    dueDate: '2025/10/18',
+    isCompleted: false,
+    details: '依然一堆',
+    additionalInfo: '難過的不熟局'
+},
+{
+    id: 15,
+    subject: 'b',
+    title: '生物',
+    description: 'p.63.66.67.71-72.74.77-78',
+    dueDate: '2025/10/19',
+    isCompleted: false,
+    details: '＞﹏＜',
+    additionalInfo: '愉快的不用不熟局\\(￣︶￣*\\))'
 }
 
 ];
