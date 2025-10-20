@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>音頻轉檔大師 - 簡單高效的音頻格式轉換工具</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- 配置Tailwind -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#3B82F6',
+            secondary: '#10B981',
+            dark: {
+              100: '#374151',
+              200: '#1F2937',
+              300: '#111827',
+              400: '#030712'
+            },
+            light: {
+              100: '#F9FAFB',
+              200: '#F3F4F6',
+              300: '#E5E7EB'
+            }
+          },
+          fontFamily: {
+            inter: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .backdrop-blur-sm {
+        backdrop-filter: blur(4px);
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+    }
+  </style>
+</head>
+
+<body class="font-inter bg-dark-400 text-light-100 min-h-screen flex flex-col">
+  <!-- 頂部導航 -->
+  <header class="bg-dark-300/80 backdrop-blur-sm sticky top-0 z-50 border-b border-dark-100/20">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <i class="fa fa-music text-primary text-2xl"></i>
+        <h1 class="text-xl font-bold text-light-100">音頻轉檔大師</h1>
+      </div>
+      <button id="helpBtn" class="text-light-300 hover:text-primary transition-colors">
+        <i class="fa fa-question-circle text-xl"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- 主要內容 -->
+  <main class="flex-grow container mx-auto px-4 py-6">
+    <!-- 介紹文字 -->
+    <div class="text-center mb-8">
+      <h2 class="text-[clamp(1.25rem,5vw,1.75rem)] font-semibold mb-2 text-light-100">簡單快速的音頻格式轉換</h2>
+      <p class="text-light-300 text-sm md:text-base max-w-md mx-auto">支援多種音頻格式互轉，保持最佳音質，操作簡單，完全免費</p>
+    </div>
+
+    <!-- 上傳區域 -->
+    <div id="uploadArea" class="border-2 border-dashed border-dark-100/50 rounded-2xl p-8 text-center mb-8 transition-all duration-300 hover:border-primary/70 bg-dark-300/30">
+      <div class="upload-icon mb-4">
+        <i class="fa fa-cloud-upload text-5xl text-primary/80"></i>
+      </div>
+      <h3 class="text-lg font-medium mb-2">拖放音頻檔案到這裡</h3>
+      <p class="text-light-300 text-sm mb-4">或點擊選擇檔案</p>
+      <label for="fileInput" class="inline-block bg-primary hover:bg-primary/90 text-white font-medium py-3 px-6 rounded-full transition-all duration-300 transform hover:scale-105 cursor-pointer">
+        <i class="fa fa-file-audio-o mr-2"></i>選擇音頻檔案
+      </label>
+      <input id="fileInput" type="file" accept="audio/*" class="hidden" multiple>
+      <p class="text-light-300/70 text-xs mt-4">支援 MP3, WAV, FLAC, AAC, OGG 等格式</p>
+    </div>
+
+    <!-- 已選檔案列表 -->
+    <div id="fileList" class="mb-8 hidden">
+      <h3 class="text-lg font-medium mb-3 flex items-center">
+        <i class="fa fa-list-ul text-primary mr-2"></i>已選擇的檔案
+      </h3>
+      <div id="selectedFiles" class="space-y-3 max-h-40 overflow-y-auto scrollbar-hide pr-2">
+        <!-- 動態添加的檔案項 -->
+      </div>
+    </div>
+
+    <!-- 格式選擇 -->
+    <div class="mb-8">
+      <h3 class="text-lg font-medium mb-3 flex items-center">
+        <i class="fa fa-exchange text-primary mr-2"></i>選擇輸出格式
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <!-- 音頻格式選項 -->
+        <div class="format-option bg-dark-300 rounded-xl p-4 border border-dark-100/30 hover:border-primary/50 transition-all cursor-pointer">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center">
+              <i class="fa fa-music text-primary mr-3"></i>
+              <div>
+                <h4 class="font-medium">MP3</h4>
+                <p class="text-light-300 text-xs mt-1">(高壓縮，中等品質保留，廣泛相容)</p>
+              </div>
+            </div>
+            <div class="format-radio">
+              <input type="radio" name="format" value="mp3" class="w-4 h-4 accent-primary" checked>
+            </div>
+          </div>
+        </div>
+
+        <div class="format-option bg-dark-300 rounded-xl p-4 border border-dark-100/30 hover:border-primary/50 transition-all cursor-pointer">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center">
+              <i class="fa fa-file-audio-o text-primary mr-3"></i>
+              <div>
+                <h4 class="font-medium">WAV</h4>
+                <p class="text-light-300 text-xs mt-1">(無壓縮，高品質保留，檔案較大)</p>
+              </div>
+            </div>
+            <div class="format-radio">
+              <input type="radio" name="format" value="wav" class="w-4 h-4 accent-primary">
+            </div>
+          </div>
+        </div>
+
+        <div class="format-option bg-dark-300 rounded-xl p-4 border border-dark-100/30 hover:border-primary/50 transition-all cursor-pointer">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center">
+              <i class="fa fa-compress text-primary mr-3"></i>
+              <div>
+                <h4 class="font-medium">FLAC</h4>
+                <p class="text-light-300 text-xs mt-1">(無損壓縮，高品質保留，檔案中等)</p>
+              </div>
+            </div>
+            <div class="format-radio">
+              <input type="radio" name="format" value="flac" class="w-4 h-4 accent-primary">
+            </div>
+          </div>
+        </div>
+
+        <div class="format-option bg-dark-300 rounded-xl p-4 border border-dark-100/30 hover:border-primary/50 transition-all cursor-pointer">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center">
+              <i class="fa fa-mobile text-primary mr-3 text-lg"></i>
+              <div>
+                <h4 class="font-medium">AAC</h4>
+                <p class="text-light-300 text-xs mt-1">(中等壓縮，良好品質保留，適合行動裝置)</p>
+              </div>
+            </div>
+            <div class="format-radio">
+              <input type="radio" name="format" value="aac" class="w-4 h-4 accent-primary">
+            </div>
+          </div>
+        </div>
+
+        <div class="format-option bg-dark-300 rounded-xl p-4 border border-dark-100/30 hover:border-primary/50 transition-all cursor-pointer">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center">
+              <i class="fa fa-code-fork text-primary mr-3"></i>
+              <div>
+                <h4 class="font-medium">OGG</h4>
+                <p class="text-light-300 text-xs mt-1">(中等壓縮，良好品質保留，開源格式)</p>
+              </div>
+            </div>
+            <div class="format-radio">
+              <input type="radio" name="format" value="ogg" class="w-4 h-4 accent-primary">
+            </div>
+          </div>
+        </div>
+
+        <div class="format-option bg-dark-300 rounded-xl p-4 border border-dark-100/30 hover:border-primary/50 transition-all cursor-pointer">
+          <div class="flex justify-between items-center">
+            <div class="flex items-center">
+              <i class="fa fa-apple text-primary mr-3"></i>
+              <div>
+                <h4 class="font-medium">M4A</h4>
+                <p class="text-light-300 text-xs mt-1">(中等壓縮，良好品質保留，蘋果裝置相容)</p>
+              </div>
+            </div>
+            <div class="format-radio">
+              <input type="radio" name="format" value="m4a" class="w-4 h-4 accent-primary">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 轉換設定 -->
+    <div class="mb-8 bg-dark-300/50 rounded-xl p-5 border border-dark-100/20">
+      <h3 class="text-lg font-medium mb-4 flex items-center">
+        <i class="fa fa-sliders text-primary mr-2"></i>轉換設定
+      </h3>
+      
+      <div class="space-y-4">
+        <div>
+          <label class="block text-light-200 text-sm mb-2">音質設定</label>
+          <select class="w-full bg-dark-200 border border-dark-100 rounded-lg px-4 py-3 text-light-100 focus:outline-none focus:ring-2 focus:ring-primary/50">
+            <option value="high">高品質 (適合音樂欣賞)</option>
+            <option value="medium" selected>中等品質 (平衡音質和檔案大小)</option>
+            <option value="low">低品質 (檔案小，適合語音)</option>
+          </select>
+        </div>
+        
+        <div>
+          <label class="block text-light-200 text-sm mb-2">取樣率</label>
+          <select class="w-full bg-dark-200 border border-dark-100 rounded-lg px-4 py-3 text-light-100 focus:outline-none focus:ring-2 focus:ring-primary/50">
+            <option value="44100" selected>44.1 kHz (標準音樂格式)</option>
+            <option value="48000">48 kHz (專業音頻)</option>
+            <option value="32000">32 kHz (語音最佳化)</option>
+            <option value="22050">22.05 kHz (低頻寬)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 轉換按鈕 -->
+    <div class="text-center mb-8">
+      <button id="convertBtn" class="bg-secondary hover:bg-secondary/90 text-white font-medium py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:bg-secondary" disabled>
+        <i class="fa fa-cog mr-2"></i>開始轉換
+      </button>
+    </div>
+
+    <!-- 轉換進度 (預設隱藏) -->
+    <div id="progressArea" class="mb-8 hidden">
+      <h3 class="text-lg font-medium mb-3 flex items-center">
+        <i class="fa fa-spinner fa-spin text-primary mr-2"></i>轉換進度
+      </h3>
+      <div class="bg-dark-300 rounded-xl p-5 border border-dark-100/20">
+        <div id="currentFile" class="text-light-200 text-sm mb-2">正在處理: <span></span></div>
+        <div class="w-full bg-dark-200 rounded-full h-3 mb-2">
+          <div id="progressBar" class="bg-primary h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <div class="flex justify-between text-xs text-light-300">
+          <span id="progressPercent">0%</span>
+          <span id="progressTime">剩餘時間: 計算中...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 轉換結果 (預設隱藏) -->
+    <div id="resultArea" class="mb-8 hidden">
+      <h3 class="text-lg font-medium mb-3 flex items-center">
+        <i class="fa fa-check-circle text-secondary mr-2"></i>轉換完成
+      </h3>
+      <div id="resultFiles" class="space-y-3">
+        <!-- 動態添加的結果檔案 -->
+      </div>
+    </div>
+  </main>
+
+  <!-- 幫助彈窗 (預設隱藏) -->
+  <div id="helpModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-dark-300 rounded-2xl max-w-md w-full max-h-[80vh] overflow-y-auto">
+      <div class="p-5 border-b border-dark-100/20 flex justify-between items-center">
+        <h3 class="text-xl font-bold">使用說明</h3>
+        <button id="closeHelpBtn" class="text-light-300 hover:text-light-100">
+          <i class="fa fa-times text-xl"></i>
+        </button>
+      </div>
+      <div class="p-5 space-y-4">
+        <div>
+          <h4 class="font-medium text-primary mb-2">如何轉換音頻檔案？</h4>
+          <ol class="list-decimal list-inside text-light-300 space-y-2 text-sm">
+            <li>點擊"選擇音頻檔案"按鈕或直接拖放檔案到上傳區域</li>
+            <li>選擇您需要的輸出格式</li>
+            <li>根據需求調整音質和取樣率設定</li>
+            <li>點擊"開始轉換"按鈕</li>
+            <li>轉換完成後，點擊"下載"按鈕儲存檔案</li>
+          </ol>
+        </div>
+        <div>
+          <h4 class="font-medium text-primary mb-2">常見問題</h4>
+          <div class="space-y-3 text-sm">
+            <p class="text-light-300"><span class="font-medium text-light-100">Q: </span>轉換後的檔案會儲存在伺服器上嗎？</p>
+            <p class="text-light-300 ml-4"><span class="font-medium text-light-100">A: </span>不會，所有轉換都在您的裝置上完成，保護您的隱私安全。</p>
+            
+            <p class="text-light-300"><span class="font-medium text-light-100">Q: </span>支援批次轉換嗎？</p>
+            <p class="text-light-300 ml-4"><span class="font-medium text-light-100">A: </span>支援，您可以同時上傳多個檔案進行轉換。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 獲取DOM元素
+    const fileInput = document.getElementById('fileInput');
+    const uploadArea = document.getElementById('uploadArea');
+    const fileList = document.getElementById('fileList');
+    const selectedFiles = document.getElementById('selectedFiles');
+    const convertBtn = document.getElementById('convertBtn');
+    const progressArea = document.getElementById('progressArea');
+    const progressBar = document.getElementById('progressBar');
+    const progressPercent = document.getElementById('progressPercent');
+    const progressTime = document.getElementById('progressTime');
+    const currentFile = document.querySelector('#currentFile span');
+    const resultArea = document.getElementById('resultArea');
+    const resultFiles = document.getElementById('resultFiles');
+    const helpBtn = document.getElementById('helpBtn');
+    const helpModal = document.getElementById('helpModal');
+    const closeHelpBtn = document.getElementById('closeHelpBtn');
+    const formatOptions = document.querySelectorAll('.format-option');
+    
+    // 儲存選中的檔案
+    let files = [];
+    
+    // 格式化檔案大小
+    const formatFileSize = (bytes) => {
+      if (bytes < 1024) return bytes + ' B';
+      else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+      else return (bytes / 1048576).toFixed(1) + ' MB';
+    };
+    
+    // 顯示選中的檔案
+    const displayFiles = () => {
+      if (files.length === 0) {
+        fileList.classList.add('hidden');
+        convertBtn.disabled = true;
+        return;
+      }
+      
+      fileList.classList.remove('hidden');
+      convertBtn.disabled = false;
+      selectedFiles.innerHTML = '';
+      
+      files.forEach((file, index) => {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'bg-dark-200/50 rounded-lg p-3 flex justify-between items-center';
+        fileItem.innerHTML = `
+          <div class="flex items-center">
+            <i class="fa fa-file-audio-o text-primary mr-3"></i>
+            <div>
+              <p class="text-sm truncate max-w-[200px]">${file.name}</p>
+              <p class="text-light-300 text-xs">${formatFileSize(file.size)}</p>
+            </div>
+          </div>
+          <button class="remove-file text-light-300 hover:text-red-400 transition-colors" data-index="${index}">
+            <i class="fa fa-times"></i>
+          </button>
+        `;
+        selectedFiles.appendChild(fileItem);
+      });
+      
+      // 新增刪除檔案事件
+      document.querySelectorAll('.remove-file').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const index = parseInt(e.currentTarget.dataset.index);
+          files.splice(index, 1);
+          displayFiles();
+        });
+      });
+    };
+    
+    // 處理檔案選擇
+    fileInput.addEventListener('change', (e) => {
+      files = Array.from(e.target.files);
+      displayFiles();
+    });
+    
+    // 拖放功能
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      uploadArea.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+      uploadArea.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+      uploadArea.addEventListener(eventName, unhighlight, false);
+    });
+    
+    function highlight() {
+      uploadArea.classList.add('border-primary');
+      uploadArea.classList.add('bg-dark-300/50');
+    }
+    
+    function unhighlight() {
+      uploadArea.classList.remove('border-primary');
+      uploadArea.classList.remove('bg-dark-300/50');
+    }
+    
+    uploadArea.addEventListener('drop', handleDrop, false);
+    
+    function handleDrop(e) {
+      const dt = e.dataTransfer;
+      files = Array.from(dt.files).filter(file => file.type.startsWith('audio/'));
+      displayFiles();
+    }
+    
+    // 點擊上傳區域觸發檔案選擇
+    uploadArea.addEventListener('click', (e) => {
+      if (!e.target.closest('label')) {
+        fileInput.click();
+      }
+    });
+    
+    // 格式選擇點擊事件
+    formatOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        const radio = option.querySelector('input[type="radio"]');
+        radio.checked = true;
+      });
+    });
+    
+    // 模擬轉換過程
+    convertBtn.addEventListener('click', () => {
+      // 隱藏其他區域，顯示進度區域
+      fileList.classList.add('hidden');
+      convertBtn.classList.add('hidden');
+      progressArea.classList.remove('hidden');
+      
+      let progress = 0;
+      const totalFiles = files.length;
+      let currentFileIndex = 0;
+      
+      // 更新當前處理的檔案
+      currentFile.textContent = files[currentFileIndex].name;
+      
+      // 模擬進度更新
+      const interval = setInterval(() => {
+        progress += 1;
+        
+        // 更新進度條和百分比
+        progressBar.style.width = `${progress}%`;
+        progressPercent.textContent = `${progress}%`;
+        
+        // 計算剩餘時間（模擬）
+        const totalTime = 100; // 假設總耗時100秒
+        const elapsedTime = progress;
+        const remainingTime = totalTime - elapsedTime;
+        const minutes = Math.floor(remainingTime / 60);
+        const seconds = remainingTime % 60;
+        progressTime.textContent = `剩餘時間: ${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+        
+        // 當一個檔案處理完成
+        if (progress >= 100 / totalFiles * (currentFileIndex + 1)) {
+          currentFileIndex++;
+          
+          // 如果還有檔案，處理下一個
+          if (currentFileIndex < totalFiles) {
+            currentFile.textContent = files[currentFileIndex].name;
+          } else {
+            // 所有檔案處理完成
+            clearInterval(interval);
+            progressArea.classList.add('hidden');
+            displayResults();
+          }
+        }
+      }, 100);
+    });
+    
+    // 顯示轉換結果
+    const displayResults = () => {
+      resultArea.classList.remove('hidden');
+      resultFiles.innerHTML = '';
+      
+      files.forEach(file => {
+        const format = document.querySelector('input[name="format"]:checked').value.toUpperCase();
+        const fileName = file.name.substring(0, file.name.lastIndexOf('.')) || file.name;
+        const resultFileName = `${fileName}.${format.toLowerCase()}`;
+        
+        const resultItem = document.createElement('div');
+        resultItem.className = 'bg-dark-200/50 rounded-lg p-3 flex justify-between items-center';
+        resultItem.innerHTML = `
+          <div class="flex items-center">
+            <i class="fa fa-file-audio-o text-secondary mr-3"></i>
+            <div>
+              <p class="text-sm truncate max-w-[200px]">${resultFileName}</p>
+              <p class="text-light-300 text-xs">轉換完成</p>
+            </div>
+          </div>
+          <button class="download-file bg-secondary/20 hover:bg-secondary/30 text-secondary px-3 py-1 rounded-full text-sm transition-colors">
+            <i class="fa fa-download mr-1"></i>下載
+          </button>
+        `;
+        resultFiles.appendChild(resultItem);
+      });
+      
+      // 新增下載事件（模擬）
+      document.querySelectorAll('.download-file').forEach(btn => {
+        btn.addEventListener('click', () => {
+          alert('在實際應用中，這裡會觸發檔案下載');
+        });
+      });
+    };
+    
+    // 幫助彈窗控制
+    helpBtn.addEventListener('click', () => {
+      helpModal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    });
+    
+    closeHelpBtn.addEventListener('click', () => {
+      helpModal.classList.add('hidden');
+      document.body.style.overflow = '';
+    });
+    
+    // 點擊彈窗外部關閉
+    helpModal.addEventListener('click', (e) => {
+      if (e.target === helpModal) {
+        helpModal.classList.add('hidden');
+        document.body.style.overflow = '';
+      }
+    });
+  </script>
+</body>
+</html>
