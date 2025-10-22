@@ -147,6 +147,26 @@ const homeworkData = [
     isCompleted: false,
     details: '＞﹏＜',
     additionalInfo: '愉快的不用不熟局\\(￣︶￣*\\))'
+},
+{
+    id: 16,
+    subject: 'c',
+    title: '國文',
+    description: '紅 52~56, 60, 63~68；綠 25, 26, 153, 154；國寫：點亮生命的人',
+    dueDate: '2025/10/25',
+    isCompleted: false,
+    details: '紅 52~56, 60, 63~68\n綠 25, 26, 153, 154\n國寫：點亮生命的人\n我將醒著.... 🥲',
+    additionalInfo: '難過的不熟局'
+},
+{
+    id: 17,
+    subject: 'b',
+    title: '生物',
+    description: '82~84, 86, 89, 91~93, 98, 99, 101, 118, 119',
+    dueDate: '2025/10/26',
+    isCompleted: false,
+    details: '有點多...',
+    additionalInfo: '愉快的不用不熟局'
 }
 
 ];
