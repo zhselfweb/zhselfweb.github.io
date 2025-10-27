@@ -222,7 +222,7 @@
                 { id: 'c', name: '愉快的國文', icon: 'fa-book', color: 'bg-red-500/20 text-red-400', day: 'saturday' },
                 { id: 'mp', name: '狼師(進度)', icon: 'fa-calculator', color: 'bg-blue-500/20 text-blue-400', day: 'tuesday' },
                 { id: 'mr', name: '狼師(複習)', icon: 'fa-calculator', color: 'bg-indigo-500/20 text-indigo-400', day: 'saturday' },
-                { id: 'b', name: '好吵的生物', icon: 'fa-bacteria', color: 'bg-green-500/20 text-green-400', day: 'sunday' }
+                { id: 'b', name: '有趣的物理', icon: 'fa-solid fa-brain', color: 'bg-orange-500/20 text-orange-400', day: 'sunday' }
             ];
 
             // 作業資料
@@ -366,7 +366,7 @@
             const getNextWeekday = (targetWeekday) => {
                 const today = new Date();
                 const currentWeekday = today.getDay();
-                const daysToAdd = (targetWeekday - currentWeekday + 6) % 7 || 7;
+                const daysToAdd = (targetWeekday - currentWeekday + 7) % 7 || 7;
 
                 const nextDate = new Date(today);
                 nextDate.setDate(today.getDate() + daysToAdd);
@@ -512,7 +512,7 @@
                     if (subject.name.includes('國文')) prefix = '國文';
                     else if (subject.name.includes('狼師(進度)')) prefix = '數學(進度)';
                     else if (subject.name.includes('狼師(複習)')) prefix = '數學(複習)';
-                    else if (subject.name.includes('生物')) prefix = '生物';
+                    else if (subject.name.includes('物理')) prefix = '物理';
 
                     elements.titleInput.value = prefix;
                 }
@@ -527,7 +527,7 @@
             const setDefaultDateBySubject = (subjectId) => {
                 let targetWeekday; // 0=周日, 1=周一, ..., 6=周六
                 let hintText = '';
-                //因會設定成截止日期前一天，所以將截止日期往後延一天
+
                 switch (subjectId) {
                     case 'c': // 國文 - 下周六
                         targetWeekday = 0;
@@ -543,7 +543,7 @@
                         break;
                     case 'b': // 生物 - 下周日
                         targetWeekday = 1;
-                        hintText = '生物默認截止日為下周日';
+                        hintText = '物理默認截止日為下周日';
                         break;
                     default:
                         hintText = '';
