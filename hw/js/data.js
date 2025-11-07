@@ -62,7 +62,7 @@ const homeworkData = [
     id: 23,
     subject: 'c',
     title: '國文',
-    description: '紅 118~113, 116, 117, 122, 123, 129, 130；綠 P.37-38.44-46；國寫：□的啟示',
+    description: '紅 108~113, 116, 117, 122, 123, 129, 130；綠 P.37-38.44-46；國寫：□的啟示',
     dueDate: '2025/11/8',
     isCompleted: false,
     details: '紅 118~113,\n116, 117,\n122, 123\n129, 130\n綠 P.37-38.44-46\n國寫：□的啟示',
@@ -80,5 +80,6 @@ const homeworkData = [
 }
 
 ];
+
 
 
