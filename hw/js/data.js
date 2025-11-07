@@ -35,7 +35,7 @@ const homeworkData = [
     description: 'p113~115',
     dueDate: '2025/11/2',
     isCompleted: false,
-    details: '\(￣︶￣*\))',
+    details: '\\(￣︶￣*\\))',
     additionalInfo: ''
 },
 {
@@ -47,6 +47,36 @@ const homeworkData = [
     isCompleted: false,
     details: '18歲 ! ! !',
     additionalInfo: ''
+},
+{
+    id: 22,
+    subject: 'mr',
+    title: '數學(複習)',
+    description: '平面向量P125-139',
+    dueDate: '2025/11/8',
+    isCompleted: false,
+    details: '想妳啦',
+    additionalInfo: ''
+},
+{
+    id: 23,
+    subject: 'c',
+    title: '國文',
+    description: '紅 118~113, 116, 117, 122, 123, 129, 130；綠 P.37-38.44-46；國寫：□的啟示',
+    dueDate: '2025/11/8',
+    isCompleted: false,
+    details: '紅 118~113,\n116, 117,\n122, 123\n129, 130\n綠 P.37-38.44-46\n國寫：□的啟示',
+    additionalInfo: '要10.30前回家'
+},
+{
+    id: 24,
+    subject: 'b',
+    title: '物理',
+    description: 'p119~121, 124~127',
+    dueDate: '2025/11/9',
+    isCompleted: false,
+    details: '主題3~4(p119~121)\n主5~8(p124~127)',
+    additionalInfo: '嘿嘿 抱抱\\(￣︶￣*\\))'
 }
 
 ];
