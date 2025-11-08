@@ -73,13 +73,14 @@ const homeworkData = [
     subject: 'b',
     title: '物理',
     description: 'p119~121, 124~127',
-    dueDate: '2025/11/9',
+    dueDate: '2025/11/16',
     isCompleted: false,
     details: '主題3~4(p119~121)\n主5~8(p124~127)',
     additionalInfo: '嘿嘿 抱抱\\(￣︶￣*\\))'
 }
 
 ];
+
 
 
 
