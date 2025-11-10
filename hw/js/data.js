@@ -77,11 +77,18 @@ const homeworkData = [
     isCompleted: false,
     details: '主題3~4(p119~121)\n主5~8(p124~127)',
     additionalInfo: '嘿嘿 抱抱\\(￣︶￣*\\))'
+},
+{
+    id: 25,
+    subject: 'mp',
+    title: '數學(進度)',
+    description: '多項式函數的微積分p38~40.44.45',
+    dueDate: '2025/11/11',
+    isCompleted: false,
+    details: 'p38~40.44.45',
+    additionalInfo: '(*￣3￣)╭'
 }
 
 ];
-
-
-
 
 
