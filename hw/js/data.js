@@ -93,7 +93,7 @@ const homeworkData = [
     subject: 'mp',
     title: '數學(進度)',
     description: '多項式函數的微積分 p.50.51.52.66',
-    dueDate: '2025/11/19',
+    dueDate: '2025/11/18',
     isCompleted: false,
     details: 'p.50.51.52.66',
     additionalInfo: '(⁠◍⁠•⁠ᴗ⁠•⁠◍⁠)'
@@ -101,6 +101,7 @@ const homeworkData = [
 
 
 ];
+
 
 
 
