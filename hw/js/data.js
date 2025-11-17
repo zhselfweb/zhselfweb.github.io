@@ -87,8 +87,20 @@ const homeworkData = [
     isCompleted: false,
     details: 'p38~40.44.45',
     additionalInfo: '(*￣3￣)╭'
+},
+{
+    id: 26,
+    subject: 'mp',
+    title: '數學(進度)',
+    description: '多項式函數的微積分 p.50.51.52.66',
+    dueDate: '2025/11/19',
+    isCompleted: false,
+    details: 'p.50.51.52.66',
+    additionalInfo: '(⁠◍⁠•⁠ᴗ⁠•⁠◍⁠)'
 }
 
+
 ];
+
 
 
