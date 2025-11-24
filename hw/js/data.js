@@ -8,100 +8,18 @@ const subjects = [
 
 // 作業
 const homeworkData = [
-{
-    id: 18,
-    subject: 'c',
-    title: '國文',
-    description: '紅 P.80-85 .90 .95-97.102-103；綠 P.35-36.155；國寫 : 網路謠言',
-    dueDate: '2025/11/1',
-    isCompleted: false,
-    details: '紅 P.80-85 .90 .95-97.102-103\n綠 P.35-36.155\n國寫 : 網路謠言',
-    additionalInfo: '我將清醒'
-},
-{
-    id: 19,
-    subject: 'mr',
-    title: '數學(複習)',
-    description: '平面向量p108~124',
-    dueDate: '2025/11/1',
-    isCompleted: false,
-    details: '平面向量p108~124',
-    additionalInfo: '難過的不熟局'
-},
-{
-    id: 20,
-    subject: 'b',
-    title: '物理',
-    description: 'p113~115',
-    dueDate: '2025/11/2',
-    isCompleted: false,
-    details: '\\(￣︶￣*\\))',
-    additionalInfo: ''
-},
-{
-    id: 21,
-    subject: 'mp',
-    title: '數學(進度)',
-    description: 'p3.11.25.27',
-    dueDate: '2025/11/5',
-    isCompleted: false,
-    details: '18歲 ! ! !',
-    additionalInfo: ''
-},
-{
-    id: 22,
-    subject: 'mr',
-    title: '數學(複習)',
-    description: '平面向量P125-139',
-    dueDate: '2025/11/8',
-    isCompleted: false,
-    details: '想妳啦',
-    additionalInfo: ''
-},
-{
-    id: 23,
-    subject: 'c',
-    title: '國文',
-    description: '紅 108~113, 116, 117, 122, 123, 129, 130；綠 P.37-38.44-46；國寫：□的啟示',
-    dueDate: '2025/11/8',
-    isCompleted: false,
-    details: '紅 108~113,\n116, 117,\n122, 123\n129, 130\n綠 P.37-38.44-46\n國寫：□的啟示',
-    additionalInfo: '要10.30前回家'
-},
-{
-    id: 24,
-    subject: 'b',
-    title: '物理',
-    description: 'p119~121, 124~127',
-    dueDate: '2025/11/16',
-    isCompleted: false,
-    details: '主題3~4(p119~121)\n主5~8(p124~127)',
-    additionalInfo: '嘿嘿 抱抱\\(￣︶￣*\\))'
-},
-{
-    id: 25,
-    subject: 'mp',
-    title: '數學(進度)',
-    description: '多項式函數的微積分p38~40.44.45',
-    dueDate: '2025/11/11',
-    isCompleted: false,
-    details: 'p38~40.44.45',
-    additionalInfo: '(*￣3￣)╭'
-},
+
 {
     id: 26,
     subject: 'mp',
     title: '數學(進度)',
-    description: '多項式函數的微積分 p.50.51.52.66',
-    dueDate: '2025/11/18',
+    description: '多項式函數的微積分p.70.88.89.100(3).101(4).102',
+    dueDate: '2025/11/25',
     isCompleted: false,
-    details: 'p.50.51.52.66',
-    additionalInfo: '(⁠◍⁠•⁠ᴗ⁠•⁠◍⁠)'
+    details: 'p.70.88.89.100(3).101(4).102',
+    additionalInfo: '好喜歡妳❤️'
 }
 
-
 ];
-
-
 
 
