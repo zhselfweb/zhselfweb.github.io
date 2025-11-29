@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>For You</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Italianno&family=Cinzel:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0;
+        background-color: #000;
+        overflow: hidden;
+        touch-action: none;
+        -webkit-tap-highlight-color: transparent;
+        user-select: none;
+      }
+      #canvas-container {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        background: radial-gradient(
+          circle at center,
+          #1a202c 0%,
+          #000000 100%
+        ); /* 優化：漸層背景 */
+      }
+
+      /* 字幕層 */
+      #text-layer {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        text-align: center;
+        pointer-events: none;
+        z-index: 10;
+        mix-blend-mode: screen;
+      }
+
+      .cinematic-text {
+        font-family: "Cinzel", serif;
+        color: #fff;
+        font-size: 1.8rem;
+        letter-spacing: 0.5rem;
+        font-weight: bold;
+        opacity: 0;
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+        transition: transform 0.2s ease-out; /* 用於手機視差微動 */
+      }
+
+      /* 信件層 */
+      #final-message-layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        pointer-events: none;
+        opacity: 0;
+        z-index: 20;
+      }
+
+      .handwritten-text {
+        font-family: "Italianno", cursive;
+        color: #fff;
+        font-size: 4rem;
+        line-height: 1.5;
+        text-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+        white-space: nowrap;
+      }
+
+      .date-text {
+        font-family: "Cinzel", serif;
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.3);
+        letter-spacing: 2px;
+        font-weight: normal;
+        text-transform: uppercase;
+      }
+
+      .signature {
+        font-family: "Italianno", cursive;
+        position: absolute;
+        bottom: 50px;
+        right: 20px;
+        font-size: 3rem;
+        color: #7855a3b5;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      }
+
+      @media (max-width: 600px) {
+        .handwritten-text {
+          white-space: normal;
+          padding: 0 20px;
+          text-align: center;
+          font-size: 2.5rem;
+        }
+        .signature {
+          font-size: 2rem;
+          bottom: 30px;
+          right: 15px;
+        }
+        .date-text {
+          font-size: 0.6rem;
+          bottom: 15px;
+          right: 15px;
+        }
+        .cinematic-text {
+          font-size: 1.4rem;
+          letter-spacing: 0.3rem;
+        }
+      }
+
+      #hint {
+        position: absolute;
+        bottom: 50px;
+        left: 0;
+        width: 100%;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.4);
+        font-family: sans-serif;
+        font-size: 0.7rem;
+        letter-spacing: 4px;
+        animation: pulse 3s infinite;
+        pointer-events: none;
+        opacity: 0.5;
+      }
+
+      /* 音樂控制提示 (可選) */
+      #music-note {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 20px;
+        color: rgba(255, 255, 255, 0.3);
+        z-index: 30;
+        opacity: 0;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 0.2;
+        }
+        50% {
+          opacity: 0.7;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="text-layer">
+      <div id="subtitle" class="cinematic-text"></div>
+    </div>
+
+    <div id="final-message-layer">
+      <div class="handwritten-text">
+        Having you step in my life is<br />the greatest luck of mine forever.
+      </div>
+      <div class="signature">ZH</div>
+      <div class="date-text">2025.12.1</div>
+    </div>
+
+    <div id="hint">TAP TO START</div>
+    <div id="music-note">♫</div>
+    <div id="canvas-container"></div>
+
+    <audio id="bg-music" loop>
+      <source src="./bgm.mp3" type="audio/mpeg" />
+    </audio>
+    <audio id="sfx-chime">
+      <source
+        src="https://cdn.pixabay.com/download/audio/2022/03/24/audio_c8c8a73467.mp3?filename=magic-mallet-6262.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+      }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+    <script type="module">
+      import * as THREE from "three";
+      import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+      import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+      import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+
+      const BG_MUSIC_URL = "./bgm.mp3";
+
+      // --- 核心變數 ---
+      let scene, camera, renderer, composer;
+      let particles, haloRing, spiralSystem, snowSystem, topStar;
+      let positions, targets, currentColors, sizes;
+      // 增加 velocity 用於物理模擬
+      let velocities, accelerations;
+
+      const PARTICLE_COUNT = 5000; // 稍微增加數量
+      const SPIRAL_COUNT = 300;
+      const SNOW_COUNT = 200;
+
+      // 顏色定義
+      const C_ANGEL_WHITE = new THREE.Color("#e0f7fa"); // 更亮的白
+      const C_VOID_BLUE = new THREE.Color("#1a237e");
+      const C_CORE_RED = new THREE.Color("#ff1744");
+      const C_STAR_GOLD = new THREE.Color("#ffd700");
+      const C_TREE_GREEN = new THREE.Color("#00e676"); // 混一點綠色給聖誕樹
+
+      let clock = new THREE.Clock();
+      let state = 0; // 0: Start, 1: Heart, 2: Tree, 3: Finale
+
+      // 互動相關
+      let raycaster = new THREE.Raycaster();
+      let mouseVector = new THREE.Vector2();
+      let interactionTarget = new THREE.Vector3(); // 轉換後的3D互動點
+      let isInteracting = false; // 是否正在觸控
+
+      // 視差
+      let mouseX = 0,
+        mouseY = 0;
+      let targetX = 0,
+        targetY = 0;
+      const windowHalfX = window.innerWidth / 2;
+      const windowHalfY = window.innerHeight / 2;
+
+      // DOM 元素
+      const subtitle = document.getElementById("subtitle");
+      const hint = document.getElementById("hint");
+      const finalLayer = document.getElementById("final-message-layer");
+      const bgMusic = document.getElementById("bg-music");
+      const sfxChime = document.getElementById("sfx-chime");
+
+      init();
+      animate();
+
+      function init() {
+        scene = new THREE.Scene();
+        // 增加遠景星空背景，增加深度感
+        createStarryBackground();
+        scene.fog = new THREE.FogExp2(0x050505, 0.0015);
+
+        camera = new THREE.PerspectiveCamera(
+          60,
+          window.innerWidth / window.innerHeight,
+          0.1,
+          3000
+        );
+        camera.position.z = 150;
+
+        renderer = new THREE.WebGLRenderer({
+          antialias: false,
+          powerPreference: "high-performance",
+          alpha: true,
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        document
+          .getElementById("canvas-container")
+          .appendChild(renderer.domElement);
+
+        const renderScene = new RenderPass(scene, camera);
+        // Bloom 優化：強度與半徑微調，避免過曝
+        const bloomPass = new UnrealBloomPass(
+          new THREE.Vector2(window.innerWidth, window.innerHeight),
+          1.5,
+          0.4,
+          0.85
+        );
+        bloomPass.threshold = 0;
+        bloomPass.strength = 1.8;
+        bloomPass.radius = 0.5;
+
+        composer = new EffectComposer(renderer);
+        composer.addPass(renderScene);
+        composer.addPass(bloomPass);
+
+        createParticles();
+        createHalo();
+        createSpirals();
+        createSnow(); // 新增飄雪
+        createTopStar(); // 新增頂星
+
+        window.addEventListener("resize", onWindowResize);
+
+        // 綁定互動事件
+        const body = document.body;
+        body.addEventListener("click", handleStateChange);
+        body.addEventListener("touchstart", handleStateChange, {
+          passive: false,
+        });
+
+        // 斥力場互動
+        body.addEventListener("mousemove", onInteractMove);
+        body.addEventListener("touchmove", onInteractMove, { passive: false });
+        body.addEventListener("touchend", () => {
+          isInteracting = false;
+        });
+      }
+
+      function initAudio() {
+        // 設定音樂來源
+        if (bgMusic.src !== new URL(BG_MUSIC_URL, document.baseURI).href) {
+          bgMusic.src = BG_MUSIC_URL;
+        }
+
+        // 嘗試播放音樂
+        bgMusic.volume = 0.4;
+        sfxChime.volume = 0.6;
+
+        // 有些瀏覽器需要更嚴格的處理，這裡做個簡單的檢查
+        if (bgMusic.paused) {
+          bgMusic
+            .play()
+            .then(() => {
+              gsap.to("#music-note", { opacity: 1, duration: 2 });
+            })
+            .catch((e) =>
+              console.log("Audio play failed (waiting for interaction):", e)
+            );
+        }
+      }
+
+      function playChime() {
+        if (sfxChime.currentTime > 0) {
+          sfxChime.currentTime = 0;
+        }
+        sfxChime.play().catch((e) => {});
+      }
+
+      function initGyro() {
+        if (
+          typeof DeviceOrientationEvent !== "undefined" &&
+          typeof DeviceOrientationEvent.requestPermission === "function"
+        ) {
+          DeviceOrientationEvent.requestPermission()
+            .then((permissionState) => {
+              if (permissionState === "granted")
+                window.addEventListener("deviceorientation", handleOrientation);
+            })
+            .catch(console.error);
+        } else {
+          window.addEventListener("deviceorientation", handleOrientation);
+        }
+      }
+
+      function handleOrientation(event) {
+        const x = event.gamma || 0;
+        const y = event.beta || 0;
+        // 增加靈敏度
+        mouseX = (x / 30) * windowHalfX;
+        mouseY = ((y - 45) / 30) * windowHalfY;
+      }
+
+      function onInteractMove(event) {
+        isInteracting = true;
+        let clientX, clientY;
+        if (event.touches && event.touches.length > 0) {
+          clientX = event.touches[0].clientX;
+          clientY = event.touches[0].clientY;
+        } else {
+          clientX = event.clientX;
+          clientY = event.clientY;
+        }
+
+        // 更新滑鼠/觸控位置用於視差
+        mouseX = (clientX - windowHalfX) * 0.5;
+        mouseY = (clientY - windowHalfY) * 0.5;
+
+        // 計算 3D 斥力場的投影位置
+        // 將螢幕座標轉為標準化設備座標 (NDC)
+        mouseVector.x = (clientX / window.innerWidth) * 2 - 1;
+        mouseVector.y = -(clientY / window.innerHeight) * 2 + 1;
+
+        // 用 Raycaster 找出與 Z=0 平面的交點 (假設粒子主要聚集在 Z=0 附近)
+        raycaster.setFromCamera(mouseVector, camera);
+        const planeZ = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+        raycaster.ray.intersectPlane(planeZ, interactionTarget);
+      }
+
+      function createStarryBackground() {
+        const geometry = new THREE.BufferGeometry();
+        const count = 1000;
+        const pos = new Float32Array(count * 3);
+        for (let i = 0; i < count; i++) {
+          pos[i * 3] = (Math.random() - 0.5) * 2000;
+          pos[i * 3 + 1] = (Math.random() - 0.5) * 2000;
+          pos[i * 3 + 2] = -500 - Math.random() * 1000; // 放在很遠的地方
+        }
+        geometry.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+        const material = new THREE.PointsMaterial({
+          color: 0x888888,
+          size: 2,
+          sizeAttenuation: false, // 保持小點
+          transparent: true,
+          opacity: 0.6,
+        });
+        const stars = new THREE.Points(geometry, material);
+        scene.add(stars);
+      }
+
+      function createParticles() {
+        const geometry = new THREE.BufferGeometry();
+        positions = new Float32Array(PARTICLE_COUNT * 3);
+        targets = new Float32Array(PARTICLE_COUNT * 3);
+        currentColors = new Float32Array(PARTICLE_COUNT * 3);
+        sizes = new Float32Array(PARTICLE_COUNT);
+
+        // 物理屬性
+        velocities = new Float32Array(PARTICLE_COUNT * 3);
+
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+          positions[i * 3] = (Math.random() - 0.5) * 800; // 初始散佈更廣
+          positions[i * 3 + 1] = (Math.random() - 0.5) * 800;
+          positions[i * 3 + 2] = (Math.random() - 0.5) * 600;
+
+          targets[i * 3] = positions[i * 3];
+          targets[i * 3 + 1] = positions[i * 3 + 1];
+          targets[i * 3 + 2] = positions[i * 3 + 2];
+
+          const c = Math.random() > 0.5 ? C_ANGEL_WHITE : C_VOID_BLUE;
+          currentColors[i * 3] = c.r;
+          currentColors[i * 3 + 1] = c.g;
+          currentColors[i * 3 + 2] = c.b;
+
+          sizes[i] = Math.random() * 3; // 粒子大小差異化
+        }
+        geometry.setAttribute(
+          "position",
+          new THREE.BufferAttribute(positions, 3)
+        );
+        geometry.setAttribute(
+          "color",
+          new THREE.BufferAttribute(currentColors, 3)
+        );
+        geometry.setAttribute("size", new THREE.BufferAttribute(sizes, 1));
+
+        const material = new THREE.PointsMaterial({
+          size: 3,
+          map: getSprite(),
+          vertexColors: true,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+          transparent: true,
+          opacity: 0.9,
+          sizeAttenuation: true,
+        });
+        particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+      }
+
+      function createSnow() {
+        const geometry = new THREE.BufferGeometry();
+        const pos = new Float32Array(SNOW_COUNT * 3);
+        const vels = new Float32Array(SNOW_COUNT); // 下落速度
+
+        for (let i = 0; i < SNOW_COUNT; i++) {
+          pos[i * 3] = (Math.random() - 0.5) * 400;
+          pos[i * 3 + 1] = 200 + Math.random() * 200;
+          pos[i * 3 + 2] = (Math.random() - 0.5) * 200;
+          vels[i] = 0.2 + Math.random() * 0.5;
+        }
+        geometry.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+        geometry.setAttribute("velocity", new THREE.BufferAttribute(vels, 1));
+
+        const material = new THREE.PointsMaterial({
+          color: 0xffffff,
+          size: 2,
+          map: getSprite(),
+          blending: THREE.AdditiveBlending,
+          transparent: true,
+          opacity: 0, // 初始隱藏
+          depthWrite: false,
+        });
+
+        snowSystem = new THREE.Points(geometry, material);
+        scene.add(snowSystem);
+      }
+
+      function createTopStar() {
+        const canvas = document.createElement("canvas");
+        canvas.width = 64;
+        canvas.height = 64;
+        const ctx = canvas.getContext("2d");
+        // 畫十字星芒
+        const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+        grad.addColorStop(0, "white");
+        grad.addColorStop(1, "rgba(255,255,200,0)");
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 64, 64);
+
+        const texture = new THREE.CanvasTexture(canvas);
+        const material = new THREE.SpriteMaterial({
+          map: texture,
+          color: 0xffffee,
+          blending: THREE.AdditiveBlending,
+          opacity: 0,
+        });
+        topStar = new THREE.Sprite(material);
+        topStar.scale.set(30, 30, 1);
+        topStar.position.set(0, 165, 0); // 樹頂位置
+        scene.add(topStar);
+      }
+
+      function createSpirals() {
+        const geometry = new THREE.BufferGeometry();
+        const pos = new Float32Array(SPIRAL_COUNT * 3);
+        const sizes = new Float32Array(SPIRAL_COUNT);
+        for (let i = 0; i < SPIRAL_COUNT; i++) {
+          pos[i * 3] = 0;
+          pos[i * 3 + 1] = 0;
+          pos[i * 3 + 2] = 0;
+          sizes[i] = Math.random() * 4 + 2;
+        }
+        geometry.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+        geometry.setAttribute("size", new THREE.BufferAttribute(sizes, 1));
+        const material = new THREE.PointsMaterial({
+          color: 0xffeebb,
+          size: 4,
+          map: getSprite(),
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+          transparent: true,
+          opacity: 0,
+        });
+        spiralSystem = new THREE.Points(geometry, material);
+        scene.add(spiralSystem);
+      }
+
+      function createHalo() {
+        const geometry = new THREE.TorusGeometry(60, 0.6, 16, 100);
+        const material = new THREE.MeshBasicMaterial({
+          color: 0xffffff,
+          transparent: true,
+          opacity: 0,
+        });
+        haloRing = new THREE.Mesh(geometry, material);
+        haloRing.rotation.x = Math.PI / 2.5;
+        scene.add(haloRing);
+      }
+
+      function getSprite() {
+        const canvas = document.createElement("canvas");
+        canvas.width = 64;
+        canvas.height = 64;
+        const ctx = canvas.getContext("2d");
+
+        // 繪製更柔和的光暈
+        const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+        grad.addColorStop(0, "rgba(255,255,255,1)");
+        grad.addColorStop(0.4, "rgba(255,255,255,0.3)");
+        grad.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(32, 32, 32, 0, Math.PI * 2);
+        ctx.fill();
+        return new THREE.CanvasTexture(canvas);
+      }
+
+      // --- 狀態控制與互動邏輯 ---
+      let isProcessing = false;
+
+      function handleStateChange(e) {
+        if (e.type === "touchstart") {
+          // 防止雙重觸發但允許音樂播放
+          // e.preventDefault(); // 註解掉以允許音訊觸發
+        }
+
+        if (state === 0) initAudio(); // 確保音樂開始播放
+        if (isProcessing) return;
+
+        isProcessing = true;
+        setTimeout(() => (isProcessing = false), 1500); // 稍微延長鎖定時間配合特效
+
+        // 音效
+        if (state > 0) playChime();
+
+        // 衝擊效果：先讓粒子炸開
+        if (state > 0 && state < 3) explodeParticles();
+
+        if (state === 0) {
+          // Start -> Heart
+          initGyro();
+          state = 1;
+          gsap.to(hint, { opacity: 0, duration: 1 });
+          transformToHeart();
+        } else if (state === 1) {
+          // Heart -> Tree
+          hideCurrentText();
+          state = 2;
+          // 延遲一點點讓爆炸效果先跑
+          setTimeout(transformToTree, 400);
+        } else if (state === 2) {
+          // Tree -> Finale
+          hideCurrentText();
+          state = 3;
+          setTimeout(finaleSequence, 400);
+        }
+      }
+
+      // 爆炸特效：隨機打散目標點，製造衝擊感
+      function explodeParticles() {
+        const targetAttr = targets;
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+          const idx = i * 3;
+          // 向外推擠
+          const ex = (Math.random() - 0.5) * 300;
+          const ey = (Math.random() - 0.5) * 300;
+          const ez = (Math.random() - 0.5) * 300;
+
+          // 暫時修改當前位置做"瞬間"爆發，或者快速移動 target
+          // 這裡我們選擇快速移動 target 到一個擴散狀態
+          targets[idx] += ex;
+          targets[idx + 1] += ey;
+          targets[idx + 2] += ez;
+        }
+      }
+
+      function showText(str, autoFadeDuration = 0, delay = 0) {
+        gsap.killTweensOf(subtitle);
+        subtitle.style.opacity = 0;
+        subtitle.innerText = str;
+        gsap.to(subtitle, {
+          opacity: 1,
+          duration: 1.5,
+          delay: delay,
+          ease: "power2.out",
+          onComplete: () => {
+            if (autoFadeDuration > 0) {
+              gsap.to(subtitle, {
+                opacity: 0,
+                duration: 1.5,
+                delay: autoFadeDuration / 1000,
+                ease: "power2.in",
+              });
+            }
+          },
+        });
+      }
+
+      function hideCurrentText() {
+        gsap.killTweensOf(subtitle);
+        gsap.to(subtitle, {
+          opacity: 0,
+          duration: 0.8,
+          ease: "power2.out",
+        });
+      }
+
+      function transformToHeart() {
+        showText("LOVE", 0, 1.2);
+
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+          const phi = Math.acos(-1 + (2 * i + 1) / PARTICLE_COUNT);
+          const theta = Math.sqrt(PARTICLE_COUNT * Math.PI) * phi;
+          let x = 16 * Math.pow(Math.sin(phi), 3) * Math.cos(theta);
+          let z = 16 * Math.pow(Math.sin(phi), 3) * Math.sin(theta);
+          let y =
+            13 * Math.cos(phi) -
+            5 * Math.cos(2 * phi) -
+            2 * Math.cos(3 * phi) -
+            Math.cos(4 * phi);
+          x *= 1.8; // 稍微放大
+          y *= 1.8;
+          z *= 1.8;
+          y += 10;
+          targets[i * 3] = x;
+          targets[i * 3 + 1] = y;
+          targets[i * 3 + 2] = z;
+        }
+
+        gsap.to(
+          {},
+          { duration: 3, onUpdate: () => updateColors(C_CORE_RED, 0.03) }
+        );
+
+        haloRing.scale.set(0.1, 0.1, 0.1);
+        gsap.to(haloRing.material, { opacity: 0.6, duration: 1.5, delay: 1 });
+        gsap.to(haloRing.scale, {
+          x: 1.2,
+          y: 1.2,
+          z: 1.2,
+          duration: 3.5,
+          ease: "elastic.out(1, 0.5)",
+          delay: 1,
+        });
+        gsap.to(camera.position, {
+          z: 100,
+          duration: 3,
+          ease: "power2.inOut",
+          delay: 0.5,
+        });
+      }
+
+      function transformToTree() {
+        showText("MERRY CHRISTMAS", 0);
+
+        // 開啟飄雪
+        gsap.to(snowSystem.material, { opacity: 0.8, duration: 3 });
+        // 開啟頂星
+        gsap.to(topStar.material, { opacity: 1, duration: 2, delay: 2 });
+
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+          const p = i / PARTICLE_COUNT;
+          const h = 180;
+          const y = p * h - h / 2 - 20;
+          const r = (1 - p) * 50;
+          const angle = p * Math.PI * 2 * 12 + Math.random(); // 增加隨機角度讓樹更自然
+          const x = Math.cos(angle) * r;
+          const z = Math.sin(angle) * r;
+          targets[i * 3] = x;
+          targets[i * 3 + 1] = y;
+          targets[i * 3 + 2] = z;
+        }
+
+        // 顏色混合：金色混一點綠色
+        const mixedColor = C_STAR_GOLD.clone().lerp(C_TREE_GREEN, 0.3);
+
+        gsap.to(
+          {},
+          { duration: 3, onUpdate: () => updateColors(mixedColor, 0.02) }
+        );
+
+        gsap.to(haloRing.position, {
+          y: 80,
+          duration: 4,
+          ease: "power2.inOut",
+        });
+        gsap.to(haloRing.scale, { x: 0.2, y: 0.2, z: 0.2, duration: 4 });
+
+        gsap.to(camera.position, { z: 220, duration: 4 });
+        gsap.to(spiralSystem.material, { opacity: 0.5, duration: 2, delay: 1 });
+      }
+
+      function finaleSequence() {
+        showText("FOR MY ETERNAL LOVE", 4000, 0.8);
+
+        // 關閉飄雪和星星
+        gsap.to(snowSystem.material, { opacity: 0, duration: 2 });
+        gsap.to(topStar.material, { opacity: 0, duration: 2 });
+
+        const posAttr = particles.geometry.attributes.position;
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+          const idx = i * 3;
+          targets[idx] = posAttr.array[idx] + (Math.random() - 0.5) * 600;
+          targets[idx + 1] = posAttr.array[idx + 1] + 400 + Math.random() * 300;
+          targets[idx + 2] =
+            posAttr.array[idx + 2] + (Math.random() - 0.5) * 600;
+
+          gsap.to(particles.material, {
+            opacity: 0,
+            duration: 8,
+            delay: 1,
+            ease: "power2.inOut",
+          });
+        }
+
+        gsap.to(spiralSystem.material, { opacity: 0, duration: 6 });
+        gsap.to(haloRing.material, { opacity: 0, duration: 5, delay: 2 });
+        gsap.to(camera.position, {
+          z: 400,
+          duration: 8,
+          ease: "power1.inOut",
+          onComplete: () => {
+            scene.remove(particles);
+          },
+        });
+
+        gsap.to(finalLayer, {
+          opacity: 1,
+          duration: 3,
+          delay: 7.8,
+          ease: "power2.out",
+        });
+      }
+
+      function updateColors(targetColor, speed) {
+        const attr = particles.geometry.attributes.color;
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+          currentColors[i * 3] +=
+            (targetColor.r - currentColors[i * 3]) * speed;
+          currentColors[i * 3 + 1] +=
+            (targetColor.g - currentColors[i * 3 + 1]) * speed;
+          currentColors[i * 3 + 2] +=
+            (targetColor.b - currentColors[i * 3 + 2]) * speed;
+          attr.array[i * 3] = currentColors[i * 3];
+          attr.array[i * 3 + 1] = currentColors[i * 3 + 1];
+          attr.array[i * 3 + 2] = currentColors[i * 3 + 2];
+        }
+        attr.needsUpdate = true;
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        const time = clock.getElapsedTime();
+
+        // 視差效果
+        targetX += (mouseX - targetX) * 0.1;
+        targetY += (mouseY - targetY) * 0.1;
+        camera.position.x += (targetX * 0.1 - camera.position.x) * 0.05;
+        camera.position.y += (-targetY * 0.1 - camera.position.y) * 0.05;
+        camera.lookAt(scene.position);
+
+        const pos = particles.geometry.attributes.position.array;
+
+        // 粒子更新迴圈
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+          const idx = i * 3;
+
+          // 1. 基礎移動：更平滑的 ease
+          let tx = targets[idx];
+          let ty = targets[idx + 1];
+          let tz = targets[idx + 2];
+
+          // 2. 螺旋/捲曲雜訊 (Curl Noise 近似)
+          // 在移動路徑上增加垂直的正弦波擾動，製造"魔法流動"感
+          if (state === 1 || state === 2) {
+            const noiseScale = 0.5;
+            const timeScale = time * 2;
+            tx += Math.sin(timeScale + positions[idx + 1] * 0.05) * 2;
+            ty += Math.cos(timeScale + positions[idx] * 0.05) * 2;
+          }
+
+          // 3. 互動斥力 (Repulsion)
+          if (isInteracting && interactionTarget) {
+            // 簡單計算粒子與互動點的距離 (只考慮 X, Y 投影面效果較好)
+            const dx = positions[idx] - interactionTarget.x;
+            const dy = positions[idx + 1] - interactionTarget.y;
+            // 加一點 Z 軸深度判定，避免影響太遠的粒子
+            const dz = positions[idx + 2];
+
+            const distSq = dx * dx + dy * dy;
+            const radius = 60 * 60; // 斥力半徑
+
+            if (distSq < radius && Math.abs(dz) < 100) {
+              const dist = Math.sqrt(distSq);
+              const force = (60 - dist) / 60;
+              // 將粒子推開
+              tx += (dx / dist) * force * 150;
+              ty += (dy / dist) * force * 150;
+            }
+          }
+
+          // 更新位置 (Lerp)
+          pos[idx] += (tx - pos[idx]) * 0.04;
+          pos[idx + 1] += (ty - pos[idx + 1]) * 0.04;
+          pos[idx + 2] += (tz - pos[idx + 2]) * 0.04;
+
+          // 4. 心跳效果 (僅在 Heart 狀態)
+          if (state === 1) {
+            const beatScale = Math.sin(time * 3) * 0.1 + 1; // 心跳頻率加快
+            // 這裡簡單做整體縮放，若要更細緻可針對法向量
+            // 但因為位置已經在每一幀被 target 拉扯，我們直接對計算結果做微調會抖動
+            // 比較好的做法是改變 Target，或者在 Shader 做。
+            // 這裡採用簡單的疊加位移
+            const beatAmt = (Math.sin(time * 3.5 - i * 0.001) + 1) * 0.5;
+            // 讓愛心邊緣有點起伏
+            if (beatAmt > 0.8) {
+              pos[idx] *= 1.01;
+              pos[idx + 1] *= 1.01;
+              pos[idx + 2] *= 1.01;
+            }
+          }
+        }
+        particles.geometry.attributes.position.needsUpdate = true;
+        particles.geometry.attributes.color.needsUpdate = true;
+
+        // 聖誕樹螺旋裝飾動畫
+        if (state === 2 || state === 3) {
+          const spiralPos = spiralSystem.geometry.attributes.position.array;
+          const h = 180;
+          for (let i = 0; i < SPIRAL_COUNT; i++) {
+            const idx = i * 3;
+            let particleY = ((time * 25 + i * 2) % (h + 50)) - h / 2 - 20;
+            const progress = (particleY + h / 2 + 20) / (h + 50);
+            const radius = (1 - progress) * 60 + 5; // 配合樹的寬度調整
+            const angle = -time * 3 + i * 0.2;
+            spiralPos[idx] = Math.cos(angle) * radius;
+            spiralPos[idx + 1] = particleY;
+            spiralPos[idx + 2] = Math.sin(angle) * radius;
+          }
+          spiralSystem.geometry.attributes.position.needsUpdate = true;
+
+          // 更新飄雪
+          if (snowSystem && snowSystem.material.opacity > 0) {
+            const snowPos = snowSystem.geometry.attributes.position.array;
+            const snowVel = snowSystem.geometry.attributes.velocity.array;
+            for (let i = 0; i < SNOW_COUNT; i++) {
+              const idx = i * 3;
+              snowPos[idx + 1] -= snowVel[i]; // 下落
+              snowPos[idx] += Math.sin(time + i) * 0.2; // 左右飄
+              if (snowPos[idx + 1] < -200) {
+                snowPos[idx + 1] = 250;
+              }
+            }
+            snowSystem.geometry.attributes.position.needsUpdate = true;
+          }
+
+          // 頂星旋轉
+          if (topStar) {
+            topStar.material.rotation = time * 0.5;
+            // 閃爍
+            const s = 30 + Math.sin(time * 5) * 5;
+            topStar.scale.set(s, s, 1);
+          }
+        }
+
+        particles.rotation.y = time * 0.08;
+        haloRing.rotation.z = time * 0.1;
+        haloRing.rotation.x = Math.PI / 2.5 + Math.sin(time * 0.4) * 0.1;
+
+        composer.render();
+      }
+
+      function onWindowResize() {
+        windowHalfX = window.innerWidth / 2;
+        windowHalfY = window.innerHeight / 2;
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        composer.setSize(window.innerWidth, window.innerHeight);
+        bloomPass.resolution.set(window.innerWidth, window.innerHeight);
+      }
+    </script>
+  </body>
+</html>
