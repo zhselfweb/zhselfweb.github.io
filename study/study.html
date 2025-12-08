@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus Sanctuary v2.5 (Curved Meteors & Gentle Rain) - Fixed</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@200;400;700&family=Inter:wght@200;400;500&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+            cursor: none; /* 隱藏預設游標 */
+            overflow: hidden;
+        }
+        .font-serif { font-family: 'Noto Serif TC', serif; }
+
+        /* --- 核心動畫定義 --- */
+        @keyframes float { 0%, 100% { transform: translate(0, 0); opacity: 0.3; } 50% { transform: translate(20px, -20px); opacity: 0.6; } }
+        @keyframes drift { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+        @keyframes pulse-slow { 0%, 100% { opacity: 0.3; transform: scale(1); } 50% { opacity: 0.6; transform: scale(1.05); } }
+        @keyframes twinkle { 0%, 100% { opacity: 0.2; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+        @keyframes sway { 0%, 100% { transform: rotate(-2deg); } 50% { transform: rotate(2deg); } }
+        @keyframes flicker { 0%, 100% { opacity: 0.8; transform: scale(1); } 25% { opacity: 0.6; transform: scale(0.98); } 50% { opacity: 0.9; transform: scale(1.02); } 75% { opacity: 0.7; transform: scale(0.99); } }
+        @keyframes ray-sweep { 0%, 100% { transform: rotate(10deg) translateX(0); opacity: 0.3; } 50% { transform: rotate(15deg) translateX(20px); opacity: 0.5; } }
+
+        /* 曲線流星 (Shooting Star V4 - Curved) */
+        @keyframes shoot-curve {
+            0% {
+                transform: translate(0, 0) rotate(215deg);
+                width: 0;
+                opacity: 1;
+            }
+            20% {
+                width: 220px;
+                opacity: 1;
+            }
+            100% {
+                /* 終點使用大量位移以離開畫面，並漸隱 */
+                transform: translate(-120vw, 120vh) rotate(240deg);
+                width: 0;
+                opacity: 0;
+            }
+        }
+
+        @keyframes firefly-x { 0%,100% { transform: translateX(0); } 25% { transform: translateX(50px); } 50% { transform: translateX(-30px); } 75% { transform: translateX(20px); } }
+        @keyframes firefly-y { 0%,100% { transform: translateY(0); } 33% { transform: translateY(-40px); } 66% { transform: translateY(20px); } }
+
+        /* 工具類 */
+        .animate-float { animation: float 15s infinite ease-in-out; }
+        .animate-drift-slow { animation: drift 120s linear infinite; }
+        .animate-drift-slower { animation: drift 240s linear infinite; }
+        .animate-pulse-slow { animation: pulse-slow 8s ease-in-out infinite; }
+        .animate-twinkle { animation: twinkle 4s ease-in-out infinite; }
+        .animate-sway { animation: sway 12s ease-in-out infinite; }
+        .animate-sway-slow { animation: sway 18s ease-in-out infinite reverse; }
+        .animate-flicker { animation: flicker 4s infinite alternate; }
+        .animate-ray-sweep { animation: ray-sweep 25s ease-in-out infinite; }
+
+        /* 螢火蟲 */
+        .firefly-container { position: absolute; animation: firefly-x 20s ease-in-out infinite alternate; }
+        .firefly-body { width: 100%; height: 100%; background: #bef264; border-radius: 50%; box-shadow: 0 0 10px #bef264; animation: firefly-y 15s ease-in-out infinite alternate, pulse-slow 3s infinite; }
+
+        /* 流星樣式 V4 */
+        .shooting-star-v4 {
+            position: absolute;
+            height: 3px;
+            background: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.85) 10%, rgba(255,255,255,0) 100%);
+            border-radius: 999px;
+            transform-origin: left center;
+            box-shadow: 0 0 8px rgba(255,255,255,0.7);
+            opacity: 0;
+            z-index: 5;
+            will-change: transform, width, opacity;
+            left: 0; top: 0;
+        }
+        .shooting-star-v4::after {
+            content: '';
+            position: absolute;
+            left: -2px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px; height: 6px;
+            background: #fff; border-radius: 50%;
+            box-shadow: 0 0 15px 4px rgba(255,255,255,0.9), 0 0 30px rgba(255,255,255,0.4);
+        }
+
+        ::-webkit-scrollbar { display: none; }
+        * { -ms-overflow-style: none; scrollbar-width: none; }
+
+        .grain-overlay { position: fixed; inset: 0; z-index: 50; pointer-events: none; opacity: 0.07; mix-blend-mode: overlay; }
+
+        /* 游標光效 */
+        #cursor-light { position: fixed; top: 0; left: 0; width: 600px; height: 600px; border-radius: 50%; pointer-events: none; z-index: 40; transform: translate(-50%, -50%); background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 30%, rgba(255,255,255,0) 70%); mix-blend-mode: screen; transition: opacity 0.3s ease; }
+        #cursor-dot { position: fixed; top: 0; left: 0; width: 8px; height: 8px; background: rgba(255,255,255,0.8); border-radius: 50%; pointer-events: none; z-index: 60; transform: translate(-50%, -50%); box-shadow: 0 0 10px rgba(255,255,255,0.5); transition: transform 0.1s ease, opacity 0.3s ease; }
+        body:active #cursor-dot { transform: translate(-50%, -50%) scale(0.8); background: rgba(255,255,255,1); }
+        .cursor-hidden { opacity: 0 !important; }
+
+        /* 確保所有 interactive 元素也不顯示系統游標 */
+        .no-cursor * { cursor: none !important; }
+    </style>
+</head>
+<body class="relative w-full h-screen overflow-hidden selection:bg-white/10 transition-colors duration-1000 ease-in-out bg-[#1c1917]" id="main-container">
+
+    <!-- 游標光效元素 -->
+    <div id="cursor-light"></div>
+    <div id="cursor-dot"></div>
+
+    <!-- 質感雜訊濾鏡 -->
+    <div class="grain-overlay">
+        <svg class="h-full w-full">
+            <filter id="noiseFilter"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" /></filter>
+            <rect width="100%" height="100%" filter="url(#noiseFilter)" />
+        </svg>
+    </div>
+
+    <!-- 背景層容器 -->
+    <div id="bg-container" class="absolute inset-0 z-0 transition-opacity duration-1000 opacity-80 origin-center">
+    </div>
+
+    <!-- 主要內容層 UI -->
+    <div id="ui-container" class="relative z-10 w-full h-full flex flex-col items-center justify-between py-12 transition-opacity duration-700 opacity-100 no-cursor">
+        <!-- Top: Clock -->
+        <div id="clock-display" class="text-sm tracking-[0.3em] font-medium uppercase opacity-60 text-orange-50 mix-blend-plus-lighter">00:00</div>
+
+        <!-- Center: Timer & Quote -->
+        <div class="flex flex-col items-center gap-12 transform -translate-y-4">
+            <div id="timer-area" class="relative group"> 
+                <div id="timer-display" class="text-[8rem] leading-none font-serif tracking-tighter transition-all duration-500 text-orange-50 drop-shadow-2xl opacity-70 blur-[1px] scale-95 group-hover:blur-0 group-hover:scale-100 group-hover:opacity-90">25:00</div>
+                <div id="timer-status-icon" class="absolute -right-10 top-1/2 -translate-y-1/2 transition-opacity duration-300 opacity-0 text-orange-50"></div>
+            </div>
+
+            <div id="timer-controls" class="flex gap-6 transition-all duration-500 opacity-0 translate-y-4">
+                 <button id="btn-reset" class="p-2 rounded-full border border-white/10 hover:bg-white/10 transition-colors text-orange-200/50" title="Reset Timer">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M21 21v-5h-5"/></svg>
+                 </button>
+            </div>
+
+            <div id="quote-display" class="max-w-lg text-center font-light tracking-widest leading-loose cursor-pointer transition-colors duration-300 hover:text-white text-orange-200/50">小主人，深呼吸一下喔 (灬º‿º灬)♡</div>
+        </div>
+
+        <!-- Bottom: Control Bar -->
+        <div id="control-bar" class="mb-4 px-6 py-3 rounded-full bg-white/5 backdrop-blur-xl border border-white/5 shadow-2xl flex items-center gap-8 transition-all duration-700 ease-out translate-y-0 opacity-100">
+            <div class="flex items-center gap-3 border-r border-white/10 pr-6">
+                <button id="btn-audio-toggle" class="p-2 rounded-full transition-colors hover:bg-white/10 text-white/40" title="Toggle Audio">
+                    <svg id="icon-volume-off" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+                    <svg id="icon-volume-on" class="hidden" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+                </button>
+                <div id="volume-control-container" class="w-20 h-1 bg-white/10 rounded-full overflow-hidden cursor-pointer group hidden relative">
+                    <input type="range" id="volume-slider" min="0" max="0.2" step="0.001" value="0.05" class="w-full h-full opacity-0 absolute z-10 inset-0">
+                    <div id="volume-bar-fill" class="h-full bg-white/50 group-hover:bg-white/80 transition-all rounded-full" style="width: 25%;"></div>
+                </div>
+            </div>
+            <div class="flex items-center gap-1" id="scene-selector"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- 可愛化引言 (QUOTES) & 配置 ---
+        const QUOTES = [
+            "你可以的	༼⁠ ⁠つ⁠ ⁠◕⁠‿⁠◕⁠ ⁠༽⁠つ",
+            "慢慢來，今天也要溫柔對自己 (｡･ω･｡)",
+            "像小樹一樣靜靜長大，別急 (꒰˶◕‿◕˶꒱)",
+            "專注一小段時間，就值得一個糖果獎勵 (✿◠‿◠)",
+            "把煩惱放旁邊，現在只做一件事 (⁄ ⁄•⁄ω⁄•⁄ ⁄)",
+            "小步前進也很勇敢喔 (｡•̀ᴗ-)✧",
+            "讓心像雲朵一樣輕飄飄 (꒰ˊ•༝•ˋ꒱੭",
+            "今天的你已經很棒了 (灬º‿º灬)"
+        ];
+
+        const SCENE_CONFIG = {
+            study: { bgClass: 'bg-[#1c1917]', textClass: 'text-orange-50', subTextClass: 'text-orange-200/50', name: 'Study',
+                iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/></svg>' },
+            rain: { bgClass: 'bg-slate-950', textClass: 'text-slate-200', subTextClass: 'text-slate-400', name: 'Rain',
+                iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M8 19v2"/><path d="M8 13v2"/><path d="M16 19v2"/><path d="M16 13v2"/><path d="M12 21v2"/><path d="M12 15v2"/></svg>' },
+            stars: { bgClass: 'bg-[#020617]', textClass: 'text-indigo-100', subTextClass: 'text-indigo-300/60', name: 'Stars',
+                iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>' },
+            forest: { bgClass: 'bg-[#0f2e22]', textClass: 'text-emerald-50', subTextClass: 'text-emerald-200/60', name: 'Forest',
+                /* 修正：改用更簡潔且顯示正確的樹狀圖示 */
+                iconSvg: '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.77 5.82 22 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>' }
+        };
+
+        const ICONS = {
+            play: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>',
+            pause: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>'
+        };
+
+        let currentState = { scene: 'study', audioEnabled: false, volume: 0.05, timerMode: 'idle', timeLeft: 25 * 60, uiShowing: true };
+        let uiTimeout, timerInterval, rainAnimationId, shootingStarInterval, lightningInterval, audioCtx, noiseSource, gainNode;
+
+        const els = {
+            body: document.getElementById('main-container'),
+            bgContainer: document.getElementById('bg-container'),
+            uiContainer: document.getElementById('ui-container'),
+            clock: document.getElementById('clock-display'),
+            timerDisplay: document.getElementById('timer-display'),
+            timerArea: document.getElementById('timer-area'),
+            timerStatusIcon: document.getElementById('timer-status-icon'),
+            timerControls: document.getElementById('timer-controls'),
+            btnReset: document.getElementById('btn-reset'),
+            quote: document.getElementById('quote-display'),
+            controlBar: document.getElementById('control-bar'),
+            btnAudioToggle: document.getElementById('btn-audio-toggle'),
+            iconVolumeOff: document.getElementById('icon-volume-off'),
+            iconVolumeOn: document.getElementById('icon-volume-on'),
+            volumeContainer: document.getElementById('volume-control-container'),
+            volumeSlider: document.getElementById('volume-slider'),
+            volumeBarFill: document.getElementById('volume-bar-fill'),
+            sceneSelector: document.getElementById('scene-selector'),
+            cursorLight: document.getElementById('cursor-light'),
+            cursorDot: document.getElementById('cursor-dot')
+        };
+
+        // --- 游標光效邏輯 (保留光效但系統游標完全隱藏) ---
+        function initCursorEffect() {
+            document.addEventListener('mousemove', (e) => {
+                const x = e.clientX, y = e.clientY;
+                els.cursorLight.style.left = x + 'px'; els.cursorLight.style.top = y + 'px';
+                els.cursorDot.style.left = x + 'px'; els.cursorDot.style.top = y + 'px';
+                els.cursorLight.classList.remove('cursor-hidden'); els.cursorDot.classList.remove('cursor-hidden');
+            });
+            document.addEventListener('mouseleave', () => { els.cursorLight.classList.add('cursor-hidden'); els.cursorDot.classList.add('cursor-hidden'); });
+            document.addEventListener('mouseenter', () => { els.cursorLight.classList.remove('cursor-hidden'); els.cursorDot.classList.remove('cursor-hidden'); });
+            updateCursorStyle(currentState.scene);
+        }
+
+        function updateCursorStyle(scene) {
+            if (scene === 'study') els.cursorLight.style.background = 'radial-gradient(circle, rgba(255, 200, 150, 0.2) 0%, rgba(255, 200, 150, 0.05) 35%, rgba(255, 200, 150, 0) 70%)';
+            else if (scene === 'forest') els.cursorLight.style.background = 'radial-gradient(circle, rgba(200, 255, 200, 0.2) 0%, rgba(200, 255, 200, 0.05) 35%, rgba(200, 255, 200, 0) 70%)';
+            else els.cursorLight.style.background = 'radial-gradient(circle, rgba(200, 220, 255, 0.15) 0%, rgba(200, 220, 255, 0.05) 35%, rgba(200, 220, 255, 0) 70%)';
+        }
+
+        // --- 核心邏輯 ---
+        function updateClock() { els.clock.textContent = new Date().toLocaleTimeString('zh-TW', { hour: '2-digit', minute: '2-digit', hour12: false }); }
+        function formatCountdown(s) { return `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`; }
+        function toggleTimer(e) { e.stopPropagation(); currentState.timerMode = currentState.timerMode === 'running' ? 'paused' : 'running'; if(currentState.timerMode==='running'&&audioCtx?.state==='suspended'&&currentState.audioEnabled) audioCtx.resume(); updateTimerUI(); }
+        function resetTimer(e) { e.stopPropagation(); currentState.timerMode = 'idle'; currentState.timeLeft = 25*60; updateTimerUI(); }
+        function tickTimer() { if(currentState.timerMode==='running' && currentState.timeLeft>0) { currentState.timeLeft--; if(currentState.timeLeft===0)currentState.timerMode='idle'; updateTimerUI(); } }
+        function updateTimerUI() {
+            els.timerDisplay.textContent = formatCountdown(currentState.timeLeft);
+            const isRun = currentState.timerMode === 'running';
+            els.timerDisplay.className = `text-[8rem] leading-none font-serif tracking-tighter transition-all duration-500 drop-shadow-2xl ${isRun ? 'opacity-100 blur-0 scale-100' : 'opacity-70 blur-[1px] scale-95'} ${SCENE_CONFIG[currentState.scene].textClass}`;
+            els.timerStatusIcon.innerHTML = isRun ? ICONS.pause : ICONS.play;
+            els.timerStatusIcon.className = `absolute -right-10 top-1/2 -translate-y-1/2 transition-opacity duration-300 ${isRun||currentState.uiShowing ? 'opacity-40' : 'opacity-0'} ${SCENE_CONFIG[currentState.scene].textClass}`;
+            els.timerControls.className = `flex gap-6 transition-all duration-500 ${currentState.timerMode!=='idle'||currentState.uiShowing ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`;
+        }
+        function handleMouseMove() {
+            currentState.uiShowing = true; els.uiContainer.classList.replace('opacity-80', 'opacity-100'); els.controlBar.classList.replace('translate-y-12', 'translate-y-0'); els.controlBar.classList.replace('opacity-0', 'opacity-100'); updateTimerUI();
+            if(uiTimeout) clearTimeout(uiTimeout);
+            uiTimeout = setTimeout(() => { currentState.uiShowing = false; els.uiContainer.classList.replace('opacity-100', 'opacity-80'); els.controlBar.classList.replace('translate-y-0', 'translate-y-12'); els.controlBar.classList.replace('opacity-100', 'opacity-0'); updateTimerUI(); }, 3500);
+        }
+        function changeQuote() { els.quote.textContent = QUOTES[Math.floor(Math.random()*QUOTES.length)]; }
+
+        // Audio Logic (unchanged)
+        function initAudio() { if(audioCtx) return; const AC = window.AudioContext || window.webkitAudioContext; audioCtx = new AC(); const b = audioCtx.createBuffer(1, 2*audioCtx.sampleRate, audioCtx.sampleRate), d = b.getChannelData(0); for(let i=0,l=0;i<d.length;i++) { const w=Math.random()*2-1; d[i]=(l+(0.02*w))/1.02; l=d[i]; d[i]*=3.5; } noiseSource=audioCtx.createBufferSource(); noiseSource.buffer=b; noiseSource.loop=true; gainNode=audioCtx.createGain(); gainNode.gain.value=0; noiseSource.connect(gainNode); gainNode.connect(audioCtx.destination); noiseSource.start(0); }
+        function toggleAudio(e) { e.stopPropagation(); if(!audioCtx) initAudio(); currentState.audioEnabled=!currentState.audioEnabled; if(currentState.audioEnabled){if(audioCtx.state==='suspended')audioCtx.resume(); els.iconVolumeOff.classList.add('hidden'); els.iconVolumeOn.classList.remove('hidden'); els.btnAudioToggle.classList.add('text-white'); els.volumeContainer.classList.remove('hidden');}else{els.iconVolumeOff.classList.remove('hidden'); els.iconVolumeOn.classList.add('hidden'); els.btnAudioToggle.classList.remove('text-white'); els.volumeContainer.classList.add('hidden');} updateVolume(); }
+        function updateVolume() { if(gainNode) gainNode.gain.setTargetAtTime(currentState.audioEnabled?currentState.volume:0, audioCtx.currentTime, 0.5); els.volumeBarFill.style.width=`${(currentState.volume/0.2)*100}%`; }
+
+        // --- 視覺渲染引擎 ---
+        function clearDynamicIntervals() { if (rainAnimationId) cancelAnimationFrame(rainAnimationId); if (shootingStarInterval) clearInterval(shootingStarInterval); if (lightningInterval) clearInterval(lightningInterval); }
+
+        function renderBackground(scene) {
+            clearDynamicIntervals(); els.bgContainer.innerHTML = ''; const config = SCENE_CONFIG[scene];
+            els.body.className = `relative w-full h-screen overflow-hidden transition-colors duration-1000 ease-in-out font-sans selection:bg-white/10 ${config.bgClass}`;
+            els.clock.className = `text-sm tracking-[0.3em] font-medium uppercase opacity-60 mix-blend-plus-lighter ${config.textClass}`;
+            els.btnReset.className = `p-2 rounded-full border border-white/10 hover:bg-white/10 transition-colors ${config.subTextClass}`;
+            els.quote.className = `max-w-lg text-center font-light tracking-widest leading-loose cursor-pointer transition-colors duration-300 hover:text-white ${config.subTextClass}`;
+            updateCursorStyle(scene);
+            switch(scene) { case 'study': renderStudyBg(); break; case 'stars': renderStarsBg(); break; case 'forest': renderForestBg(); break; case 'rain': renderRainBg(); break; }
+            updateSceneSelectors(scene);
+        }
+
+        function renderStudyBg() {
+             els.bgContainer.innerHTML = `
+                <div class="absolute inset-0 overflow-hidden bg-[#2a2420]">
+                    <div class="absolute inset-0 bg-gradient-to-tr from-orange-950 via-transparent to-transparent opacity-80 animate-flicker"></div>
+                    <div class="absolute top-[-30%] left-[-20%] w-[80%] h-[80%] bg-orange-300/30 rounded-full blur-[150px] animate-pulse-slow"></div>
+                    <div class="absolute bottom-[-10%] left-[20%] w-[60%] h-[40%] bg-amber-700/40 rounded-[100%] blur-[100px] animate-flicker"></div>
+                    <div class="absolute top-[20%] right-[-30%] w-[50%] h-[60%] bg-orange-900/20 rounded-full blur-[120px]"></div>
+                     ${Array.from({length: 40}).map(() => `<div class="absolute ${Math.random()>0.5?'w-1 h-1':'w-0.5 h-0.5'} bg-orange-200/40 rounded-full blur-[1px] animate-float" style="top:${Math.random()*100}%; left:${Math.random()*100}%; animation-delay:${Math.random()*-20}s; animation-duration:${Math.random()*10+10}s;"></div>`).join('')}
+                </div>
+            `;
+        }
+
+        function renderStarsBg() {
+            els.bgContainer.innerHTML = `
+                <div class="absolute inset-0 overflow-hidden bg-gradient-to-b from-slate-950 via-[#090c21] to-[#020617]">
+                    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-transparent to-transparent"></div>
+                    <div class="absolute inset-0 animate-drift-slower" style="width: 200%;">
+                         ${Array.from({length: 120}).map(() => `<div class="absolute bg-white/60 rounded-full" style="top:${Math.random()*100}%; left:${Math.random()*100}%; width:${Math.random()*1.5+0.5}px; height:${Math.random()*1.5+0.5}px; box-shadow: 0 0 2px rgba(255,255,255,0.3);"></div>`).join('')}
+                    </div>
+                     <div class="absolute inset-0 animate-drift-slow" style="width: 200%;">
+                        ${Array.from({length: 60}).map(() => `<div class="absolute bg-indigo-100/90 rounded-full animate-twinkle" style="top:${Math.random()*100}%; left:${Math.random()*100}%; width:${Math.random()*2+1}px; height:${Math.random()*2+1}px; animation-delay:${Math.random()*-4}s;"></div>`).join('')}
+                    </div>
+                    <div id="shooting-star-container" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+                    <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-indigo-500/5 to-transparent transform rotate-45 scale-150 blur-3xl pointer-events-none animate-pulse-slow"></div>
+                </div>
+            `;
+
+             const container = document.getElementById('shooting-star-container');
+             function createShootingStar() {
+                 if(!container) return;
+                 const star = document.createElement('div');
+                 star.className = 'shooting-star-v4';
+                 // 初始寬度/高度與 transform
+                 star.style.width = '0px';
+                 star.style.height = '3px';
+                 star.style.transformOrigin = 'left center';
+                 // 隨機化方向/位置：右上區域
+                 const top = Math.random() * 30; // 0 - 30%
+                 const left = Math.random() * 30 + 70; // 70 - 100%
+                 star.style.top = top + '%';
+                 star.style.left = left + '%';
+                 // 根據長度亂數化速度
+                 const duration = Math.random() * 1.5 + 2.5; // 2.5s - 4s
+                 star.style.animation = `shoot-curve ${duration}s cubic-bezier(0.25, 0.1, 0.25, 1) forwards`;
+                 // 在動畫開始時確保頭部位於 left 側（為了讓 ::after 在正確位置）
+                 star.style.transform = 'rotate(215deg)';
+                 container.appendChild(star);
+                 // 移除
+                 setTimeout(() => star.remove(), duration * 1000 + 120);
+             }
+             setTimeout(createShootingStar, 800);
+             shootingStarInterval = setInterval(() => { if(Math.random()>0.4) createShootingStar(); }, 4000);
+        }
+
+        function renderForestBg() {
+             const fireflies = Array.from({length: 25}).map(() => {
+                 const top = Math.random() * 80 + 10; const left = Math.random() * 90 + 5; const size = Math.random() * 4 + 2;
+                 const delayX = Math.random() * -20; const delayY = Math.random() * -15; const durationX = Math.random() * 10 + 15; const durationY = Math.random() * 10 + 10;
+                 return `<div class="firefly-container" style="top:${top}%; left:${left}%; animation-delay:${delayX}s; animation-duration:${durationX}s;"><div class="firefly-body" style="width:${size}px; height:${size}px; animation-delay:${delayY}s; animation-duration:${durationY}s;"></div></div>`;
+             }).join('');
+
+             els.bgContainer.innerHTML = `
+                <div class="absolute inset-0 overflow-hidden bg-[#0f2e22]">
+                    <div class="absolute inset-0 bg-gradient-to-b from-[#1a4731] to-[#062117]"></div>
+                    <div class="absolute top-[-10%] left-[-10%] w-[120%] h-[150%] bg-gradient-to-r from-yellow-100/10 via-transparent to-transparent transform rotate-12 blur-3xl pointer-events-none animate-ray-sweep"></div>
+                    <div class="absolute top-[-10%] left-[10%] w-[80%] h-[150%] bg-gradient-to-r from-yellow-50/5 via-transparent to-transparent transform rotate-12 blur-2xl pointer-events-none animate-ray-sweep" style="animation-delay: -5s;"></div>
+                    <div class="absolute top-[-100px] left-[-100px] w-[500px] h-[500px] bg-yellow-100/20 rounded-full blur-[80px] animate-pulse-slow"></div>
+                    <div class="absolute top-[-10%] right-[-10%] w-[70%] h-[70%] bg-[#134e4a]/60 rounded-full blur-[60px] animate-sway"></div>
+                    <div class="absolute top-[20%] left-[-20%] w-[60%] h-[60%] bg-[#047857]/40 rounded-full blur-[80px] animate-sway-slow"></div>
+                    <div class="absolute bottom-[-10%] left-0 w-full h-[40%] bg-gradient-to-t from-[#021c15] to-transparent blur-xl"></div>
+                    ${fireflies}
+                     ${Array.from({length: 20}).map(() => `<div class="absolute w-1 h-1 bg-yellow-100/30 rounded-full blur-[0.5px] animate-float" style="top:${Math.random()*100}%; left:${Math.random()*100}%; animation-duration: 25s;"></div>`).join('')}
+                    <div class="absolute inset-0 bg-yellow-500/5 mix-blend-overlay pointer-events-none"></div>
+                </div>
+            `;
+        }
+
+        function renderRainBg() {
+            const lightning = document.createElement('div'); lightning.className = 'absolute inset-0 bg-white/0 pointer-events-none z-0 transition-colors duration-100'; els.bgContainer.appendChild(lightning);
+            const canvas = document.createElement('canvas'); canvas.className = 'absolute inset-0 w-full h-full z-10'; els.bgContainer.appendChild(canvas);
+            const ctx = canvas.getContext('2d'); let w = canvas.width = window.innerWidth, h = canvas.height = window.innerHeight;
+            const drops = Array.from({ length: 160 }).map(() => ({ x: Math.random()*w, y: Math.random()*h, l: Math.random()*20+10, vy: Math.random()*2 + 1.5, opacity: Math.random()*0.3+0.1 }));
+            let splashes = [];
+            function animate() {
+                ctx.clearRect(0, 0, w, h);
+                drops.forEach(d => {
+                    ctx.beginPath(); ctx.strokeStyle = `rgba(180, 200, 220, ${d.opacity})`; ctx.lineWidth = 1.5; ctx.moveTo(d.x, d.y); ctx.lineTo(d.x, d.y + d.l); ctx.stroke();
+                    d.y += d.vy;
+                    if(d.y > h) { if(Math.random()>0.7) splashes.push({ x: d.x, y: h, vy: -(Math.random()*1 + 0.5), life: 1 }); d.y = -d.l; d.x = Math.random()*w; }
+                });
+                ctx.fillStyle = 'rgba(180, 220, 255, 0.4)';
+                for (let i = splashes.length - 1; i >= 0; i--) { let s = splashes[i]; ctx.beginPath(); ctx.arc(s.x, s.y, 1.5, 0, Math.PI*2); ctx.fill(); s.y += s.vy; s.life -= 0.05; if(s.life <= 0) splashes.splice(i, 1); }
+                rainAnimationId = requestAnimationFrame(animate);
+            }
+            animate();
+            lightningInterval = setInterval(() => { if(Math.random() > 0.95) { lightning.classList.replace('bg-white/0', 'bg-white/10'); setTimeout(() => lightning.classList.replace('bg-white/10', 'bg-white/0'), 150); } }, 2000);
+            window.addEventListener('resize', () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }, { once: true });
+        }
+
+        function updateSceneSelectors(currentScene) {
+             els.sceneSelector.innerHTML = Object.entries(SCENE_CONFIG).map(([key, config]) => {
+                 const isActive = key === currentScene;
+                 return `
+                    <button data-scene="${key}" class="scene-btn p-3 rounded-full transition-all duration-300 relative group ${isActive ? 'text-white bg-white/10' : 'text-white/40 hover:text-white/80 hover:bg-white/5'}" title="${config.name}">
+                        ${config.iconSvg}
+                        <span class="absolute -top-10 left-1/2 -translate-x-1/2 px-2 py-1 bg-black/80 text-[10px] text-white rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none tracking-widest uppercase">${config.name}</span>
+                    </button>
+                 `;
+             }).join('');
+             document.querySelectorAll('.scene-btn').forEach(btn => {
+                 btn.addEventListener('click', (e) => { e.stopPropagation(); const newScene = btn.dataset.scene; if (newScene !== currentState.scene) { currentState.scene = newScene; renderBackground(newScene); } });
+             })
+        }
+
+        function init() {
+            initCursorEffect(); renderBackground(currentState.scene); updateClock(); updateTimerUI(); handleMouseMove(); setInterval(updateClock, 1000); timerInterval = setInterval(tickTimer, 1000); window.addEventListener('mousemove', handleMouseMove); window.addEventListener('click', handleMouseMove); els.timerArea.addEventListener('click', toggleTimer); els.btnReset.addEventListener('click', resetTimer); els.quote.addEventListener('click', (e) => { e.stopPropagation(); changeQuote(); }); els.btnAudioToggle.addEventListener('click', toggleAudio); els.volumeSlider.addEventListener('input', (e) => { currentState.volume = parseFloat(e.target.value); updateVolume(); }); els.volumeSlider.addEventListener('click', (e) => e.stopPropagation());
+        }
+
+        init();
+    </script>
+</body>
+</html>
