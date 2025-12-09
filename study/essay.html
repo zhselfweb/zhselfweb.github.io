@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>學測英文作文神器 | Ultimate Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+TC:wght@300;400;500;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap");
+
+      :root {
+        --bg-base: #000000;
+        --text-main: #e5e5e5;
+        --text-dim: #737373;
+        --text-highlight: #38bdf8;
+        --text-interactive: #e0e7ff;
+        --border-dim: rgba(255, 255, 255, 0.15);
+        --border-active: #38bdf8;
+        --border-error: #ef4444;
+        --card-bg: rgba(18, 18, 18, 0.85);
+        --base-font-size: 16px;
+      }
+
+      body {
+        font-family: "Inter", "Noto Sans TC", sans-serif;
+        background-color: var(--bg-base);
+        color: var(--text-main);
+        -webkit-tap-highlight-color: transparent;
+        background-image: radial-gradient(
+          circle at 50% 0%,
+          #1a1a1a 0%,
+          #000000 70%
+        );
+        background-attachment: fixed;
+        font-size: var(--base-font-size);
+        transition: font-size 0.2s ease, background 0.3s ease;
+      }
+
+      /* Mono Card */
+      .mono-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-dim);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        transition: all 0.3s ease;
+      }
+
+      /* Template Text (Clickable) */
+      .template-text {
+        cursor: pointer;
+        border-bottom: 1px dashed rgba(255, 255, 255, 0.2);
+        transition: all 0.2s;
+        color: var(--text-main);
+      }
+      .template-text:hover,
+      .template-text.active {
+        color: #fff;
+        background: rgba(255, 255, 255, 0.1);
+        border-bottom-color: rgba(255, 255, 255, 0.6);
+        border-radius: 2px;
+      }
+
+      /* Cloze Field */
+      .cloze-field {
+        display: inline;
+        border-bottom: 1px solid var(--border-dim);
+        color: var(--text-highlight);
+        padding: 0 4px;
+        outline: none;
+        transition: all 0.2s ease;
+        font-weight: 500;
+        line-height: 1.8;
+        min-width: 60px;
+        word-break: break-word;
+        cursor: text;
+      }
+
+      .cloze-field:focus {
+        border-bottom: 1px solid var(--border-active);
+        background: rgba(56, 189, 248, 0.1);
+        border-radius: 2px 2px 0 0;
+      }
+
+      .cloze-field.error {
+        border-bottom-color: var(--border-error);
+        background: rgba(239, 68, 68, 0.1);
+        animation: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+      }
+
+      @keyframes shake {
+        10%,
+        90% {
+          transform: translate3d(-1px, 0, 0);
+        }
+        20%,
+        80% {
+          transform: translate3d(2px, 0, 0);
+        }
+        30%,
+        50%,
+        70% {
+          transform: translate3d(-4px, 0, 0);
+        }
+        40%,
+        60% {
+          transform: translate3d(4px, 0, 0);
+        }
+      }
+
+      .cloze-field:empty::before {
+        content: attr(data-placeholder);
+        color: rgba(255, 255, 255, 0.25);
+        font-size: 0.85em;
+        font-style: italic;
+        pointer-events: none;
+        font-weight: 400;
+      }
+
+      /* Navigation */
+      .nav-pill {
+        transition: all 0.2s ease;
+        white-space: nowrap;
+        background: transparent;
+        border: 1px solid var(--border-dim);
+        color: var(--text-dim);
+      }
+      .nav-pill.active {
+        background: #ffffff;
+        color: #000000;
+        border-color: #ffffff;
+        font-weight: 600;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+      }
+
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+
+      .text-content {
+        line-height: 2.4;
+        transition: all 0.3s ease;
+      }
+      .deco-line {
+        width: 1px;
+        background: linear-gradient(
+          to bottom,
+          transparent,
+          rgba(255, 255, 255, 0.2),
+          transparent
+        );
+        transition: opacity 0.3s;
+      }
+
+      /* Saving Indicator */
+      .saving-indicator {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        opacity: 0;
+        transition: opacity 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        pointer-events: none;
+        z-index: 50;
+      }
+      .saving-indicator.show {
+        opacity: 1;
+      }
+
+      /* Action Bar Container */
+      .action-bar-container {
+        position: fixed;
+        bottom: 30px;
+        left: 0;
+        width: 100%;
+        z-index: 30;
+        pointer-events: none;
+        display: flex;
+        justify-content: center;
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+          opacity 0.3s ease;
+        transform: translateY(0);
+        opacity: 1;
+      }
+      .action-bar-container.hidden-bar {
+        transform: translateY(150%);
+        opacity: 0;
+      }
+
+      /* Independent Hint Bar */
+      .hint-container {
+        position: fixed;
+        bottom: 20px;
+        left: 0;
+        width: 100%;
+        z-index: 40;
+        pointer-events: none;
+        display: flex;
+        justify-content: center;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      .hint-container.visible {
+        transform: translateY(-10px);
+        opacity: 1;
+      }
+
+      .active-hint-bar {
+        background: rgba(56, 189, 248, 0.95);
+        color: #09090b;
+        padding: 10px 20px;
+        border-radius: 99px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        box-shadow: 0 4px 20px rgba(56, 189, 248, 0.4);
+        max-width: 90%;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        backdrop-filter: blur(4px);
+        transition: background-color 0.3s, box-shadow 0.3s;
+      }
+
+      .active-hint-bar.translation-mode {
+        background: rgba(139, 92, 246, 0.95);
+        box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+        color: #ffffff;
+      }
+
+      /* Action Bar Styling */
+      .action-bar {
+        pointer-events: auto;
+        background: rgba(23, 23, 23, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        backdrop-filter: blur(20px);
+        padding: 6px;
+        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.8);
+        width: auto;
+        max-width: 95%;
+      }
+
+      /* Font Control */
+      .font-control {
+        display: flex;
+        align-items: center;
+        gap: 2px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 99px;
+        padding: 4px;
+        margin-right: 12px;
+      }
+      .font-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-dim);
+        transition: all 0.2s;
+        font-family: serif;
+      }
+      .font-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+      }
+      .font-btn:active {
+        transform: scale(0.9);
+      }
+      .font-small {
+        font-size: 14px;
+      }
+      .font-large {
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      /* Modal */
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(4px);
+        z-index: 100;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+      .modal-overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .modal-content {
+        background: #1a1a1a;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 24px;
+        border-radius: 16px;
+        width: 90%;
+        max-width: 320px;
+        transform: scale(0.95);
+        transition: transform 0.3s;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      }
+      .modal-overlay.active .modal-content {
+        transform: scale(1);
+      }
+
+      /* --- PREVIEW MODE STYLES --- */
+      body.preview-active {
+        background-image: none;
+        background-color: #111; /* Clean dark background */
+      }
+
+      body.preview-active .mono-card {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        margin-bottom: 2rem;
+      }
+
+      body.preview-active .card-header,
+      body.preview-active .deco-line {
+        display: none !important;
+      }
+
+      body.preview-active .text-content {
+        font-family: "Lora", "Times New Roman", serif; /* Book-like serif font */
+        font-size: 1.15em;
+        line-height: 2;
+        color: #d4d4d4; /* Soft white */
+        padding: 0 !important;
+      }
+
+      body.preview-active .template-text {
+        border-bottom: none;
+        cursor: default;
+      }
+      body.preview-active .template-text:hover {
+        background: transparent;
+        color: #d4d4d4;
+      }
+
+      body.preview-active .cloze-field {
+        border-bottom: none;
+        color: #fff; /* Highlight user text slightly */
+        background: transparent !important;
+        padding: 0;
+        font-weight: 600; /* Bold user text slightly */
+      }
+
+      body.preview-active .cloze-field:empty::before {
+        content: "_______";
+        opacity: 0.2;
+      }
+
+      /* Hide Hints in preview */
+      body.preview-active .active-hint-bar {
+        display: none !important;
+      }
+
+      /* Preview Button Active State */
+      .preview-btn.active {
+        color: #38bdf8;
+        background: rgba(56, 189, 248, 0.15);
+      }
+    </style>
+  </head>
+  <body
+    class="min-h-screen flex flex-col items-center p-4 sm:p-8 pb-40 transition-all duration-300"
+  >
+    <!-- Saving Indicator -->
+    <div id="saveIndicator" class="saving-indicator">
+      <i class="fa-solid fa-cloud-arrow-up"></i> Saved
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal-overlay">
+      <div class="modal-content text-center">
+        <div
+          class="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4"
+        >
+          <i class="fa-solid fa-triangle-exclamation text-red-500 text-xl"></i>
+        </div>
+        <h3 class="text-white font-bold text-lg mb-2">Clear All Content?</h3>
+        <p class="text-neutral-400 text-sm mb-6 leading-relaxed">
+          This will remove all your writing. This action cannot be undone.
+        </p>
+        <div class="flex gap-3">
+          <button
+            onclick="closeModal()"
+            class="flex-1 py-2.5 rounded-lg border border-white/10 text-neutral-300 font-medium hover:bg-white/5 transition-colors text-sm"
+          >
+            Cancel
+          </button>
+          <button
+            onclick="executeReset()"
+            class="flex-1 py-2.5 rounded-lg bg-red-600 text-white font-medium hover:bg-red-500 transition-colors text-sm shadow-lg shadow-red-900/20"
+          >
+            Clear All
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <header
+      class="w-full max-w-3xl mb-8 text-center border-b border-white/5 pb-6 transition-opacity duration-300"
+    >
+      <h1
+        class="text-2xl sm:text-3xl font-bold mb-2 tracking-[0.15em] text-white uppercase"
+      >
+        Essay Template
+      </h1>
+      <p class="text-neutral-500 text-xs tracking-[0.3em] uppercase">
+        (～￣▽￣)～
+      </p>
+    </header>
+
+    <!-- Navigation -->
+    <nav
+      class="w-full max-w-3xl mb-8 sticky top-0 z-20 bg-black/80 backdrop-blur-xl py-3 -mx-4 px-4 sm:mx-0 sm:px-0 border-b border-white/5 sm:border-none sm:bg-transparent transition-opacity duration-300"
+    >
+      <div
+        class="flex overflow-x-auto gap-2 sm:gap-3 pb-1 no-scrollbar"
+        id="templateNav"
+      >
+        <!-- JS Injected -->
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="w-full max-w-3xl flex-grow">
+      <!-- Info Banner -->
+      <div
+        class="mb-6 flex flex-col sm:flex-row sm:items-center justify-between px-1 gap-2 transition-opacity duration-300"
+        id="infoBanner"
+      >
+        <span
+          id="typeTitle"
+          class="text-lg font-bold text-white tracking-wide"
+        ></span>
+        <div class="flex items-center gap-3">
+          <span
+            id="wordCount"
+            class="text-xs text-neutral-500 font-mono border border-neutral-800 px-2 py-1 rounded"
+            >Total: 0</span
+          >
+          <span
+            id="typeDescription"
+            class="text-xs text-neutral-400 border border-neutral-800 px-3 py-1 rounded-full"
+          ></span>
+        </div>
+      </div>
+
+      <!-- Paragraph 1 -->
+      <div class="mono-card rounded-lg p-5 sm:p-8 mb-6 relative group">
+        <div class="absolute left-0 top-10 bottom-10 deco-line ml-0.5"></div>
+        <div class="card-header flex justify-between items-center mb-4 pl-4">
+          <h2
+            class="text-[10px] font-bold text-neutral-600 uppercase tracking-[0.2em] flex items-center gap-2"
+          >
+            Paragraph 01 <span class="h-px w-8 bg-neutral-800"></span>
+          </h2>
+          <span id="p1Count" class="text-[10px] font-mono text-neutral-600"
+            >0 words</span
+          >
+        </div>
+        <div id="editor-p1" class="text-content text-neutral-300 pl-2 sm:pl-4">
+          <!-- JS Injected -->
+        </div>
+      </div>
+
+      <!-- Paragraph 2 -->
+      <div class="mono-card rounded-lg p-5 sm:p-8 mb-6 relative group">
+        <div class="absolute left-0 top-10 bottom-10 deco-line ml-0.5"></div>
+        <div class="card-header flex justify-between items-center mb-4 pl-4">
+          <h2
+            class="text-[10px] font-bold text-neutral-600 uppercase tracking-[0.2em] flex items-center gap-2"
+          >
+            Paragraph 02 <span class="h-px w-8 bg-neutral-800"></span>
+          </h2>
+          <span id="p2Count" class="text-[10px] font-mono text-neutral-600"
+            >0 words</span
+          >
+        </div>
+        <div id="editor-p2" class="text-content text-neutral-300 pl-2 sm:pl-4">
+          <!-- JS Injected -->
+        </div>
+      </div>
+    </main>
+
+    <!-- Independent Hint Bar -->
+    <div id="hintContainer" class="hint-container">
+      <div id="hintBar" class="active-hint-bar">
+        <i id="hintIcon" class="fa-regular fa-lightbulb mr-2"></i
+        ><span id="hintText">Start typing...</span>
+      </div>
+    </div>
+
+    <!-- Action Bar Container -->
+    <div id="actionBarContainer" class="action-bar-container">
+      <div class="action-bar">
+        <!-- Font Control -->
+        <div class="font-control">
+          <button
+            onclick="adjustFont(-1)"
+            class="font-btn font-small"
+            title="Decrease Font"
+          >
+            A
+          </button>
+          <div class="w-px h-3 bg-white/20"></div>
+          <button
+            onclick="adjustFont(1)"
+            class="font-btn font-large"
+            title="Increase Font"
+          >
+            A
+          </button>
+        </div>
+
+        <!-- Preview Mode Button (New) -->
+        <button
+          onclick="togglePreview()"
+          id="previewBtn"
+          class="preview-btn w-10 h-10 rounded-full text-neutral-400 hover:text-white hover:bg-white/5 transition-colors flex items-center justify-center flex-shrink-0"
+          title="Preview Mode"
+        >
+          <i class="fa-regular fa-eye"></i>
+        </button>
+
+        <!-- Reset -->
+        <button
+          onclick="openModal()"
+          class="w-10 h-10 rounded-full text-neutral-400 hover:text-red-400 hover:bg-white/5 transition-colors flex items-center justify-center flex-shrink-0"
+          title="Clear All"
+        >
+          <i class="fa-solid fa-trash-can text-sm"></i>
+        </button>
+
+        <div class="h-4 w-px bg-neutral-600 mx-3"></div>
+
+        <!-- Copy -->
+        <button
+          onclick="validateAndCopy()"
+          class="flex-grow h-10 px-6 rounded-full bg-white text-black font-bold hover:bg-neutral-200 transition-all active:scale-95 flex items-center justify-center text-sm tracking-wide shadow-lg"
+        >
+          <i class="fa-regular fa-copy mr-2"></i> COPY
+        </button>
+      </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div
+      id="toast"
+      class="fixed top-8 left-1/2 transform -translate-x-1/2 bg-white text-black px-6 py-3 rounded-md shadow-2xl opacity-0 transition-all duration-300 pointer-events-none z-50 flex items-center translate-y-[-20px] border border-neutral-200"
+    >
+      <i id="toastIcon" class="fa-solid fa-check mr-2 text-xs"></i>
+      <span id="toastMsg" class="font-bold text-xs tracking-widest uppercase"
+        >Copied</span
+      >
+    </div>
+
+    <script>
+      // 模板數據 (包含中文翻譯)
+      const templates = [
+        {
+          id: "A",
+          name: "二選一",
+          fullName: "Type A: Preference",
+          desc: "機器人、公園、選擇題",
+          p1: [
+            { t: "When it comes to", zh: "當談到..." },
+            { ph: "題目主題 (e.g. choosing a robot)" },
+            {
+              t: ", individuals may hold diverse preferences depending on their specific needs. On the one hand,",
+              zh: "，每個人根據自身需求可能有不同的偏好。一方面，",
+            },
+            { ph: "選項A名稱" },
+            { t: "features", zh: "以...為特色" },
+            { ph: "選項A的一個特色" },
+            { t: ", which can", zh: "，這能夠..." },
+            { ph: "選項A的功能/好處" },
+            { t: ". On the other hand,", zh: "。另一方面，" },
+            { ph: "選項B名稱" },
+            { t: "focuses on", zh: "專注於..." },
+            { ph: "選項B的一個特色" },
+            { t: ", providing people with", zh: "，提供人們..." },
+            { ph: "選項B的功能/好處" },
+            {
+              t: ". While both options possess their own unique merits, they appeal to different perspectives.",
+              zh: "。雖然兩個選項都有其獨特的優點，但它們吸引不同的觀點。",
+            },
+          ],
+          p2: [
+            {
+              t: "As for me, if I were given the chance to make a choice, I would definitely opt for",
+              zh: "至於我，如果我有機會做選擇，我絕對會選擇...",
+            },
+            { ph: "你的選擇" },
+            {
+              t: ". The primary reason for my decision is that",
+              zh: "。我做此決定的主要原因是...",
+            },
+            { ph: "理由一: 解決什麼問題" },
+            { t: ". For instance,", zh: "。例如，" },
+            { ph: "舉一個簡單例子" },
+            { t: ". In addition,", zh: "。此外，" },
+            { ph: "理由二: 深層好處/情感" },
+            {
+              t: "is also a crucial factor. In conclusion, considering the reasons mentioned above,",
+              zh: "也是一個關鍵因素。總而言之，考量上述原因，",
+            },
+            { ph: "你的選擇" },
+            {
+              t: "is undoubtedly the most suitable option for me.",
+              zh: "無疑是對我來說最合適的選擇。",
+            },
+          ],
+        },
+        {
+          id: "B",
+          name: "現象論述",
+          fullName: "Type B: Phenomenon",
+          desc: "表情符號、科技利弊",
+          p1: [
+            { t: "In recent years,", zh: "近年來，" },
+            { ph: "題目主題 (e.g. using emojis)" },
+            {
+              t: "has become an indispensable part of our daily lives. Opinions on this trend, however, are divided. On the positive side, proponents argue that",
+              zh: "已成為我們生活中不可或缺的一部分。然而對此趨勢看法分歧。正面來看，支持者認為...",
+            },
+            { ph: "好處/優點" },
+            { t: ", which allows us to", zh: "，這讓我們能夠..." },
+            { ph: "這個好處帶來的結果" },
+            {
+              t: ". However, every coin has two sides. Opponents raise concerns that",
+              zh: "。然而，凡事有一體兩面。反對者提出疑慮...",
+            },
+            { ph: "壞處/問題" },
+            {
+              t: ". Apparently, this phenomenon serves as a double-edged sword, bringing both convenience and potential challenges.",
+              zh: "。顯然地，此現象是一把雙面刃，帶來便利的同時也帶來挑戰。",
+            },
+          ],
+          p2: [
+            {
+              t: "From my perspective, I believe that",
+              zh: "從我的觀點來看，我認為...",
+            },
+            { ph: "你的立場" },
+            {
+              t: ". My personal experience serves as a perfect example. I recall a time when",
+              zh: "。我的個人經驗就是完美的例子。我回想起有一次...",
+            },
+            { ph: "發生過的一件事" },
+            { t: ". At that moment,", zh: "。在那一刻，" },
+            { ph: "故事的高潮/結果" },
+            {
+              t: ", which made me realize the importance of",
+              zh: "，這讓我意識到了...的重要性",
+            },
+            { ph: "學到的教訓" },
+            {
+              t: ". In sum, only by using",
+              zh: "。總結來說，只有透過明智地使用...",
+            },
+            { ph: "主題" },
+            {
+              t: "wisely can we maximize its benefits while avoiding its drawbacks.",
+              zh: "我們才能最大化其好處並避免其壞處。",
+            },
+          ],
+        },
+        {
+          id: "C",
+          name: "看圖敘事",
+          fullName: "Type C: Narrative",
+          desc: "踩花海、排隊、單張圖",
+          p1: [
+            {
+              t: "As depicted in the picture, a thought-provoking scene unfolds before our eyes. In the center of the image,",
+              zh: "正如圖片所描繪，一個發人深省的場景在眼前展開。在圖片中央，",
+            },
+            { ph: "主角/人群" },
+            { t: "is/are", zh: "正在..." },
+            { ph: "正在做的動作(ing)" },
+            { t: ". Surrounding them,", zh: "。圍繞著他們，" },
+            { ph: "周圍環境/其他人" },
+            { t: "seem to be", zh: "似乎呈現..." },
+            { ph: "周圍的狀態" },
+            { t: ". Obviously, the atmosphere is", zh: "。顯然地，氣氛是..." },
+            { ph: "形容氣氛 (chaotic/tense)" },
+            {
+              t: ". However, what catches my attention most is that",
+              zh: "。然而，最吸引我注意的是...",
+            },
+            { ph: "關鍵問題/衝突點" },
+            { t: ".", zh: "。" },
+          ],
+          p2: [
+            {
+              t: "Witnessing such a scene, I cannot help but feel",
+              zh: "目擊這樣的場景，我忍不住感到...",
+            },
+            { ph: "你的情緒 (shocked/sad)" },
+            { t: ". It goes without saying that", zh: "。無庸置疑地..." },
+            { ph: "指出問題核心" },
+            {
+              t: ". If I were the person in this situation, I would",
+              zh: "。如果我是當下那個人，我會...",
+            },
+            { ph: "具體行動" },
+            {
+              t: ". By doing so, not only could I",
+              zh: "。這麼做，我不僅可以...",
+            },
+            { ph: "行動好處1" },
+            { t: ", but I could also", zh: "，還可以..." },
+            { ph: "行動好處2" },
+            {
+              t: ". This picture conveys a crucial message: we should always",
+              zh: "。這張圖片傳達了一個關鍵訊息：我們應該總是...",
+            },
+            { ph: "總結教訓/呼籲" },
+            { t: ".", zh: "。" },
+          ],
+        },
+        {
+          id: "D",
+          name: "圖表分析",
+          fullName: "Type D: Chart Analysis",
+          desc: "長條圖、圓餅圖、數據",
+          p1: [
+            { t: "The provided", zh: "所提供的..." },
+            { ph: "圖表類型 (bar/pie chart)" },
+            { t: "clearly illustrates", zh: "清楚地說明了..." },
+            { ph: "圖表標題/主題" },
+            { t: ". According to the statistics,", zh: "。根據統計數據，" },
+            { ph: "排名第一的項目" },
+            { t: "ranks first, accounting for", zh: "排名第一，佔了..." },
+            { ph: "數據/百分比" },
+            { t: ". In contrast,", zh: "。相反地，" },
+            { ph: "排名最後/對比項目" },
+            {
+              t: "shows a relatively lower figure, standing at only",
+              zh: "顯示相對較低的數字，僅位於...",
+            },
+            { ph: "數據/百分比" },
+            {
+              t: ". Overall, the data indicates a significant trend that",
+              zh: "。整體而言，數據指出一個顯著趨勢...",
+            },
+            { ph: "觀察到的總結現象" },
+            { t: ".", zh: "。" },
+          ],
+          p2: [
+            {
+              t: "The phenomenon shown above carries significant implications, and I believe",
+              zh: "上述現象帶有重要意涵，我相信...",
+            },
+            { ph: "兩個主要原因" },
+            {
+              t: "contribute to this situation. First of all,",
+              zh: "促成了這個情況。首先，",
+            },
+            { ph: "原因一" },
+            { t: ". This explains why", zh: "。這解釋了為什麼..." },
+            { ph: "現象一" },
+            { t: ". Moreover,", zh: "。此外，" },
+            { ph: "原因二" },
+            {
+              t: "also plays a key role. In light of this, it is suggested that we should",
+              zh: "也扮演關鍵角色。有鑑於此，建議我們應該...",
+            },
+            { ph: "你的建議/方案" },
+            { t: ". By doing so, we can", zh: "。透過這麼做，我們可以..." },
+            { ph: "預期好結果" },
+            { t: ".", zh: "。" },
+          ],
+        },
+        {
+          id: "E",
+          name: "經驗計畫",
+          fullName: "Type E: Reflection",
+          desc: "壞習慣、改變、未來規劃",
+          p1: [
+            { t: "It is universally acknowledged that", zh: "眾所皆知..." },
+            { ph: "題目關鍵字" },
+            {
+              t: "play(s) a pivotal role in shaping our lives. As for me, I used to struggle with",
+              zh: "在塑造生活中扮演關鍵角色。至於我，我過去常苦惱於...",
+            },
+            { ph: "你的壞習慣/現況" },
+            { t: ". Whenever I", zh: "。每當我..." },
+            { ph: "發生情境" },
+            { t: ", I would always", zh: "，我總是會..." },
+            { ph: "當時的負面行為" },
+            { t: ". This not only", zh: "。這不僅..." },
+            { ph: "負面影響1" },
+            { t: ", but also", zh: "，而且還..." },
+            { ph: "負面影響2" },
+            {
+              t: ". Realizing the severity of the problem, I was determined to make a change.",
+              zh: "。意識到問題的嚴重性，我下定決心做出改變。",
+            },
+          ],
+          p2: [
+            {
+              t: "To achieve this goal, I started to take concrete actions. First of all, I",
+              zh: "為了達成目標，我開始採取具體行動。首先，我...",
+            },
+            { ph: "具體作法1" },
+            { t: ". By doing so, I could", zh: "。透過這麼做，我可以..." },
+            { ph: "作法1的效果" },
+            { t: ". In addition, I also tried to", zh: "。此外，我也嘗試..." },
+            { ph: "具體作法2" },
+            {
+              t: ". Although the process was challenging at first, I gradually",
+              zh: "。雖然過程起初很具挑戰性，但我逐漸...",
+            },
+            { ph: "進步/改變的狀況" },
+            {
+              t: ". In conclusion, I believe that through these efforts, I can pave the way for a better self.",
+              zh: "。總結來說，我相信透過這些努力，我可以為更好的自己鋪路。",
+            },
+          ],
+        },
+        {
+          id: "F",
+          name: "四格故事",
+          fullName: "Type F: Story",
+          desc: "連環圖、撿錢包、突發狀況",
+          p1: [
+            { t: "It was a", zh: "那是一個..." },
+            { ph: "天氣 (sunny/rainy)" },
+            { t: "morning. ", zh: "早晨。" },
+            { ph: "主角名字" },
+            { t: "was", zh: "正在..." },
+            { ph: "正在做的動作" },
+            {
+              t: ", enjoying the pleasant atmosphere. Everything seemed perfect until",
+              zh: "，享受著愉快的氣氛。一切看似完美，直到...",
+            },
+            { ph: "突發狀況/圖二" },
+            {
+              t: ". Caught off guard by the sudden situation,",
+              zh: "。被這突發狀況弄得措手不及，",
+            },
+            { ph: "主角" },
+            { t: "felt", zh: "感到..." },
+            { ph: "情緒 (panicked)" },
+            {
+              t: "and didn't know what to do at first. Obviously, something had to be done immediately.",
+              zh: "，起初不知道該怎麼辦。顯然地，必須立刻採取行動。",
+            },
+          ],
+          p2: [
+            { t: "To deal with the problem,", zh: "為了處理這個問題，" },
+            { ph: "主角" },
+            { t: "decided to", zh: "決定..." },
+            { ph: "採取的行動/圖三" },
+            { t: ". After a while,", zh: "。過了一會兒，" },
+            { ph: "行動結果/圖四" },
+            {
+              t: ". Eventually, the incident came to a",
+              zh: "。最終，這起事件有了一個...",
+            },
+            { ph: "結局形容詞 (happy)" },
+            {
+              t: "end. Looking back on what happened,",
+              zh: "結局。回頭看發生的事，",
+            },
+            { ph: "主角" },
+            {
+              t: "breathed a sigh of relief. This experience taught him/her a valuable lesson: one should always",
+              zh: "鬆了一口氣。這經驗教了他/她一個珍貴的教訓：人應該總是...",
+            },
+            { ph: "學到的教訓" },
+            { t: ".", zh: "。" },
+          ],
+        },
+        {
+          id: "G",
+          name: "想像假設",
+          fullName: "Type G: Hypothesis",
+          desc: "如果我是...、最特別的禮物",
+          p1: [
+            { t: "If I were asked to", zh: "如果有人要我..." },
+            { ph: "題目情境 (name a gift)" },
+            {
+              t: ", my answer would undoubtedly be",
+              zh: "，我的答案無疑會是...",
+            },
+            { ph: "你的答案" },
+            {
+              t: ". Unlike ordinary choices, this",
+              zh: "。不同於一般的選擇，這個...",
+            },
+            { ph: "你的答案" },
+            { t: "would be characterized by", zh: "將以...為特徵。" },
+            { ph: "特色形容詞 (warmth)" },
+            {
+              t: ". Specifically, I envision that",
+              zh: "。具體來說，我想像...",
+            },
+            { ph: "詳細描述樣子" },
+            {
+              t: ". To me, it is not merely a",
+              zh: "。對我來說，這不僅僅是一個...",
+            },
+            { ph: "名詞 (gift)" },
+            { t: ", but a symbol of", zh: "，而是...的象徵。" },
+            { ph: "抽象意義 (love)" },
+            { t: ".", zh: "。" },
+          ],
+          p2: [
+            {
+              t: "The reason why I cherish this idea is simple yet profound. Primarily, it would enable me to",
+              zh: "我珍惜此想法的原因簡單而深遠。首先，它將使我能夠...",
+            },
+            { ph: "對自己的好處" },
+            {
+              t: ". More importantly, I believe that",
+              zh: "。更重要的是，我相信...",
+            },
+            { ph: "更深層理由/對他人意義" },
+            { t: ". In a world filled with", zh: "。在一個充滿...的世界裡，" },
+            { ph: "反面現況 (chaos)" },
+            { t: ", having", zh: "，擁有..." },
+            { ph: "你的答案" },
+            {
+              t: "reminds me of what truly matters. In short, its true value lies not in its price, but in the",
+              zh: "提醒了我什麼才是真正重要的。簡言之，其價值不在價格，而在於它帶來的...",
+            },
+            { ph: "總結名詞 (happiness)" },
+            { t: "it brings.", zh: "。" },
+          ],
+        },
+      ];
+
+      let activeTemplateId = "A";
+      const STORAGE_KEY_PREFIX = "essay_architect_";
+      let blurTimeout;
+      let hintTimeout;
+      let currentFontSize = 16;
+      let isPreviewMode = false;
+
+      function init() {
+        renderNav();
+        const lastActive = localStorage.getItem(
+          STORAGE_KEY_PREFIX + "lastActive"
+        );
+
+        // Restore font size
+        const savedFont = localStorage.getItem(STORAGE_KEY_PREFIX + "fontSize");
+        if (savedFont) {
+          currentFontSize = parseInt(savedFont);
+          document.documentElement.style.setProperty(
+            "--base-font-size",
+            currentFontSize + "px"
+          );
+        }
+
+        loadTemplate(lastActive || "A");
+      }
+
+      function renderNav() {
+        const navContainer = document.getElementById("templateNav");
+        navContainer.innerHTML = templates
+          .map(
+            (t) => `
+                <button 
+                    onclick="loadTemplate('${t.id}')"
+                    class="nav-pill px-4 py-2 rounded-full text-xs sm:text-sm tracking-wide ${
+                      t.id === activeTemplateId ? "active" : ""
+                    }"
+                    id="nav-${t.id}"
+                >
+                    ${t.name}
+                </button>
+            `
+          )
+          .join("");
+      }
+
+      function loadTemplate(id) {
+        activeTemplateId = id;
+        localStorage.setItem(STORAGE_KEY_PREFIX + "lastActive", id);
+
+        document
+          .querySelectorAll(".nav-pill")
+          .forEach((btn) => btn.classList.remove("active"));
+        document.getElementById(`nav-${id}`).classList.add("active");
+
+        const template = templates.find((t) => t.id === id);
+
+        document.getElementById("typeTitle").textContent = template.fullName;
+        document.getElementById("typeDescription").textContent = template.desc;
+
+        const savedData = JSON.parse(
+          localStorage.getItem(STORAGE_KEY_PREFIX + "data_" + id) || "{}"
+        );
+
+        renderParagraph("editor-p1", template.p1, savedData.p1 || []);
+        renderParagraph("editor-p2", template.p2, savedData.p2 || []);
+
+        updateWordCount();
+      }
+
+      function renderParagraph(elementId, contentArray, savedValues) {
+        const container = document.getElementById(elementId);
+        container.innerHTML = "";
+
+        let inputIndex = 0;
+
+        contentArray.forEach((item) => {
+          if (item.t) {
+            // Static text with translation
+            const span = document.createElement("span");
+            span.textContent = item.t + " ";
+            span.className = "template-text";
+
+            // Add Click Handler for Translation
+            span.onclick = (e) => {
+              if (isPreviewMode) return; // Disable clicks in preview
+              e.stopPropagation(); // Prevent document click
+              showTranslation(item.zh);
+
+              // Highlight current text
+              document
+                .querySelectorAll(".template-text")
+                .forEach((el) => el.classList.remove("active"));
+              span.classList.add("active");
+            };
+
+            container.appendChild(span);
+          } else if (item.ph) {
+            // Input field
+            const span = document.createElement("span");
+            span.contentEditable = "true";
+            span.className = "cloze-field";
+            span.setAttribute("data-placeholder", item.ph);
+            span.setAttribute("data-index", inputIndex);
+
+            if (savedValues && savedValues[inputIndex]) {
+              span.innerText = savedValues[inputIndex];
+            }
+
+            inputIndex++;
+
+            span.addEventListener("paste", (e) => {
+              e.preventDefault();
+              const text = (e.clipboardData || window.clipboardData).getData(
+                "text"
+              );
+              document.execCommand("insertText", false, text);
+            });
+
+            span.addEventListener("keydown", (e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                const fields = Array.from(
+                  document.querySelectorAll(".cloze-field")
+                );
+                const currentIndex = fields.indexOf(e.target);
+                if (currentIndex < fields.length - 1) {
+                  fields[currentIndex + 1].focus();
+                } else {
+                  e.target.blur();
+                }
+              }
+            });
+
+            span.addEventListener("input", () => {
+              span.classList.remove("error"); // Clear error on typing
+              saveCurrentProgress();
+              updateWordCount();
+            });
+
+            // Active Context Logic for Input
+            span.addEventListener("focus", (e) => {
+              if (isPreviewMode) return;
+              clearTimeout(blurTimeout);
+              clearTimeout(hintTimeout);
+
+              // Remove any text active state
+              document
+                .querySelectorAll(".template-text")
+                .forEach((el) => el.classList.remove("active"));
+
+              // Hide Action Bar
+              document
+                .getElementById("actionBarContainer")
+                .classList.add("hidden-bar");
+
+              // Show Hint (Input Mode)
+              showHintBar(e.target.getAttribute("data-placeholder"), false);
+
+              setTimeout(() => {
+                span.scrollIntoView({ behavior: "smooth", block: "center" });
+              }, 100);
+            });
+
+            span.addEventListener("blur", () => {
+              blurTimeout = setTimeout(() => {
+                // Show Action Bar
+                document
+                  .getElementById("actionBarContainer")
+                  .classList.remove("hidden-bar");
+                // Hide Hint
+                hideHintBar();
+              }, 150);
+            });
+
+            container.appendChild(span);
+            container.appendChild(document.createTextNode(" "));
+          }
+        });
+      }
+
+      // Global click to clear selection
+      document.addEventListener("click", (e) => {
+        if (
+          !e.target.classList.contains("template-text") &&
+          !e.target.classList.contains("cloze-field")
+        ) {
+          document
+            .querySelectorAll(".template-text")
+            .forEach((el) => el.classList.remove("active"));
+          if (!document.activeElement.classList.contains("cloze-field")) {
+            hideHintBar();
+          }
+        }
+      });
+
+      function showTranslation(text) {
+        clearTimeout(hintTimeout);
+        showHintBar("翻譯：" + text, true);
+
+        // Auto hide translation after 5 seconds if no interaction
+        hintTimeout = setTimeout(() => {
+          hideHintBar();
+          document
+            .querySelectorAll(".template-text")
+            .forEach((el) => el.classList.remove("active"));
+        }, 5000);
+      }
+
+      function showHintBar(text, isTranslation) {
+        const hintContainer = document.getElementById("hintContainer");
+        const hintBar = document.getElementById("hintBar");
+        const hintText = document.getElementById("hintText");
+        const hintIcon = document.getElementById("hintIcon");
+
+        hintText.textContent = text;
+
+        if (isTranslation) {
+          hintBar.classList.add("translation-mode");
+          hintIcon.className = "fa-solid fa-language mr-2";
+        } else {
+          hintBar.classList.remove("translation-mode");
+          hintIcon.className = "fa-regular fa-lightbulb mr-2";
+        }
+
+        hintContainer.classList.add("visible");
+      }
+
+      function hideHintBar() {
+        document.getElementById("hintContainer").classList.remove("visible");
+      }
+
+      function saveCurrentProgress() {
+        const getData = (containerId) => {
+          const inputs = document.querySelectorAll(
+            `#${containerId} .cloze-field`
+          );
+          return Array.from(inputs).map((el) => el.innerText);
+        };
+
+        const data = {
+          p1: getData("editor-p1"),
+          p2: getData("editor-p2"),
+          timestamp: new Date().getTime(),
+        };
+
+        localStorage.setItem(
+          STORAGE_KEY_PREFIX + "data_" + activeTemplateId,
+          JSON.stringify(data)
+        );
+
+        const indicator = document.getElementById("saveIndicator");
+        indicator.classList.add("show");
+        setTimeout(() => indicator.classList.remove("show"), 1500);
+      }
+
+      function validateAndCopy() {
+        const fields = document.querySelectorAll(".cloze-field");
+        let hasEmpty = false;
+        let firstEmpty = null;
+
+        fields.forEach((field) => {
+          if (!field.innerText.trim()) {
+            field.classList.add("error");
+            hasEmpty = true;
+            if (!firstEmpty) firstEmpty = field;
+          }
+        });
+
+        if (hasEmpty) {
+          firstEmpty.scrollIntoView({ behavior: "smooth", block: "center" });
+          firstEmpty.focus();
+          showToast("請填寫所有標示的欄位", "fa-exclamation-circle");
+          return;
+        }
+
+        copyToClipboard();
+      }
+
+      function adjustFont(delta) {
+        currentFontSize += delta;
+        if (currentFontSize < 12) currentFontSize = 12;
+        if (currentFontSize > 24) currentFontSize = 24;
+
+        document.documentElement.style.setProperty(
+          "--base-font-size",
+          currentFontSize + "px"
+        );
+        localStorage.setItem(STORAGE_KEY_PREFIX + "fontSize", currentFontSize);
+      }
+
+      // Preview Mode Toggle
+      function togglePreview() {
+        isPreviewMode = !isPreviewMode;
+        document.body.classList.toggle("preview-active");
+
+        const btn = document.getElementById("previewBtn");
+        const icon = btn.querySelector("i");
+
+        // Toggle Button Visual
+        btn.classList.toggle("active");
+
+        if (isPreviewMode) {
+          // Hide header/nav if you want full immersion, here mainly CSS handles it
+          // Disable content editable
+          document
+            .querySelectorAll(".cloze-field")
+            .forEach((el) => (el.contentEditable = "false"));
+          icon.className = "fa-solid fa-eye-slash";
+
+          // Hide hints explicitly
+          hideHintBar();
+          // Hide info Banner and Nav to be super clean?
+          // document.querySelector('header').style.opacity = '0';
+          // document.querySelector('nav').style.opacity = '0';
+          // document.getElementById('infoBanner').style.opacity = '0';
+        } else {
+          // Enable content editable
+          document
+            .querySelectorAll(".cloze-field")
+            .forEach((el) => (el.contentEditable = "true"));
+          icon.className = "fa-regular fa-eye";
+
+          // Restore headers
+          // document.querySelector('header').style.opacity = '1';
+          // document.querySelector('nav').style.opacity = '1';
+          // document.getElementById('infoBanner').style.opacity = '1';
+        }
+      }
+
+      // Modal Logic
+      function openModal() {
+        document.getElementById("confirmModal").classList.add("active");
+      }
+      function closeModal() {
+        document.getElementById("confirmModal").classList.remove("active");
+      }
+      function executeReset() {
+        resetInputs();
+        closeModal();
+      }
+
+      function resetInputs() {
+        const fields = document.querySelectorAll(".cloze-field");
+        fields.forEach((field) => {
+          field.innerText = "";
+          field.classList.remove("error");
+        });
+        saveCurrentProgress();
+        updateWordCount();
+      }
+
+      function updateWordCount() {
+        const countWords = (text) =>
+          text
+            .trim()
+            .split(/\s+/)
+            .filter((w) => w.length > 0).length;
+
+        const p1Text = getSectionText("editor-p1");
+        const p2Text = getSectionText("editor-p2");
+
+        const p1Count = p1Text ? countWords(p1Text) : 0;
+        const p2Count = p2Text ? countWords(p2Text) : 0;
+        const total = p1Count + p2Count;
+
+        document.getElementById("wordCount").innerText = `Total: ${total}`;
+        document.getElementById("p1Count").innerText = `${p1Count} words`;
+        document.getElementById("p2Count").innerText = `${p2Count} words`;
+      }
+
+      function getSectionText(containerId) {
+        const container = document.getElementById(containerId);
+        let paragraphText = "";
+        container.childNodes.forEach((node) => {
+          if (node.nodeType === Node.TEXT_NODE)
+            paragraphText += node.textContent;
+          else if (node.tagName === "SPAN") {
+            if (node.classList.contains("cloze-field")) {
+              const val = node.innerText.trim();
+              if (val) paragraphText += val + " ";
+            } else if (node.classList.contains("template-text")) {
+              paragraphText += node.textContent;
+            }
+          }
+        });
+        return paragraphText.replace(/\s+/g, " ").trim();
+      }
+
+      function copyToClipboard() {
+        let fullText = "";
+
+        function extractTextWithPlaceholders(containerId) {
+          const container = document.getElementById(containerId);
+          let paragraphText = "";
+          container.childNodes.forEach((node) => {
+            if (node.nodeType === Node.TEXT_NODE)
+              paragraphText += node.textContent;
+            else if (node.tagName === "SPAN") {
+              if (node.classList.contains("cloze-field")) {
+                const val = node.innerText.trim();
+                if (val) paragraphText += val + " ";
+                else
+                  paragraphText += `[${node.getAttribute(
+                    "data-placeholder"
+                  )}] `;
+              } else if (node.classList.contains("template-text")) {
+                paragraphText += node.textContent;
+              }
+            }
+          });
+          return paragraphText.replace(/\s+/g, " ").trim();
+        }
+
+        const p1 = extractTextWithPlaceholders("editor-p1");
+        const p2 = extractTextWithPlaceholders("editor-p2");
+        fullText = `${p1}\n\n${p2}`;
+
+        navigator.clipboard
+          .writeText(fullText)
+          .then(() => {
+            showToast("已複製到剪貼簿", "fa-check");
+          })
+          .catch((err) => {
+            const textarea = document.createElement("textarea");
+            textarea.value = fullText;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textarea);
+            showToast("已複製到剪貼簿", "fa-check");
+          });
+      }
+
+      function showToast(msg, iconClass) {
+        const toast = document.getElementById("toast");
+        document.getElementById("toastMsg").textContent = msg;
+        document.getElementById(
+          "toastIcon"
+        ).className = `fa-solid ${iconClass} mr-2 text-xs`;
+
+        toast.style.opacity = "1";
+        toast.style.transform = "translate(-50%, 0)";
+        setTimeout(() => {
+          toast.style.opacity = "0";
+          toast.style.transform = "translate(-50%, -20px)";
+        }, 2000);
+      }
+
+      init();
+    </script>
+  </body>
+</html>
