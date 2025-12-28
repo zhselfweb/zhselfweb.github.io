@@ -1423,6 +1423,10 @@
         if (payload.type) appState.selectedType = payload.type;
         if (payload.year) appState.selectedYear = payload.year;
         if (payload.subject) appState.selectedSubject = payload.subject;
+
+        // Push state to browser history
+        history.pushState({ ...appState }, "", "#step" + step);
+
         render();
       }
 
@@ -1431,6 +1435,10 @@
           const prevState = appState.history.pop();
           Object.assign(appState, prevState);
           appState.history = appState.history.slice(0, appState.history.length);
+
+          // Update browser history
+          history.pushState({ ...appState }, "", "#step" + appState.step);
+
           render();
         }
       }
@@ -1478,6 +1486,9 @@
       function resetApp() {
         appState.step = 0;
         appState.history = [];
+
+        // Reset browser history to home
+        history.pushState({ ...appState }, "", "#step0");
         render();
       }
 
@@ -1531,7 +1542,8 @@
                                     <div style="padding-bottom: 24px;">
                                         <div style="font-size: 0.85rem; color: var(--accent); font-weight: 600; margin-bottom: 4px;">v4.0</div>
                                         <ul style="font-size: 0.9rem; color: var(--text-primary); list-style: none; display: flex; flex-direction: column; gap: 6px;">
-                                            <li style="color: #eee;">新增手機版 Google 文件線上預覽 (解決無法開啟問題)</li>
+                                            <li style="color: #eee;">新增手機版返回鍵邏輯</li>
+                                          <li style="color: #eee;">新增手機版 Google 文件線上預覽 (解決無法開啟問題)</li>
                                             <li style="color: #eee;">優化手機版 RWD 介面與安全區域 (Safe Area)</li>
                                             <li style="color: #ccc;">建立自動更新腳本 (Deploy Script)</li>
                                             <li style="color: #ccc;">統整版本更新日誌</li>
@@ -1879,7 +1891,21 @@
         previewModal.classList.remove("active");
       };
 
+      // Handle browser back/forward buttons
+      window.addEventListener("popstate", (event) => {
+        if (event.state) {
+          // Restore state from browser history
+          Object.assign(appState, event.state);
+          render();
+        } else {
+          // Fallback: go back in app
+          goBack();
+        }
+      });
+
       // Init
+      // Set initial state
+      history.replaceState({ ...appState }, "", "#step0");
       render();
     </script>
   </body>
