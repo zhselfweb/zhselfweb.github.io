@@ -2056,16 +2056,13 @@
             const context = canvas.getContext("2d");
             canvas.height = viewport.height;
             canvas.width = viewport.width;
-            // Use CSS to fit it initially? No, we'll handle it in initPdfZoomPan
-            canvas.style.width = "100%";
-            canvas.style.height = "auto";
             canvas.style.display = "block";
 
             await page.render({ canvasContext: context, viewport }).promise;
 
             modalPreviewArea.innerHTML = `
               ${backBar}
-              <div id="pdf-viewport" style="flex: 1; overflow: hidden; background: #525659; position: relative; touch-action: none; display: flex; align-items: flex-start; justify-content: center;">
+              <div id="pdf-viewport" style="flex: 1; overflow: hidden; background: #525659; position: relative; touch-action: none;">
                 <div id="pdf-container" style="transform-origin: 0 0; display: block;"></div>
               </div>
               <div class="download-bar">${downloadButton}</div>
@@ -2082,8 +2079,6 @@
               const context = canvas.getContext("2d");
               canvas.height = viewport.height;
               canvas.width = viewport.width;
-              canvas.style.width = "100%";
-              canvas.style.height = "auto";
               canvas.style.display = "block";
               canvas.style.marginTop = "10px";
               await page.render({ canvasContext: context, viewport }).promise;
@@ -2108,141 +2103,143 @@
 
         if (!viewport || !container) return;
 
-        // 1. Initial Fit-to-Width
-        const firstCanvas = container.querySelector("canvas");
-        if (!firstCanvas) return;
+        // 1. Initial Fit-to-Width (Wait for dimensions if needed)
+        function initDimensions() {
+          const firstCanvas = container.querySelector("canvas");
+          if (!firstCanvas) return;
 
-        // The canvas is rendered at 2x. We want to fit its visual width to the screen.
-        // Screen width is viewport.clientWidth
-        const canvasWidth = firstCanvas.width;
-        const initialFitScale = viewport.clientWidth / canvasWidth;
+          const canvasWidth = firstCanvas.width;
+          const vw = viewport.clientWidth;
+          if (vw === 0) {
+            // Screen not ready, retry
+            requestAnimationFrame(initDimensions);
+            return;
+          }
 
-        let scale = initialFitScale;
-        let x = 0;
-        let y = 0;
+          const initialFitScale = vw / canvasWidth;
 
-        // Centers the container horizontally
-        x = (viewport.clientWidth - canvasWidth * scale) / 2;
+          let scale = initialFitScale;
+          let x = (vw - canvasWidth * scale) / 2; // Horizontal center
+          let y = 0;
 
-        let lastTouchX = 0;
-        let lastTouchY = 0;
-        let initialPinchDistance = 0;
-        let initialPinchScale = 1;
-        let isMoving = false;
-        let isPinching = false;
+          let lastTouchX = 0;
+          let lastTouchY = 0;
+          let initialPinchDistance = 0;
+          let initialPinchScale = 1;
+          let isMoving = false;
+          let isPinching = false;
 
-        function applyTransform() {
-          container.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
-        }
+          function applyTransform() {
+            container.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+          }
 
-        // Apply initial fit
-        applyTransform();
+          applyTransform();
 
-        viewport.addEventListener(
-          "touchstart",
-          (e) => {
-            if (e.touches.length === 1) {
+          viewport.addEventListener(
+            "touchstart",
+            (e) => {
+              if (e.touches.length === 1) {
+                isMoving = true;
+                isPinching = false;
+                lastTouchX = e.touches[0].clientX;
+                lastTouchY = e.touches[0].clientY;
+              } else if (e.touches.length === 2) {
+                isMoving = false;
+                isPinching = true;
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                initialPinchDistance = Math.sqrt(dx * dx + dy * dy);
+                initialPinchScale = scale;
+              }
+            },
+            { passive: false }
+          );
+
+          viewport.addEventListener(
+            "touchmove",
+            (e) => {
+              e.preventDefault();
+
+              if (isPinching && e.touches.length === 2) {
+                const dx = e.touches[0].clientX - e.touches[1].clientX;
+                const dy = e.touches[0].clientY - e.touches[1].clientY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const newScale = Math.min(
+                  Math.max(
+                    initialFitScale,
+                    initialPinchScale * (distance / initialPinchDistance)
+                  ),
+                  6
+                );
+
+                // Zoom around the midpoint of two fingers
+                const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                const rect = viewport.getBoundingClientRect();
+                const px = midX - rect.left;
+                const py = midY - rect.top;
+
+                const ratio = newScale / scale;
+                x = px - (px - x) * ratio;
+                y = py - (py - y) * ratio;
+                scale = newScale;
+                applyTransform();
+              } else if (isMoving && e.touches.length === 1) {
+                const touchX = e.touches[0].clientX;
+                const touchY = e.touches[0].clientY;
+                x += touchX - lastTouchX;
+                y += touchY - lastTouchY;
+                lastTouchX = touchX;
+                lastTouchY = touchY;
+                applyTransform();
+              }
+            },
+            { passive: false }
+          );
+
+          viewport.addEventListener("touchend", (e) => {
+            if (e.touches.length === 0) {
+              isMoving = false;
+              isPinching = false;
+            } else if (e.touches.length === 1) {
               isMoving = true;
               isPinching = false;
               lastTouchX = e.touches[0].clientX;
               lastTouchY = e.touches[0].clientY;
-            } else if (e.touches.length === 2) {
-              isMoving = false;
-              isPinching = true;
-              const dx = e.touches[0].clientX - e.touches[1].clientX;
-              const dy = e.touches[0].clientY - e.touches[1].clientY;
-              initialPinchDistance = Math.sqrt(dx * dx + dy * dy);
-              initialPinchScale = scale;
             }
-          },
-          { passive: false }
-        );
+          });
 
-        viewport.addEventListener(
-          "touchmove",
-          (e) => {
-            e.preventDefault();
-
-            if (isPinching && e.touches.length === 2) {
-              const dx = e.touches[0].clientX - e.touches[1].clientX;
-              const dy = e.touches[0].clientY - e.touches[1].clientY;
-              const distance = Math.sqrt(dx * dx + dy * dy);
-              const newScale = Math.min(
-                Math.max(
-                  initialFitScale,
-                  initialPinchScale * (distance / initialPinchDistance)
-                ),
-                6
-              );
-
-              // Zoom around the midpoint of two fingers
-              const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-              const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+          // Fixed Double Tap Positioning
+          let lastTap = 0;
+          viewport.addEventListener("touchend", (e) => {
+            const now = Date.now();
+            if (now - lastTap < 300) {
+              container.style.transition = "transform 0.3s ease-out";
               const rect = viewport.getBoundingClientRect();
-              const px = midX - rect.left;
-              const py = midY - rect.top;
+              const touch = e.changedTouches[0];
+              const px = touch.clientX - rect.left;
+              const py = touch.clientY - rect.top;
 
-              const ratio = newScale / scale;
-              x = px - (px - x) * ratio;
-              y = py - (py - y) * ratio;
-              scale = newScale;
+              if (scale > initialFitScale * 1.5) {
+                scale = initialFitScale;
+                x = (vw - canvasWidth * scale) / 2;
+                y = 0;
+              } else {
+                const newScale = scale * 2.5;
+                const ratio = newScale / scale;
+                x = px - (px - x) * ratio;
+                y = py - (py - y) * ratio;
+                scale = newScale;
+              }
               applyTransform();
-            } else if (isMoving && e.touches.length === 1) {
-              const touchX = e.touches[0].clientX;
-              const touchY = e.touches[0].clientY;
-              x += touchX - lastTouchX;
-              y += touchY - lastTouchY;
-              lastTouchX = touchX;
-              lastTouchY = touchY;
-              applyTransform();
+              setTimeout(() => {
+                container.style.transition = "";
+              }, 300);
             }
-          },
-          { passive: false }
-        );
-
-        viewport.addEventListener("touchend", (e) => {
-          if (e.touches.length === 0) {
-            isMoving = false;
-            isPinching = false;
-          } else if (e.touches.length === 1) {
-            isMoving = true;
-            isPinching = false;
-            lastTouchX = e.touches[0].clientX;
-            lastTouchY = e.touches[0].clientY;
-          }
-        });
-
-        // Fixed Double Tap Positioning
-        let lastTap = 0;
-        viewport.addEventListener("touchend", (e) => {
-          const now = Date.now();
-          if (now - lastTap < 300) {
-            container.style.transition = "transform 0.3s ease-out";
-            const rect = viewport.getBoundingClientRect();
-            const touch = e.changedTouches[0];
-            const px = touch.clientX - rect.left;
-            const py = touch.clientY - rect.top;
-
-            if (scale > initialFitScale * 1.5) {
-              // Zoom out to fit
-              scale = initialFitScale;
-              x = (viewport.clientWidth - canvasWidth * scale) / 2;
-              y = 0;
-            } else {
-              // Zoom in at tap point
-              const newScale = scale * 2.5;
-              const ratio = newScale / scale;
-              x = px - (px - x) * ratio;
-              y = py - (py - y) * ratio;
-              scale = newScale;
-            }
-            applyTransform();
-            setTimeout(() => {
-              container.style.transition = "";
-            }, 300);
-          }
-          lastTap = now;
-        });
+            lastTap = now;
+          });
+        }
+        initDimensions();
       }
 
       // Layer 1: Mammoth.js renderer
