@@ -709,6 +709,27 @@
         width: 22px;
         height: 22px;
       }
+      /* Details/Summary Animation */
+      details > summary {
+        list-style: none;
+      }
+      details > summary::-webkit-details-marker {
+        display: none;
+      }
+      details[open] .arrow {
+        transform: rotate(180deg);
+        opacity: 1 !important;
+      }
+      .arrow {
+        transition: transform 0.3s ease, opacity 0.3s;
+      }
+      .scroll-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .scroll-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
     </style>
   </head>
   <body>
@@ -1020,7 +1041,9 @@
             {
               name: "數學A",
               files: [
+                "113學年度學科能力測驗全真模擬試卷-數學A考科(學用卷).docx",
                 "113學年度學科能力測驗全真模擬試卷-數學A考科(學用卷).pdf",
+                "113學年度學科能力測驗全真模擬試卷-數學A考科(教用卷).docx",
                 "113學年度學科能力測驗全真模擬試卷-數學A考科(教用卷).pdf",
                 "113學年度學科能力測驗全真模擬試卷-數學A考科(答題卷).pdf",
                 "113學年度學科能力測驗全真模擬試卷-數學A考科(解答卷).docx",
@@ -1030,8 +1053,9 @@
             {
               name: "數學B",
               files: [
+                "113學年度學科能力測驗全真模擬試卷-數學B考科(學用卷).docx",
                 "113學年度學科能力測驗全真模擬試卷-數學B考科(學用卷).pdf",
-
+                "113學年度學科能力測驗全真模擬試卷-數學B考科(教用卷).docx",
                 "113學年度學科能力測驗全真模擬試卷-數學B考科(教用卷).pdf",
                 "113學年度學科能力測驗全真模擬試卷-數學B考科(答題卷).pdf",
                 "113學年度學科能力測驗全真模擬試卷-數學B考科(解答卷).docx",
@@ -1137,7 +1161,7 @@
                 "114學年度分科測驗全真模擬試卷-生物考科(答題卷).pdf",
                 "114學年度分科測驗全真模擬試卷-生物考科(解答卷).docx",
                 "114學年度分科測驗全真模擬試卷-生物考科(解答卷).pdf",
-
+                "114學年度分科測驗全真模擬試卷-生物考科.docx",
                 "114學年度分科測驗全真模擬試卷-生物考科.pdf",
               ],
             },
@@ -1314,8 +1338,9 @@
             {
               name: "數學A",
               files: [
+                "115學年度學科能力測驗全真模擬試卷-數學A考科(學用卷).docx",
                 "115學年度學科能力測驗全真模擬試卷-數學A考科(學用卷)影印推薦.pdf",
-
+                "115學年度學科能力測驗全真模擬試卷-數學A考科(教用卷).docx",
                 "115學年度學科能力測驗全真模擬試卷-數學A考科(教用卷).pdf",
                 "115學年度學科能力測驗全真模擬試卷-數學A考科(答題卷).pdf",
                 "115學年度學科能力測驗全真模擬試卷-數學A考科(解答卷).docx",
@@ -1487,17 +1512,75 @@
                         </div>
                     </div>
                 </div>
-                <div style="margin-top: 40px; padding: 30px; text-align: center; opacity: 0.6;">
-                    <p style="font-size: 0.9rem; color: var(--text-tertiary2); margin-bottom: 8px;">以下檔案暫無法下載：</p>
-                    <ul style="list-style: none; font-size: 0.75rem; color: var(--text-tertiary2); line-height: 1.6;">
-                        <li>113數學A(教用卷)<span class="badge-doc">DOCX</span></li>
-                        <li>113數學A(學用卷)<span class="badge-doc">DOCX</span></li>
-                        <li>113數學B(教用卷)<span class="badge-doc">DOCX</span></li>
-                        <li>113數學B(學用卷)<span class="badge-doc">DOCX</span></li>
-                        <li>114生物(學用卷)<span class="badge-doc">DOCX</span></li>
-                        <li>115數學A(教用卷)<span class="badge-doc">DOCX</span></li>
-                        <li>115數學A(學用卷)<span class="badge-doc">DOCX</span></li>
-                    </ul>
+                <div style="margin-top: 40px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                    <details style="background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 12px; overflow: hidden; transition: all 0.3s ease;">
+                        <summary style="padding: 16px 24px; cursor: pointer; font-size: 0.9rem; color: var(--text-secondary); display: flex; align-items: center; justify-content: space-between; user-select: none;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <svg class="icon-svg" viewBox="0 0 24 24" style="width: 18px; height: 18px;"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span>版本更新日誌 (Update Log)</span>
+                            </div>
+                            <svg class="icon-svg arrow" viewBox="0 0 24 24" style="width: 16px; height: 16px; opacity: 0.5;"><path d="M6 9l6 6 6-6"/></svg>
+                        </summary>
+                        <div style="padding: 0 24px 24px; border-top: 1px solid rgba(255,255,255,0.05);">
+                            <div class="scroll-hide" style="margin-top: 20px; max-height: 250px; overflow-y: auto;">
+                                <div style="display: flex; gap: 12px;">
+                                    <div style="display: flex; flex-direction: column; align-items: center;">
+                                        <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 10px var(--accent);"></div>
+                                        <div style="width: 1px; height: 100%; background: rgba(255,255,255,0.1); margin-top: 4px;"></div>
+                                    </div>
+                                    <div style="padding-bottom: 24px;">
+                                        <div style="font-size: 0.85rem; color: var(--accent); font-weight: 600; margin-bottom: 4px;">v4.0</div>
+                                        <ul style="font-size: 0.9rem; color: var(--text-primary); list-style: none; display: flex; flex-direction: column; gap: 6px;">
+                                            <li style="color: #eee;">新增手機版 Google 文件線上預覽 (解決無法開啟問題)</li>
+                                            <li style="color: #eee;">優化手機版 RWD 介面與安全區域 (Safe Area)</li>
+                                            <li style="color: #ccc;">建立自動更新腳本 (Deploy Script)</li>
+                                            <li style="color: #ccc;">統整版本更新日誌</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; gap: 12px;">
+                                    <div style="display: flex; flex-direction: column; align-items: center;">
+                                        <div style="width: 8px; height: 8px; border-radius: 50%; background: #bf5af2; box-shadow: 0 0 10px #bf5af2;"></div>
+                                        <div style="width: 1px; height: 100%; background: rgba(255,255,255,0.05); margin-top: 4px;"></div>
+                                    </div>
+                                    <div style="padding-bottom: 24px;">
+                                        <div style="font-size: 0.85rem; color: #bf5af2; font-weight: 600; margin-bottom: 4px; opacity: 0.9;">v3.0</div>
+                                        <ul style="font-size: 0.9rem; color: var(--text-secondary); list-style: none; display: flex; flex-direction: column; gap: 6px;">
+                                            <li>補齊 113/115 學測數A、數B、生物 等缺漏檔案</li>
+                                            <li>移除 歷史、地理、公民 等<s style="font-size: 0.75rem; opacity: 0.85;">沒用的</s>科目</li>
+                                            <li>新增「暫無法下載」檔案清單提示</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; gap: 12px;">
+                                    <div style="display: flex; flex-direction: column; align-items: center;">
+                                        <div style="width: 8px; height: 8px; border-radius: 50%; background: #30d158; opacity: 0.8;"></div>
+                                        <div style="width: 1px; height: 100%; background: rgba(255,255,255,0.05); margin-top: 4px;"></div>
+                                    </div>
+                                    <div style="padding-bottom: 24px;">
+                                        <div style="font-size: 0.85rem; color: #30d158; font-weight: 600; margin-bottom: 4px;opacity: 0.85;">v2.0</div>
+                                        <ul style="font-size: 0.9rem; color: var(--text-secondary); list-style: none; display: flex; flex-direction: column; gap: 6px;">
+                                            <li>UI 全面大改版 (Apple Dark Mode x Glassmorphism)</li>
+                                            <li>新增 頂部導覽路徑 (Breadcrumbs)</li>
+                                            <li>新增 檔案類型標籤 (PDF/DOCX Badge)</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; gap: 12px;">
+                                    <div style="display: flex; flex-direction: column; align-items: center;">
+                                        <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--text-tertiary);"></div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.85rem; color: var(--text-tertiary2); font-weight: 600; margin-bottom: 4px; opacity: 0.8;">v1.0</div>
+                                        <div style="font-size: 0.9rem; color: var(--text-secondary);">網站核心架構建立、Service Worker 離線支援</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
                 </div>
             `;
       }
@@ -1730,7 +1813,6 @@
       };
 
       function showFilePreview(filename, fullPath, isPdf) {
-        // Keep the mobile back bar
         const backBar = `
                 <div class="mobile-back-bar" onclick="backToList()">
                     <svg class="icon-svg" viewBox="0 0 24 24" style="margin-right:6px;"><path d="M15 18l-6-6 6-6"/></svg>
@@ -1744,19 +1826,49 @@
                 </a>
             `;
 
-        if (isPdf) {
+        // Check if environment supports GView (Must be online, not local file://)
+        const isOnline = window.location.protocol.startsWith("http");
+        // Check for mobile
+        const isMobile =
+          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+            navigator.userAgent
+          );
+
+        // Logic:
+        // 1. If Offline (Local): Show basic download/fallback (GView won't work)
+        // 2. If Online:
+        //    - Mobile: ALWAYS use GView (Native iframes often store/download instead of display)
+        //    - Desktop:
+        //      - PDF: Use native iframe (faster, better UI)
+        //      - DOCX: Use GView (Browsers can't show DOCX natively)
+
+        if (isOnline && (isMobile || !isPdf)) {
+          // Construct absolute URL for GView
+          const absoluteUrl = new URL(fullPath, window.location.href).href;
+          const gViewUrl = `https://docs.google.com/gview?url=${encodeURIComponent(
+            absoluteUrl
+          )}&embedded=true`;
+
+          modalPreviewArea.innerHTML = `
+                    ${backBar}
+                    <iframe src="${gViewUrl}" class="preview-frame" frameborder="0"></iframe>
+                    <div class="download-bar">${downloadButton}</div>
+                `;
+        } else if (isPdf) {
+          // Desktop PDF or Local PDF
           modalPreviewArea.innerHTML = `
                     ${backBar}
                     <iframe src="${fullPath}" class="preview-frame"></iframe>
                     <div class="download-bar">${downloadButton}</div>
                 `;
         } else {
+          // Local DOCX or other unsupported types
           modalPreviewArea.innerHTML = `
                     ${backBar}
                     <div class="preview-fallback">
                         <svg class="icon-svg" viewBox="0 0 24 24" style="width:64px; height:64px; margin-bottom:16px; color:#4dabf7;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                         <h3 style="font-weight:500; margin-bottom:8px;">${filename}</h3>
-                        <p style="font-size:0.9rem; margin-bottom:24px;">DOCX 檔案無法在瀏覽器中直接預覽，請下載後檢視。</p>
+                        <p style="font-size:0.9rem; margin-bottom:24px;">無法在目前環境預覽此檔案，請下載後檢視。<br/>(若在 GitHub Pages 上瀏覽，DOCX 可透過 Google Viewer 預覽)</p>
                         ${downloadButton}
                     </div>
                 `;
