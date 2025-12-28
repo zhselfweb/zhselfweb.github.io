@@ -7,8 +7,8 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>ヾ(•ω•`)o</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://docs.google.com" />
+    <link rel="preconnect" href="https://view.officeapps.live.com" />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap"
       rel="stylesheet"
@@ -27,7 +27,14 @@
             .then((registration) => {
               console.log("SW registered:", registration.scope);
 
-              // Check for updates proactively
+              // Force check for updates immediately on load
+              registration.update();
+
+              // Check for updates when the window is focused
+              window.addEventListener("focus", () => {
+                registration.update();
+              });
+
               registration.addEventListener("updatefound", () => {
                 const newWorker = registration.installing;
                 newWorker.addEventListener("statechange", () => {
@@ -576,8 +583,82 @@
         width: 100%;
         height: 100%;
         border: none;
-        background: #1a1a1a;
+        background: white; /* Viewers often expect white background */
         display: block;
+      }
+
+      /* Preview Skeleton */
+      .preview-skeleton {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #1a1a1a;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 5;
+        overflow: hidden;
+      }
+
+      .skeleton-shimmer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.03) 50%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        animation: shimmer 2s infinite;
+      }
+
+      @keyframes shimmer {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      .skeleton-content {
+        position: relative;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(255, 255, 255, 0.1);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      .btn-refresh {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        cursor: pointer;
+        transition: background 0.2s;
+        margin-right: 12px;
+      }
+
+      .btn-refresh:hover {
+        background: rgba(255, 255, 255, 0.1);
       }
 
       .preview-fallback {
@@ -1647,11 +1728,11 @@
                                         <div style="width: 1px; height: 100%; background: rgba(255,255,255,0.1); margin-top: 4px;"></div>
                                     </div>
                                     <div style="padding-bottom: 24px;">
-                                        <div style="font-size: 0.85rem; color: var(--accent); font-weight: 600; margin-bottom: 4px;">v4.1</div>
+                                        <div style="font-size: 0.85rem; color: var(--accent); font-weight: 600; margin-bottom: 4px;">v4.1.5</div>
                                         <ul style="font-size: 0.9rem; color: var(--text-primary); list-style: none; display: flex; flex-direction: column; gap: 6px;">
-                                            <li style="color: #eee;">[Hotfix] 修復 PDF 預覽無法顯示的邏輯錯誤</li>
-                                            <li style="color: #eee;">[Update] 強化 App 更新機制，解決舊版本緩存不更新問題</li>
-                                            <li style="color: #eee;">大幅優化手機版 PDF 縮放手勢，操作更精準不回彈</li>
+                                            <li style="color: #eee;">[PDF] 手機版 PDF 預覽恢復為 Google 內嵌模式</li>
+                                            <li style="color: #eee;">[Update] 強化 PWA 更新機制，支援即時偵測新版本並自動刷新</li>
+                                            <li style="color: #eee;">[Fix] 移除冗餘的自定義縮放引擎，提升整體載入速度</li>
                                             <li style="color: #ccc;">新增深層連結功能，支援分享與書籤特定頁面</li>
                                         </ul>
                                     </div>
@@ -1967,23 +2048,24 @@
             navigator.userAgent
           );
 
-        // PDF: Use PDF.js on mobile, native iframe on desktop
+        // PDF: Strategy
         if (isPdf) {
-          if (isMobile && isOnline && typeof pdfjsLib !== "undefined") {
-            // Use PDF.js for mobile rendering
+          if (isMobile && isOnline) {
+            // Use Google Docs Viewer for mobile PDF for better native-like experience
             try {
-              const success = await tryPdfJsRender(
+              const success = await tryGoogleViewer(
                 fullPath,
                 backBar,
-                downloadButton
+                downloadButton,
+                5000
               );
               if (success) return;
             } catch (err) {
-              console.warn("PDF.js failed:", err);
+              console.warn("Google Viewer failed for PDF:", err);
             }
           }
 
-          // Fallback to native iframe
+          // Fallback to native iframe (for desktop or when Google fails)
           modalPreviewArea.innerHTML = `
                     ${backBar}
                     <iframe src="${fullPath}" class="preview-frame"></iframe>
@@ -2026,220 +2108,6 @@
 
         // Layer 3: All failed, show download prompt
         showDownloadPrompt(backBar, filename, downloadButton);
-      }
-
-      // PDF.js renderer for mobile
-      async function tryPdfJsRender(filePath, backBar, downloadButton) {
-        return new Promise(async (resolve) => {
-          try {
-            modalPreviewArea.innerHTML = `
-              ${backBar}
-              <div class="preview-fallback">
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
-                  <div style="width: 48px; height: 48px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite;"></div>
-                  <p style="color: var(--text-secondary);">正在載入 PDF...</p>
-                </div>
-              </div>
-            `;
-
-            pdfjsLib.GlobalWorkerOptions.workerSrc =
-              "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-
-            const pdf = await pdfjsLib.getDocument(filePath).promise;
-            const page = await pdf.getPage(1);
-
-            // Render at 2.0x for better quality when zooming in
-            const renderScale = 2.0;
-            const viewport = page.getViewport({ scale: renderScale });
-
-            const canvas = document.createElement("canvas");
-            const context = canvas.getContext("2d");
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-            canvas.style.display = "block";
-
-            await page.render({ canvasContext: context, viewport }).promise;
-
-            modalPreviewArea.innerHTML = `
-              ${backBar}
-              <div id="pdf-viewport" style="flex: 1; overflow: hidden; background: #525659; position: relative; touch-action: none;">
-                <div id="pdf-container" style="transform-origin: 0 0; display: block;"></div>
-              </div>
-              <div class="download-bar">${downloadButton}</div>
-            `;
-
-            const container = document.getElementById("pdf-container");
-            container.appendChild(canvas);
-
-            // Render remaining pages
-            for (let pageNum = 2; pageNum <= pdf.numPages; pageNum++) {
-              const page = await pdf.getPage(pageNum);
-              const viewport = page.getViewport({ scale: renderScale });
-              const canvas = document.createElement("canvas");
-              const context = canvas.getContext("2d");
-              canvas.height = viewport.height;
-              canvas.width = viewport.width;
-              canvas.style.display = "block";
-              canvas.style.marginTop = "10px";
-              await page.render({ canvasContext: context, viewport }).promise;
-              container.appendChild(canvas);
-            }
-
-            // Add pinch-to-zoom and pan support
-            initPdfZoomPan();
-
-            resolve(true);
-          } catch (error) {
-            console.error("PDF.js render error:", error);
-            resolve(false);
-          }
-        });
-      }
-
-      // Initialize zoom and pan for PDF
-      function initPdfZoomPan() {
-        const viewport = document.getElementById("pdf-viewport");
-        const container = document.getElementById("pdf-container");
-
-        if (!viewport || !container) return;
-
-        // 1. Initial Fit-to-Width (Wait for dimensions if needed)
-        function initDimensions() {
-          const firstCanvas = container.querySelector("canvas");
-          if (!firstCanvas) return;
-
-          const canvasWidth = firstCanvas.width;
-          const vw = viewport.clientWidth;
-          if (vw === 0) {
-            // Screen not ready, retry
-            requestAnimationFrame(initDimensions);
-            return;
-          }
-
-          const initialFitScale = vw / canvasWidth;
-
-          let scale = initialFitScale;
-          let x = (vw - canvasWidth * scale) / 2; // Horizontal center
-          let y = 0;
-
-          let lastTouchX = 0;
-          let lastTouchY = 0;
-          let initialPinchDistance = 0;
-          let initialPinchScale = 1;
-          let isMoving = false;
-          let isPinching = false;
-
-          function applyTransform() {
-            container.style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
-          }
-
-          applyTransform();
-
-          viewport.addEventListener(
-            "touchstart",
-            (e) => {
-              if (e.touches.length === 1) {
-                isMoving = true;
-                isPinching = false;
-                lastTouchX = e.touches[0].clientX;
-                lastTouchY = e.touches[0].clientY;
-              } else if (e.touches.length === 2) {
-                isMoving = false;
-                isPinching = true;
-                const dx = e.touches[0].clientX - e.touches[1].clientX;
-                const dy = e.touches[0].clientY - e.touches[1].clientY;
-                initialPinchDistance = Math.sqrt(dx * dx + dy * dy);
-                initialPinchScale = scale;
-              }
-            },
-            { passive: false }
-          );
-
-          viewport.addEventListener(
-            "touchmove",
-            (e) => {
-              e.preventDefault();
-
-              if (isPinching && e.touches.length === 2) {
-                const dx = e.touches[0].clientX - e.touches[1].clientX;
-                const dy = e.touches[0].clientY - e.touches[1].clientY;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                const newScale = Math.min(
-                  Math.max(
-                    initialFitScale,
-                    initialPinchScale * (distance / initialPinchDistance)
-                  ),
-                  6
-                );
-
-                // Zoom around the midpoint of two fingers
-                const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
-                const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
-                const rect = viewport.getBoundingClientRect();
-                const px = midX - rect.left;
-                const py = midY - rect.top;
-
-                const ratio = newScale / scale;
-                x = px - (px - x) * ratio;
-                y = py - (py - y) * ratio;
-                scale = newScale;
-                applyTransform();
-              } else if (isMoving && e.touches.length === 1) {
-                const touchX = e.touches[0].clientX;
-                const touchY = e.touches[0].clientY;
-                x += touchX - lastTouchX;
-                y += touchY - lastTouchY;
-                lastTouchX = touchX;
-                lastTouchY = touchY;
-                applyTransform();
-              }
-            },
-            { passive: false }
-          );
-
-          viewport.addEventListener("touchend", (e) => {
-            if (e.touches.length === 0) {
-              isMoving = false;
-              isPinching = false;
-            } else if (e.touches.length === 1) {
-              isMoving = true;
-              isPinching = false;
-              lastTouchX = e.touches[0].clientX;
-              lastTouchY = e.touches[0].clientY;
-            }
-          });
-
-          // Fixed Double Tap Positioning
-          let lastTap = 0;
-          viewport.addEventListener("touchend", (e) => {
-            const now = Date.now();
-            if (now - lastTap < 300) {
-              container.style.transition = "transform 0.3s ease-out";
-              const rect = viewport.getBoundingClientRect();
-              const touch = e.changedTouches[0];
-              const px = touch.clientX - rect.left;
-              const py = touch.clientY - rect.top;
-
-              if (scale > initialFitScale * 1.5) {
-                scale = initialFitScale;
-                x = (vw - canvasWidth * scale) / 2;
-                y = 0;
-              } else {
-                const newScale = scale * 2.5;
-                const ratio = newScale / scale;
-                x = px - (px - x) * ratio;
-                y = py - (py - y) * ratio;
-                scale = newScale;
-              }
-              applyTransform();
-              setTimeout(() => {
-                container.style.transition = "";
-              }, 300);
-            }
-            lastTap = now;
-          });
-        }
-        initDimensions();
       }
 
       // Layer 1: Mammoth.js renderer
@@ -2288,7 +2156,7 @@
         filePath,
         backBar,
         downloadButton,
-        timeout = 3000
+        timeout = 5000
       ) {
         return new Promise((resolve) => {
           const absoluteUrl = new URL(filePath, window.location.href).href;
@@ -2298,18 +2166,28 @@
 
           modalPreviewArea.innerHTML = `
             ${backBar}
-            <iframe src="${officeUrl}" class="preview-frame" frameborder="0"></iframe>
+            <div class="preview-skeleton">
+              <div class="skeleton-shimmer"></div>
+              <div class="skeleton-content">
+                <div class="spinner"></div>
+                <p>正在由 Office 伺服器載入...</p>
+              </div>
+            </div>
+            <iframe src="${officeUrl}" class="preview-frame" frameborder="0" style="opacity: 0; transition: opacity 0.5s ease;"></iframe>
             <div class="download-bar">${downloadButton}</div>
           `;
 
-          // Detect if iframe loaded successfully
           const iframe = modalPreviewArea.querySelector("iframe");
-          let timer = setTimeout(() => resolve(true), timeout);
+          const skeleton = modalPreviewArea.querySelector(".preview-skeleton");
 
-          iframe.onerror = () => {
-            clearTimeout(timer);
-            resolve(false);
+          iframe.onload = () => {
+            iframe.style.opacity = "1";
+            skeleton.style.display = "none";
+            resolve(true);
           };
+
+          // Safe timeout
+          setTimeout(() => resolve(true), timeout);
         });
       }
 
@@ -2318,7 +2196,7 @@
         filePath,
         backBar,
         downloadButton,
-        timeout = 3000
+        timeout = 6000
       ) {
         return new Promise((resolve) => {
           const absoluteUrl = new URL(filePath, window.location.href).href;
@@ -2328,17 +2206,36 @@
 
           modalPreviewArea.innerHTML = `
             ${backBar}
-            <iframe src="${gViewUrl}" class="preview-frame" frameborder="0"></iframe>
-            <div class="download-bar">${downloadButton}</div>
+            <div class="preview-skeleton">
+              <div class="skeleton-shimmer"></div>
+              <div class="skeleton-content">
+                <div class="spinner"></div>
+                <p>正在準備預覽內容...</p>
+              </div>
+            </div>
+            <iframe src="${gViewUrl}" class="preview-frame" frameborder="0" style="opacity: 0; transition: opacity 0.5s ease;"></iframe>
+            <div class="download-bar">
+               <button class="btn-refresh" onclick="refreshPreview()">🔄 重新載入預覽</button>
+               ${downloadButton}
+            </div>
           `;
 
           const iframe = modalPreviewArea.querySelector("iframe");
-          let timer = setTimeout(() => resolve(true), timeout);
+          const skeleton = modalPreviewArea.querySelector(".preview-skeleton");
 
-          iframe.onerror = () => {
-            clearTimeout(timer);
-            resolve(false);
+          window.refreshPreview = () => {
+            iframe.src = iframe.src;
+            skeleton.style.display = "flex";
+            iframe.style.opacity = "0";
           };
+
+          iframe.onload = () => {
+            iframe.style.opacity = "1";
+            skeleton.style.display = "none";
+            resolve(true);
+          };
+
+          setTimeout(() => resolve(true), timeout);
         });
       }
 
