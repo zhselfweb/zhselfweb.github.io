@@ -734,6 +734,66 @@
         -ms-overflow-style: none;
         scrollbar-width: none;
       }
+
+      /* Ripple effect for interactive elements */
+      .card-item,
+      .nav-card,
+      .btn-download {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .ripple {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.4);
+        transform: scale(0);
+        animation: ripple-animation 0.6s ease-out;
+        pointer-events: none;
+      }
+
+      @keyframes ripple-animation {
+        to {
+          transform: scale(4);
+          opacity: 0;
+        }
+      }
+
+      /* Page transition animations */
+      .view-section {
+        animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        will-change: opacity, transform;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Enhanced button hover states */
+      .card-item,
+      .nav-card {
+        transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+          background 0.2s ease, box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .card-item:hover,
+      .nav-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+      }
+
+      .card-item:active,
+      .nav-card:active {
+        transform: translateY(-1px);
+        transition-duration: 0.1s;
+      }
     </style>
   </head>
   <body>
@@ -1428,8 +1488,17 @@
         if (payload.year) appState.selectedYear = payload.year;
         if (payload.subject) appState.selectedSubject = payload.subject;
 
-        // Push state to browser history
-        history.pushState({ ...appState }, "", "#step" + step);
+        // Build URL hash for deep linking
+        const hashParts = [];
+        if (appState.selectedType)
+          hashParts.push(encodeURIComponent(appState.selectedType));
+        if (appState.selectedYear)
+          hashParts.push(encodeURIComponent(appState.selectedYear));
+        if (appState.selectedSubject)
+          hashParts.push(encodeURIComponent(appState.selectedSubject.name));
+
+        const newHash = hashParts.length ? "#" + hashParts.join("/") : "#";
+        history.pushState({ ...appState }, "", newHash);
 
         render();
       }
@@ -1440,8 +1509,17 @@
           Object.assign(appState, prevState);
           appState.history = appState.history.slice(0, appState.history.length);
 
-          // Update browser history
-          history.pushState({ ...appState }, "", "#step" + appState.step);
+          // Update URL hash
+          const hashParts = [];
+          if (appState.selectedType)
+            hashParts.push(encodeURIComponent(appState.selectedType));
+          if (appState.selectedYear)
+            hashParts.push(encodeURIComponent(appState.selectedYear));
+          if (appState.selectedSubject)
+            hashParts.push(encodeURIComponent(appState.selectedSubject.name));
+
+          const newHash = hashParts.length ? "#" + hashParts.join("/") : "#";
+          history.pushState({ ...appState }, "", newHash);
 
           render();
         }
@@ -1475,25 +1553,16 @@
         backBtn.classList.toggle("hidden", appState.step === 0);
         let crumbsHtml = `<span class="crumb" onclick="resetApp()">Home</span>`;
 
-        if (appState.step >= 1) {
+        if (appState.step >= 1 && appState.selectedType) {
           crumbsHtml += `<span class="crumb-sep">/</span><span class="crumb" onclick="jumpTo(1)">${appState.selectedType}</span>`;
         }
-        if (appState.step >= 2) {
+        if (appState.step >= 2 && appState.selectedYear) {
           crumbsHtml += `<span class="crumb-sep">/</span><span class="crumb" onclick="jumpTo(2)">${appState.selectedYear}</span>`;
         }
-        if (appState.step >= 3) {
+        if (appState.step >= 3 && appState.selectedSubject) {
           crumbsHtml += `<span class="crumb-sep">/</span><span class="crumb">${appState.selectedSubject.name}</span>`;
         }
         breadcrumbs.innerHTML = crumbsHtml;
-      }
-
-      function resetApp() {
-        appState.step = 0;
-        appState.history = [];
-
-        // Reset browser history to home
-        history.pushState({ ...appState }, "", "#step0");
-        render();
       }
 
       window.jumpTo = (step) => {
@@ -1501,6 +1570,18 @@
           appState.step = step;
           render();
         }
+      };
+
+      window.resetApp = () => {
+        appState.step = 0;
+        appState.selectedType = null;
+        appState.selectedYear = null;
+        appState.selectedSubject = null;
+        appState.history = [];
+
+        // Reset URL hash to home
+        history.pushState({ ...appState }, "", "#");
+        render();
       };
 
       function renderHome(container) {
@@ -1544,13 +1625,29 @@
                                         <div style="width: 1px; height: 100%; background: rgba(255,255,255,0.1); margin-top: 4px;"></div>
                                     </div>
                                     <div style="padding-bottom: 24px;">
-                                        <div style="font-size: 0.85rem; color: var(--accent); font-weight: 600; margin-bottom: 4px;">v4.0</div>
+                                        <div style="font-size: 0.85rem; color: var(--accent); font-weight: 600; margin-bottom: 4px;">v4.1</div>
                                         <ul style="font-size: 0.9rem; color: var(--text-primary); list-style: none; display: flex; flex-direction: column; gap: 6px;">
-                                            <li style="color: #eee;">實作手機版 PDF 雙指縮放與拖動功能</li>
-                                            <li style="color: #eee;">引入 PDF.js 解決手機版 PDF 無法預覽問題</li>
-                                            <li style="color: #eee;">優化 DOCX 預覽策略，優先採用 Office Viewer 確保格式準確</li>
-                                            <li style="color: #ccc;">支援瀏覽器與手機返回鍵導航 (History API)</li>
-                                            <li style="color: #ccc;">導入 Robocopy 技術，極速優化自動更新腳本</li>
+                                            <li style="color: #eee;">新增深層連結功能，支援分享與書籤特定頁面</li>
+                                            <li style="color: #eee;">大幅優化手機版 PDF 縮放手勢，操作更精準不回彈</li>
+                                            <li style="color: #eee;">修復主介面加載穩定性與轉場動畫流暢度</li>
+                                            <li style="color: #ccc;">實作波紋點擊效果與微互動細節</li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div style="display: flex; gap: 12px;">
+                                    <div style="display: flex; flex-direction: column; align-items: center;">
+                                        <div style="width: 8px; height: 8px; border-radius: 50%; background: #a78bfa; box-shadow: 0 0 10px #a78bfa;"></div>
+                                        <div style="width: 1px; height: 100%; background: rgba(255,255,255,0.1); margin-top: 4px;"></div>
+                                    </div>
+                                    <div style="padding-bottom: 24px; opacity: 0.6;">
+                                        <div style="font-size: 0.85rem; color: #a78bfa; font-weight: 600; margin-bottom: 4px;">v4.0</div>
+                                        <ul style="font-size: 0.9rem; color: var(--text-secondary); list-style: none; display: flex; flex-direction: column; gap: 6px;">
+                                            <li>實作手機版 PDF 雙指縮放與拖動功能</li>
+                                            <li>引入 PDF.js 解決手機版 PDF 無法預覽問題</li>
+                                            <li>優化 DOCX 預覽策略，優先採用 Office Viewer 確保格式準確</li>
+                                            <li>支援瀏覽器與手機返回鍵導航 (History API)</li>
+                                            <li>導入 Robocopy 技術，極速優化自動更新腳本</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -1560,8 +1657,8 @@
                                         <div style="width: 8px; height: 8px; border-radius: 50%; background: #bf5af2; box-shadow: 0 0 10px #bf5af2;"></div>
                                         <div style="width: 1px; height: 100%; background: rgba(255,255,255,0.05); margin-top: 4px;"></div>
                                     </div>
-                                    <div style="padding-bottom: 24px;">
-                                        <div style="font-size: 0.85rem; color: #bf5af2; font-weight: 600; margin-bottom: 4px; opacity: 0.9;">v3.0</div>
+                                    <div style="padding-bottom: 24px; opacity: 0.6;">
+                                        <div style="font-size: 0.85rem; color: #bf5af2; font-weight: 600; margin-bottom: 4px;">v3.0</div>
                                         <ul style="font-size: 0.9rem; color: var(--text-secondary); list-style: none; display: flex; flex-direction: column; gap: 6px;">
                                             <li>補齊 113/115 學測數A、數B、生物 等缺漏檔案</li>
                                             <li>移除 歷史、地理、公民 等<s style="font-size: 0.75rem; opacity: 0.85;">沒用的</s>科目</li>
@@ -1575,8 +1672,8 @@
                                         <div style="width: 8px; height: 8px; border-radius: 50%; background: #30d158; opacity: 0.8;"></div>
                                         <div style="width: 1px; height: 100%; background: rgba(255,255,255,0.05); margin-top: 4px;"></div>
                                     </div>
-                                    <div style="padding-bottom: 24px;">
-                                        <div style="font-size: 0.85rem; color: #30d158; font-weight: 600; margin-bottom: 4px;opacity: 0.85;">v2.0</div>
+                                    <div style="padding-bottom: 24px; opacity: 0.6;">
+                                        <div style="font-size: 0.85rem; color: #30d158; font-weight: 600; margin-bottom: 4px;">v2.0</div>
                                         <ul style="font-size: 0.9rem; color: var(--text-secondary); list-style: none; display: flex; flex-direction: column; gap: 6px;">
                                             <li>UI 全面大改版 (Apple Dark Mode x Glassmorphism)</li>
                                             <li>新增 頂部導覽路徑 (Breadcrumbs)</li>
@@ -1589,8 +1686,8 @@
                                     <div style="display: flex; flex-direction: column; align-items: center;">
                                         <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--text-tertiary);"></div>
                                     </div>
-                                    <div>
-                                        <div style="font-size: 0.85rem; color: var(--text-tertiary2); font-weight: 600; margin-bottom: 4px; opacity: 0.8;">v1.0</div>
+                                    <div style="opacity: 0.6;">
+                                        <div style="font-size: 0.85rem; color: var(--text-tertiary2); font-weight: 600; margin-bottom: 4px;">v1.0</div>
                                         <div style="font-size: 0.9rem; color: var(--text-secondary);">網站核心架構建立、Service Worker 離線支援</div>
                                     </div>
                                 </div>
@@ -1929,7 +2026,8 @@
             const pdf = await pdfjsLib.getDocument(filePath).promise;
             const page = await pdf.getPage(1);
 
-            const scale = 1.5;
+            // Reduce initial scale for better mobile UX
+            const scale = 1.0;
             const viewport = page.getViewport({ scale });
 
             const canvas = document.createElement("canvas");
@@ -1942,7 +2040,7 @@
             modalPreviewArea.innerHTML = `
               ${backBar}
               <div id="pdf-viewport" style="flex: 1; overflow: hidden; background: #525659; position: relative; touch-action: none;">
-                <div id="pdf-container" style="transform-origin: 0 0; transition: transform 0.1s ease-out;"></div>
+                <div id="pdf-container" style="transform-origin: center center;"></div>
               </div>
               <div class="download-bar">${downloadButton}</div>
             `;
@@ -1982,28 +2080,28 @@
         if (!viewport || !container) return;
 
         let scale = 1;
-        let panning = false;
         let pointX = 0;
         let pointY = 0;
         let start = { x: 0, y: 0 };
         let initialDistance = 0;
         let initialScale = 1;
+        let isPinching = false;
 
-        // Set initial position
-        setTransform();
+        function setTransform() {
+          // No transitions here for immediate feedback
+          container.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
+        }
 
         // Touch start
         viewport.addEventListener("touchstart", (e) => {
           if (e.touches.length === 1) {
-            // Single touch - pan
-            panning = true;
+            isPinching = false;
             start = {
               x: e.touches[0].clientX - pointX,
               y: e.touches[0].clientY - pointY,
             };
           } else if (e.touches.length === 2) {
-            // Two touches - zoom
-            panning = false;
+            isPinching = true;
             const dx = e.touches[0].clientX - e.touches[1].clientX;
             const dy = e.touches[0].clientY - e.touches[1].clientY;
             initialDistance = Math.sqrt(dx * dx + dy * dy);
@@ -2012,32 +2110,39 @@
         });
 
         // Touch move
-        viewport.addEventListener("touchmove", (e) => {
-          e.preventDefault();
+        viewport.addEventListener(
+          "touchmove",
+          (e) => {
+            if (e.touches.length === 1 && !isPinching) {
+              e.preventDefault();
+              pointX = e.touches[0].clientX - start.x;
+              pointY = e.touches[0].clientY - start.y;
+              setTransform();
+            } else if (e.touches.length === 2) {
+              e.preventDefault();
+              const dx = e.touches[0].clientX - e.touches[1].clientX;
+              const dy = e.touches[0].clientY - e.touches[1].clientY;
+              const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (e.touches.length === 1 && panning) {
-            // Pan
-            pointX = e.touches[0].clientX - start.x;
-            pointY = e.touches[0].clientY - start.y;
-            setTransform();
-          } else if (e.touches.length === 2) {
-            // Zoom
-            const dx = e.touches[0].clientX - e.touches[1].clientX;
-            const dy = e.touches[0].clientY - e.touches[1].clientY;
-            const distance = Math.sqrt(dx * dx + dy * dy);
+              const newScale = Math.min(
+                Math.max(0.6, initialScale * (distance / initialDistance)),
+                5
+              );
 
-            scale = Math.min(
-              Math.max(0.5, initialScale * (distance / initialDistance)),
-              4
-            );
-            setTransform();
-          }
-        });
+              // Focus zoom on the center between fingers
+              const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+              const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
 
-        // Touch end
-        viewport.addEventListener("touchend", () => {
-          panning = false;
-        });
+              const ratio = newScale / scale;
+              pointX = centerX - (centerX - pointX) * ratio;
+              pointY = centerY - (centerY - pointY) * ratio;
+
+              scale = newScale;
+              setTransform();
+            }
+          },
+          { passive: false }
+        );
 
         // Double tap to zoom
         let lastTap = 0;
@@ -2046,26 +2151,37 @@
           const tapLength = currentTime - lastTap;
 
           if (tapLength < 300 && tapLength > 0) {
-            // Double tap detected
-            if (scale > 1) {
+            // Add a small transition for double tap only
+            container.style.transition = "transform 0.3s ease-out";
+
+            if (scale > 1.2) {
               scale = 1;
               pointX = 0;
               pointY = 0;
             } else {
-              scale = 2;
-              const rect = viewport.getBoundingClientRect();
+              scale = 2.5;
               const touch = e.changedTouches[0];
-              pointX = (rect.width / 2 - touch.clientX) * scale;
-              pointY = (rect.height / 2 - touch.clientY) * scale;
+              const rect = viewport.getBoundingClientRect();
+              pointX =
+                rect.width / 2 -
+                (touch.clientX - rect.left) * scale +
+                (touch.clientX - rect.left);
+              pointY =
+                rect.height / 2 -
+                (touch.clientY - rect.top) * scale +
+                (touch.clientY - rect.top);
             }
             setTransform();
+
+            // Remove transition after it finishes
+            setTimeout(() => {
+              container.style.transition = "none";
+            }, 300);
           }
           lastTap = currentTime;
         });
 
-        function setTransform() {
-          container.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
-        }
+        setTransform();
       }
 
       // Layer 1: Mammoth.js renderer
@@ -2190,6 +2306,28 @@
       `;
       document.head.appendChild(style);
 
+      // Add ripple effect to interactive elements
+      document.addEventListener("click", (e) => {
+        const target = e.target.closest(".card-item, .nav-card, .btn-download");
+        if (!target) return;
+
+        const ripple = document.createElement("span");
+        ripple.classList.add("ripple");
+
+        const rect = target.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+
+        ripple.style.width = ripple.style.height = `${size}px`;
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+
+        target.appendChild(ripple);
+
+        setTimeout(() => ripple.remove(), 600);
+      });
+
       window.closePreview = () => {
         previewModal.classList.remove("active");
       };
@@ -2206,10 +2344,89 @@
         }
       });
 
-      // Init
-      // Set initial state
-      history.replaceState({ ...appState }, "", "#step0");
-      render();
+      // Parse URL hash for deep linking
+      function parseUrlHash() {
+        const hash = window.location.hash.slice(1); // Remove #
+        if (!hash) return null;
+
+        const parts = hash.split("/").map(decodeURIComponent);
+        return {
+          type: parts[0] || null,
+          year: parts[1] || null,
+          subjectName: parts[2] || null,
+        };
+      }
+
+      // Navigate to state from hash
+      function navigateFromHash(hashData) {
+        if (!hashData || !hashData.type) {
+          render();
+          return;
+        }
+
+        // Find matching exam data
+        const examByType = rawData.filter(
+          (item) => item.type === hashData.type
+        );
+        if (examByType.length === 0) {
+          render();
+          return;
+        }
+
+        if (!hashData.year) {
+          // Only type is specified, show year selection
+          appState.step = 1;
+          appState.selectedType = hashData.type;
+          render();
+          return;
+        }
+
+        const exam = examByType.find((item) => item.year === hashData.year);
+        if (!exam) {
+          // Year not found, show year selection for this type
+          appState.step = 1;
+          appState.selectedType = hashData.type;
+          render();
+          return;
+        }
+
+        if (!hashData.subjectName) {
+          // Type and year specified, show subject selection
+          appState.step = 2;
+          appState.selectedType = hashData.type;
+          appState.selectedYear = hashData.year;
+          render();
+          return;
+        }
+
+        const subject = exam.subjects.find(
+          (s) => s.name === hashData.subjectName
+        );
+        if (!subject) {
+          // Subject not found, show subject selection
+          appState.step = 2;
+          appState.selectedType = hashData.type;
+          appState.selectedYear = hashData.year;
+          render();
+          return;
+        }
+
+        // All valid, navigate to file list
+        appState.selectedType = hashData.type;
+        appState.selectedYear = hashData.year;
+        appState.selectedSubject = subject;
+        appState.step = 3;
+        render();
+      }
+
+      // Init with deep linking support
+      const hashData = parseUrlHash();
+      if (hashData && hashData.type) {
+        navigateFromHash(hashData);
+      } else {
+        history.replaceState({ ...appState }, "", "#");
+        render();
+      }
     </script>
   </body>
 </html>
