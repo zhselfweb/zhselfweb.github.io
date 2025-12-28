@@ -66,6 +66,7 @@
         background-color: var(--bg-base);
         color: var(--text-primary);
         height: 100vh;
+        height: 100dvh;
         overflow: hidden;
         display: flex;
         flex-direction: column;
@@ -611,6 +612,7 @@
         }
         .main-container {
           padding: 20px;
+          padding-bottom: 120px; /* Ensure content isn't cut off at bottom */
         }
 
         .grid-2,
@@ -628,9 +630,12 @@
         /* Mobile Modal: Slide Animation */
         .modal-window {
           width: 100vw;
-          height: 100vh;
+          height: 100vh; /* Fallback */
+          height: 100dvh;
           border-radius: 0;
           border: none;
+          padding-top: env(safe-area-inset-top);
+          padding-bottom: env(safe-area-inset-bottom);
         }
 
         .modal-header {
@@ -1660,7 +1665,7 @@
         );
         const folderName = group.folderName;
         const subjectName = appState.selectedSubject.name;
-        const basePath = `/全真考題/${folderName}/${subjectName}/`;
+        const basePath = `/exam/全真考題/${folderName}/${subjectName}/`;
 
         modalTitle.textContent = `${categoryTitle} (${files.length})`;
 

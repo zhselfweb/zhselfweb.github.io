@@ -2,7 +2,7 @@ const CACHE_NAME = 'v2';
 const ASSETS = [
   './home.html',
   './manifest.json',
-  './icon.jpg'
+  './icon.png'
 ];
 
 self.addEventListener('install', (event) => {
