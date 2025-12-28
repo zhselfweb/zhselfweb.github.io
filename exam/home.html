@@ -15,6 +15,8 @@
     />
     <link rel="icon" href="icon.png" />
     <link rel="manifest" href="manifest.json" />
+    <!-- Mammoth.js for DOCX rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
     <script>
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
@@ -1542,10 +1544,10 @@
                                     <div style="padding-bottom: 24px;">
                                         <div style="font-size: 0.85rem; color: var(--accent); font-weight: 600; margin-bottom: 4px;">v4.0</div>
                                         <ul style="font-size: 0.9rem; color: var(--text-primary); list-style: none; display: flex; flex-direction: column; gap: 6px;">
-                                            <li style="color: #eee;">新增手機版返回鍵邏輯</li>
-                                          <li style="color: #eee;">新增手機版 Google 文件線上預覽 (解決無法開啟問題)</li>
+                                            <li style="color: #eee;">實作四層漸進式 DOCX 預覽系統 (Mammoth/Office/Google)</li>
+                                            <li style="color: #eee;">支援瀏覽器與手機返回鍵導航 (History API)</li>
                                             <li style="color: #eee;">優化手機版 RWD 介面與安全區域 (Safe Area)</li>
-                                            <li style="color: #ccc;">建立自動更新腳本 (Deploy Script)</li>
+                                            <li style="color: #ccc;">優化自動更新腳本速度 (Repository Caching)</li>
                                             <li style="color: #ccc;">統整版本更新日誌</li>
                                         </ul>
                                     </div>
@@ -1824,7 +1826,7 @@
         modalBody.classList.remove("show-preview");
       };
 
-      function showFilePreview(filename, fullPath, isPdf) {
+      async function showFilePreview(filename, fullPath, isPdf) {
         const backBar = `
                 <div class="mobile-back-bar" onclick="backToList()">
                     <svg class="icon-svg" viewBox="0 0 24 24" style="margin-right:6px;"><path d="M15 18l-6-6 6-6"/></svg>
@@ -1838,54 +1840,176 @@
                 </a>
             `;
 
-        // Check if environment supports GView (Must be online, not local file://)
         const isOnline = window.location.protocol.startsWith("http");
-        // Check for mobile
-        const isMobile =
-          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-            navigator.userAgent
-          );
 
-        // Logic:
-        // 1. If Offline (Local): Show basic download/fallback (GView won't work)
-        // 2. If Online:
-        //    - Mobile: ALWAYS use GView (Native iframes often store/download instead of display)
-        //    - Desktop:
-        //      - PDF: Use native iframe (faster, better UI)
-        //      - DOCX: Use GView (Browsers can't show DOCX natively)
-
-        if (isOnline && (isMobile || !isPdf)) {
-          // Construct absolute URL for GView
-          const absoluteUrl = new URL(fullPath, window.location.href).href;
-          const gViewUrl = `https://docs.google.com/gview?url=${encodeURIComponent(
-            absoluteUrl
-          )}&embedded=true`;
-
-          modalPreviewArea.innerHTML = `
-                    ${backBar}
-                    <iframe src="${gViewUrl}" class="preview-frame" frameborder="0"></iframe>
-                    <div class="download-bar">${downloadButton}</div>
-                `;
-        } else if (isPdf) {
-          // Desktop PDF or Local PDF
+        // PDF: Always use native iframe (works well on all devices)
+        if (isPdf) {
           modalPreviewArea.innerHTML = `
                     ${backBar}
                     <iframe src="${fullPath}" class="preview-frame"></iframe>
                     <div class="download-bar">${downloadButton}</div>
                 `;
-        } else {
-          // Local DOCX or other unsupported types
-          modalPreviewArea.innerHTML = `
-                    ${backBar}
-                    <div class="preview-fallback">
-                        <svg class="icon-svg" viewBox="0 0 24 24" style="width:64px; height:64px; margin-bottom:16px; color:#4dabf7;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                        <h3 style="font-weight:500; margin-bottom:8px;">${filename}</h3>
-                        <p style="font-size:0.9rem; margin-bottom:24px;">無法在目前環境預覽此檔案，請下載後檢視。<br/>(若在 GitHub Pages 上瀏覽，DOCX 可透過 Google Viewer 預覽)</p>
-                        ${downloadButton}
-                    </div>
-                `;
+          return;
         }
+
+        // DOCX: Multi-layer fallback strategy
+        if (!isOnline) {
+          // Offline: Can't use any viewer, show download prompt
+          showDownloadPrompt(backBar, filename, downloadButton);
+          return;
+        }
+
+        // Layer 1: Try Mammoth.js (Client-side rendering - fastest)
+        try {
+          const success = await tryMammothRender(
+            fullPath,
+            backBar,
+            downloadButton
+          );
+          if (success) return;
+        } catch (err) {
+          console.warn("Mammoth.js failed:", err);
+        }
+
+        // Layer 2: Try Office Online Viewer
+        try {
+          const success = await tryOfficeViewer(
+            fullPath,
+            backBar,
+            downloadButton
+          );
+          if (success) return;
+        } catch (err) {
+          console.warn("Office Viewer failed:", err);
+        }
+
+        // Layer 3: Try Google Docs Viewer
+        try {
+          const success = await tryGoogleViewer(
+            fullPath,
+            backBar,
+            downloadButton
+          );
+          if (success) return;
+        } catch (err) {
+          console.warn("Google Viewer failed:", err);
+        }
+
+        // Layer 4: All failed, show download prompt
+        showDownloadPrompt(backBar, filename, downloadButton);
       }
+
+      // Layer 1: Mammoth.js renderer
+      async function tryMammothRender(filePath, backBar, downloadButton) {
+        return new Promise(async (resolve) => {
+          try {
+            // Show loading indicator
+            modalPreviewArea.innerHTML = `
+              ${backBar}
+              <div class="preview-fallback">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 16px;">
+                  <div style="width: 48px; height: 48px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                  <p style="color: var(--text-secondary);">正在載入文件 (Mammoth.js)...</p>
+                </div>
+              </div>
+            `;
+
+            const response = await fetch(filePath);
+            if (!response.ok) throw new Error("File not found");
+
+            const arrayBuffer = await response.arrayBuffer();
+            const result = await mammoth.convertToHtml({ arrayBuffer });
+
+            if (result.value && result.value.trim().length > 0) {
+              modalPreviewArea.innerHTML = `
+                ${backBar}
+                <div style="flex: 1; overflow-y: auto; padding: 40px; background: #fff; color: #000;">
+                  <div style="max-width: 800px; margin: 0 auto; font-family: 'Noto Sans TC', sans-serif;">
+                    ${result.value}
+                  </div>
+                </div>
+                <div class="download-bar">${downloadButton}</div>
+              `;
+              resolve(true);
+            } else {
+              throw new Error("Empty content");
+            }
+          } catch (error) {
+            resolve(false);
+          }
+        });
+      }
+
+      // Layer 2: Office Online Viewer
+      async function tryOfficeViewer(filePath, backBar, downloadButton) {
+        return new Promise((resolve) => {
+          const absoluteUrl = new URL(filePath, window.location.href).href;
+          const officeUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(
+            absoluteUrl
+          )}`;
+
+          modalPreviewArea.innerHTML = `
+            ${backBar}
+            <iframe src="${officeUrl}" class="preview-frame" frameborder="0"></iframe>
+            <div class="download-bar">${downloadButton}</div>
+          `;
+
+          // Try to detect if iframe loaded successfully
+          const iframe = modalPreviewArea.querySelector("iframe");
+          let timeout = setTimeout(() => resolve(true), 3000); // Assume success after 3s
+
+          iframe.onerror = () => {
+            clearTimeout(timeout);
+            resolve(false);
+          };
+        });
+      }
+
+      // Layer 3: Google Docs Viewer
+      async function tryGoogleViewer(filePath, backBar, downloadButton) {
+        return new Promise((resolve) => {
+          const absoluteUrl = new URL(filePath, window.location.href).href;
+          const gViewUrl = `https://docs.google.com/gview?url=${encodeURIComponent(
+            absoluteUrl
+          )}&embedded=true`;
+
+          modalPreviewArea.innerHTML = `
+            ${backBar}
+            <iframe src="${gViewUrl}" class="preview-frame" frameborder="0"></iframe>
+            <div class="download-bar">${downloadButton}</div>
+          `;
+
+          const iframe = modalPreviewArea.querySelector("iframe");
+          let timeout = setTimeout(() => resolve(true), 3000);
+
+          iframe.onerror = () => {
+            clearTimeout(timeout);
+            resolve(false);
+          };
+        });
+      }
+
+      // Layer 4: Download prompt
+      function showDownloadPrompt(backBar, filename, downloadButton) {
+        modalPreviewArea.innerHTML = `
+          ${backBar}
+          <div class="preview-fallback">
+            <svg class="icon-svg" viewBox="0 0 24 24" style="width:64px; height:64px; margin-bottom:16px; color:#4dabf7;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            <h3 style="font-weight:500; margin-bottom:8px;">${filename}</h3>
+            <p style="font-size:0.9rem; margin-bottom:24px;">無法預覽此檔案，請下載後檢視。</p>
+            ${downloadButton}
+          </div>
+        `;
+      }
+
+      // Add loading animation CSS
+      const style = document.createElement("style");
+      style.textContent = `
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+      `;
+      document.head.appendChild(style);
 
       window.closePreview = () => {
         previewModal.classList.remove("active");
