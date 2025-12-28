@@ -25,14 +25,36 @@
           navigator.serviceWorker
             .register("./sw.js")
             .then((registration) => {
-              console.log(
-                "ServiceWorker registration successful with scope: ",
-                registration.scope
-              );
+              console.log("SW registered:", registration.scope);
+
+              // Check for updates proactively
+              registration.addEventListener("updatefound", () => {
+                const newWorker = registration.installing;
+                newWorker.addEventListener("statechange", () => {
+                  if (
+                    newWorker.state === "installed" &&
+                    navigator.serviceWorker.controller
+                  ) {
+                    // New content is available, skip waiting is already in sw.js
+                    // We can reload or notify. Since skipWaiting is used,
+                    // a reload will bring the new version.
+                    console.log("New version found, reloading...");
+                    window.location.reload();
+                  }
+                });
+              });
             })
             .catch((err) => {
-              console.log("ServiceWorker registration failed: ", err);
+              console.log("SW registration failed:", err);
             });
+        });
+
+        // Ensure we handle the case where the sw changes and we need to reload
+        let refreshing = false;
+        navigator.serviceWorker.addEventListener("controllerchange", () => {
+          if (refreshing) return;
+          refreshing = true;
+          window.location.reload();
         });
       }
     </script>
@@ -1627,10 +1649,10 @@
                                     <div style="padding-bottom: 24px;">
                                         <div style="font-size: 0.85rem; color: var(--accent); font-weight: 600; margin-bottom: 4px;">v4.1</div>
                                         <ul style="font-size: 0.9rem; color: var(--text-primary); list-style: none; display: flex; flex-direction: column; gap: 6px;">
-                                            <li style="color: #eee;">新增深層連結功能，支援分享與書籤特定頁面</li>
+                                            <li style="color: #eee;">[Hotfix] 修復 PDF 預覽無法顯示的邏輯錯誤</li>
+                                            <li style="color: #eee;">[Update] 強化 App 更新機制，解決舊版本緩存不更新問題</li>
                                             <li style="color: #eee;">大幅優化手機版 PDF 縮放手勢，操作更精準不回彈</li>
-                                            <li style="color: #eee;">修復主介面加載穩定性與轉場動畫流暢度</li>
-                                            <li style="color: #ccc;">實作波紋點擊效果與微互動細節</li>
+                                            <li style="color: #ccc;">新增深層連結功能，支援分享與書籤特定頁面</li>
                                         </ul>
                                     </div>
                                 </div>
@@ -2022,6 +2044,9 @@
 
             pdfjsLib.GlobalWorkerOptions.workerSrc =
               "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+            const pdf = await pdfjsLib.getDocument(filePath).promise;
+            const page = await pdf.getPage(1);
 
             // Render at 2.0x for better quality when zooming in
             const renderScale = 2.0;
