@@ -64,6 +64,34 @@
           window.location.reload();
         });
       }
+
+      // Strictly disable zooming for a better App experience
+      document.addEventListener(
+        "touchstart",
+        function (event) {
+          if (event.touches.length > 1) {
+            event.preventDefault();
+          }
+        },
+        { passive: false }
+      );
+
+      let lastTouchEnd = 0;
+      document.addEventListener(
+        "touchend",
+        function (event) {
+          const now = new Date().getTime();
+          if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+          }
+          lastTouchEnd = now;
+        },
+        false
+      );
+
+      document.addEventListener("gesturestart", function (event) {
+        event.preventDefault();
+      });
     </script>
     <style>
       :root {
@@ -1683,6 +1711,7 @@
         selectedYear: null,
         selectedSubject: null,
         selectedCategory: null,
+        modalOpen: false,
         history: [],
       };
 
@@ -1742,6 +1771,17 @@
       function render() {
         updateHeader();
         mainContainer.innerHTML = "";
+
+        // Sync Modal State
+        if (appState.modalOpen) {
+          previewModal.classList.add("active");
+        } else {
+          previewModal.classList.remove("active");
+          // Clean up preview content to stop background videos/audio if any
+          if (!modalBody.classList.contains("show-preview")) {
+            modalPreviewArea.innerHTML = "";
+          }
+        }
 
         const content = document.createElement("div");
         content.className = "view-section";
@@ -2099,17 +2139,6 @@
         // Reset mobile slide view
         modalBody.classList.remove("show-preview");
 
-        modalPreviewArea.innerHTML = `
-                <div class="mobile-back-bar" onclick="backToList()">
-                    <svg class="icon-svg" viewBox="0 0 24 24" style="margin-right:6px;"><path d="M15 18l-6-6 6-6"/></svg>
-                    Back to List
-                </div>
-                <div class="preview-fallback">
-                    <svg class="icon-svg" viewBox="0 0 24 24" style="width:48px; height:48px; opacity:0.5;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                    <p>請從左側選擇檔案以預覽</p>
-                </div>
-            `;
-
         // Populate List
         files.forEach((file, index) => {
           const ext = file.split(".").pop().toUpperCase();
@@ -2147,7 +2176,10 @@
           modalFileList.appendChild(li);
         });
 
-        previewModal.classList.add("active");
+        appState.modalOpen = true;
+        // Push state for modal so "back" closes it
+        history.pushState({ ...appState }, "", window.location.hash);
+        render();
       };
 
       window.backToList = () => {
@@ -2410,7 +2442,10 @@
       });
 
       window.closePreview = () => {
-        previewModal.classList.remove("active");
+        if (appState.modalOpen) {
+          appState.modalOpen = false;
+          history.back(); // This will trigger popstate and call render()
+        }
       };
 
       // Handle browser back/forward buttons
