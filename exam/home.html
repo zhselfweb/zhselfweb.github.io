@@ -1,0 +1,1769 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>ヾ(•ω•`)o</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="icon.png" />
+    <link rel="manifest" href="manifest.json" />
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("./sw.js")
+            .then((registration) => {
+              console.log(
+                "ServiceWorker registration successful with scope: ",
+                registration.scope
+              );
+            })
+            .catch((err) => {
+              console.log("ServiceWorker registration failed: ", err);
+            });
+        });
+      }
+    </script>
+    <style>
+      :root {
+        /* Apple/Arc Dark Mode Palette */
+        --bg-base: #000000;
+        --bg-secondary: #0a0a0a;
+        --card-bg: rgba(28, 28, 30, 0.6);
+        --card-border: rgba(255, 255, 255, 0.1);
+        --card-highlight: rgba(255, 255, 255, 0.15);
+        --text-primary: #ffffff;
+        --text-secondary: #86868b; /* Apple Gray */
+        --text-tertiary: #505055;
+        --text-tertiary2: #c9c9c9;
+        --accent: #2997ff; /* Apple Blue */
+
+        --blur-strength: 40px;
+        --radius-lg: 24px;
+        --radius-md: 16px;
+
+        --anim-spring: cubic-bezier(0.25, 0.8, 0.25, 1);
+      }
+
+      * {
+        user-select: none;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+        font-family: "Inter", "Noto Sans TC", sans-serif;
+      }
+
+      body {
+        background-color: var(--bg-base);
+        color: var(--text-primary);
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        background-image: radial-gradient(
+            circle at 100% 0%,
+            rgba(255, 255, 255, 0.03) 0%,
+            transparent 30%
+          ),
+          radial-gradient(
+            circle at 0% 100%,
+            rgba(255, 255, 255, 0.02) 0%,
+            transparent 30%
+          );
+      }
+
+      .icon-svg {
+        width: 1em;
+        height: 1em;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .app-header {
+        padding: 20px 32px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        z-index: 100;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid var(--card-border);
+        transition: padding 0.3s ease;
+      }
+
+      .breadcrumbs {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        overflow-x: auto;
+        white-space: nowrap;
+        scrollbar-width: none; /* Firefox */
+      }
+      .breadcrumbs::-webkit-scrollbar {
+        display: none;
+      }
+
+      .crumb {
+        font-size: 0.95rem;
+        color: var(--text-tertiary);
+        cursor: pointer;
+        transition: color 0.2s;
+        display: flex;
+        align-items: center;
+        font-weight: 400;
+      }
+
+      .crumb:hover {
+        color: var(--text-primary);
+      }
+
+      .crumb:last-child {
+        color: var(--text-primary);
+        font-weight: 500;
+        pointer-events: none;
+      }
+
+      .crumb-sep {
+        color: var(--text-tertiary);
+        opacity: 0.5;
+        font-size: 0.8rem;
+      }
+
+      .main-container {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 32px;
+        position: relative;
+      }
+
+      .main-container::-webkit-scrollbar {
+        width: 6px;
+      }
+      .main-container::-webkit-scrollbar-thumb {
+        background: #333;
+        border-radius: 3px;
+      }
+
+      .view-section {
+        max-width: 1000px;
+        margin: 0 auto;
+        opacity: 0;
+        transform: translateY(15px);
+        animation: fadeInSpring 0.6s var(--anim-spring) forwards;
+      }
+
+      @keyframes fadeInSpring {
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Staggered list animation */
+      @keyframes slideInRight {
+        from {
+          opacity: 0;
+          transform: translateX(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: white;
+        background: linear-gradient(180deg, #ffffff 0%, #d0d0d0 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        letter-spacing: -0.03em;
+      }
+
+      .page-subtitle {
+        color: var(--text-secondary);
+        margin-bottom: 40px;
+        font-size: 1.1rem;
+        font-weight: 300;
+        letter-spacing: 0.02em;
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+      }
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 24px;
+      }
+      .grid-4 {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 20px;
+      }
+
+      .nav-card {
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius-lg);
+        padding: 28px;
+        cursor: pointer;
+        transition: all 0.4s var(--anim-spring);
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 200px;
+        backdrop-filter: blur(var(--blur-strength));
+        -webkit-backdrop-filter: blur(var(--blur-strength));
+      }
+
+      .nav-card:hover {
+        transform: translateY(-6px) scale(1.01);
+        background: rgba(40, 40, 40, 0.6);
+        border-color: var(--card-highlight);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      }
+
+      .nav-card:active {
+        transform: scale(0.98);
+      }
+
+      .card-icon-area {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        color: var(--text-primary);
+        opacity: 0.9;
+      }
+
+      .subject-char {
+        font-family: "Noto Serif TC", serif;
+        font-size: 3.5rem;
+        font-weight: 700;
+        line-height: 1;
+        background: linear-gradient(135deg, #fff 30%, #888 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        opacity: 0.9;
+      }
+
+      .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 6px;
+        letter-spacing: -0.01em;
+      }
+
+      .card-desc {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        font-weight: 400;
+      }
+
+      .version-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .version-card {
+        display: flex;
+        align-items: center;
+        padding: 24px;
+        background: var(--card-bg);
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .version-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: var(--card-highlight);
+        transform: translateX(4px);
+      }
+
+      .version-card:active {
+        transform: scale(0.99);
+      }
+
+      .version-icon-box {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 20px;
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        flex-shrink: 0;
+      }
+
+      .v-student .version-icon-box {
+        border: 1px solid rgba(100, 210, 255, 0.3);
+        color: #64d2ff;
+      }
+      .v-teacher .version-icon-box {
+        border: 1px solid rgba(191, 90, 242, 0.3);
+        color: #bf5af2;
+      }
+      .v-answer .version-icon-box {
+        border: 1px solid rgba(48, 209, 88, 0.3);
+        color: #30d158;
+      }
+      .v-key .version-icon-box {
+        border: 1px solid rgba(255, 159, 10, 0.3);
+        color: #ff9f0a;
+      }
+
+      .version-info h3 {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: var(--text-primary);
+      }
+      .version-info p {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        margin-top: 4px;
+      }
+
+      .version-arrow {
+        margin-left: auto;
+        color: var(--text-tertiary);
+        opacity: 0.5;
+        transition: opacity 0.2s, transform 0.2s;
+      }
+      .version-card:hover .version-arrow {
+        opacity: 1;
+        transform: translateX(5px);
+      }
+
+      /* --- Immersive Preview & Modal --- */
+      .immersive-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+
+      .immersive-overlay.active {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      .modal-window {
+        width: 90vw;
+        height: 85vh;
+        background: #121212;
+        border: 1px solid var(--card-border);
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        box-shadow: 0 50px 100px rgba(0, 0, 0, 0.8);
+        transform: scale(0.95);
+        transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+
+      .immersive-overlay.active .modal-window {
+        transform: scale(1);
+      }
+
+      .modal-header {
+        padding: 16px 24px;
+        background: rgba(30, 30, 30, 0.5);
+        border-bottom: 1px solid var(--card-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-shrink: 0;
+      }
+
+      .modal-title-group h3 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .modal-title-group span {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+      }
+
+      .modal-close-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        color: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+      }
+
+      .modal-close-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .modal-body {
+        flex: 1;
+        display: flex;
+        overflow: hidden;
+        position: relative; /* For mobile transitions */
+      }
+
+      /* Sidebar (File List) */
+      .file-list-sidebar {
+        width: 320px;
+        border-right: 1px solid var(--card-border);
+        background: rgba(20, 20, 20, 0.5);
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+      }
+
+      .file-list-item {
+        padding: 16px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        cursor: pointer;
+        transition: background 0.2s;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        animation: slideInRight 0.3s ease backwards;
+      }
+
+      /* Stagger animations via JS or minimal CSS delay for first few items */
+      .file-list-item:nth-child(1) {
+        animation-delay: 0.05s;
+      }
+      .file-list-item:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+      .file-list-item:nth-child(3) {
+        animation-delay: 0.15s;
+      }
+      .file-list-item:nth-child(4) {
+        animation-delay: 0.2s;
+      }
+
+      .file-list-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .file-list-item.active {
+        background: rgba(41, 151, 255, 0.1);
+        border-left: 3px solid var(--accent);
+      }
+
+      .item-name {
+        font-size: 0.9rem;
+        color: #eee;
+        word-break: break-word; /* Better line breaking */
+        line-height: 1.4;
+      }
+
+      .item-meta {
+        font-size: 0.75rem;
+        color: #888;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .badge-pdf {
+        color: #ff6b6b;
+        background: rgba(255, 107, 107, 0.1);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: 600;
+      }
+      .badge-doc {
+        color: #4dabf7;
+        background: rgba(77, 171, 247, 0.1);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.7rem;
+        font-weight: 600;
+      }
+
+      /* Preview Pane */
+      .preview-pane {
+        flex: 1;
+        background: #000;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .mobile-back-bar {
+        display: none; /* Hidden on desktop */
+        align-items: center;
+        padding: 12px 16px;
+        background: #1a1a1a;
+        border-bottom: 1px solid var(--card-border);
+        color: var(--accent);
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      .preview-frame {
+        width: 100%;
+        height: 100%;
+        border: none;
+        background: #1a1a1a;
+        display: block;
+      }
+
+      .preview-fallback {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary);
+        gap: 20px;
+        padding: 40px;
+        text-align: center;
+      }
+
+      .download-bar {
+        padding: 16px 24px;
+        background: rgba(20, 20, 20, 0.95);
+        border-top: 1px solid var(--card-border);
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+        backdrop-filter: blur(10px);
+      }
+
+      .btn-download {
+        background: var(--text-primary);
+        color: #000;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s;
+      }
+
+      .btn-download:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+      .btn-download:active {
+        transform: scale(0.98);
+      }
+
+      /* --- Responsive Design (Mobile Optimization) --- */
+      @media (max-width: 768px) {
+        .app-header {
+          padding: 16px 20px;
+        }
+        .page-title {
+          font-size: 1.8rem;
+        }
+        .page-subtitle {
+          font-size: 0.95rem;
+          margin-bottom: 24px;
+        }
+        .main-container {
+          padding: 20px;
+        }
+
+        .grid-2,
+        .grid-3,
+        .grid-4 {
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+
+        .nav-card {
+          min-height: 160px;
+          padding: 24px;
+        }
+
+        /* Mobile Modal: Slide Animation */
+        .modal-window {
+          width: 100vw;
+          height: 100vh;
+          border-radius: 0;
+          border: none;
+        }
+
+        .modal-header {
+          padding: 16px;
+        }
+
+        .modal-body {
+          display: block; /* Disable flex for absolute positioning */
+        }
+
+        .file-list-sidebar {
+          width: 100%;
+          height: 100%;
+          border-right: none;
+          position: absolute;
+          top: 0;
+          left: 0;
+          transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+          z-index: 1;
+          background: #121212;
+        }
+
+        .preview-pane {
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          top: 0;
+          left: 100%; /* Initially off-screen to right */
+          transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+          z-index: 2;
+          background: #000;
+        }
+
+        /* State: Show Preview (Slide Left) */
+        .modal-body.show-preview .file-list-sidebar {
+          transform: translateX(-30%); /* Parallax fade out */
+          opacity: 0;
+          pointer-events: none;
+        }
+
+        .modal-body.show-preview .preview-pane {
+          transform: translateX(-100%); /* Slide in */
+        }
+
+        .mobile-back-bar {
+          display: flex; /* Show back button on mobile */
+        }
+      }
+
+      /* --- Utility --- */
+      .hidden {
+        display: none !important;
+      }
+      .back-btn {
+        background: transparent;
+        border: none;
+        color: var(--text-primary);
+        cursor: pointer;
+        padding: 8px;
+        margin-right: 8px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+      }
+      .back-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      .back-btn svg {
+        width: 22px;
+        height: 22px;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="app-header">
+      <div style="display: flex; align-items: center">
+        <button id="backBtn" class="back-btn hidden" onclick="goBack()">
+          <svg class="icon-svg" viewBox="0 0 24 24">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+        </button>
+        <nav class="breadcrumbs" id="breadcrumbs">
+          <!-- Injected via JS -->
+        </nav>
+      </div>
+    </header>
+
+    <main class="main-container" id="mainContainer">
+      <!-- Views will be injected here -->
+    </main>
+
+    <!-- Redesigned Immersive Modal -->
+    <div class="immersive-overlay" id="previewModal">
+      <div class="modal-window">
+        <header class="modal-header">
+          <div class="modal-title-group">
+            <h3 id="modalTitle">File Browser</h3>
+            <span id="modalSubtitle">Select a file</span>
+          </div>
+          <button class="modal-close-btn" onclick="closePreview()">
+            <svg class="icon-svg" viewBox="0 0 24 24">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
+        </header>
+        <div class="modal-body" id="modalBody">
+          <!-- Sidebar -->
+          <div class="file-list-sidebar" id="modalFileList">
+            <!-- List items injected here -->
+          </div>
+
+          <!-- Main Preview Area -->
+          <div class="preview-pane" id="modalPreviewArea">
+            <div class="mobile-back-bar" onclick="backToList()">
+              <svg
+                class="icon-svg"
+                viewBox="0 0 24 24"
+                style="margin-right: 6px"
+              >
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+              Back to List
+            </div>
+            <div class="preview-fallback" id="previewPlaceholder">
+              <svg
+                class="icon-svg"
+                viewBox="0 0 24 24"
+                style="width: 48px; height: 48px; opacity: 0.5"
+              >
+                <path
+                  d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+                />
+                <polyline points="14 2 14 8 20 8" />
+              </svg>
+              <p>請從左側選擇檔案以預覽</p>
+            </div>
+            <!-- Content will be injected here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const rawData = [
+        {
+          year: "112",
+          type: "學測",
+          folderName: "龍騰112學測全真模擬卷",
+          subjects: [
+            {
+              name: "化學",
+              files: [
+                "112學年度學科能力測驗複習試卷-化學考科(學用卷).docx",
+                "112學年度學科能力測驗複習試卷-化學考科(學用卷).pdf",
+                "112學年度學科能力測驗複習試卷-化學考科(教用卷).docx",
+                "112學年度學科能力測驗複習試卷-化學考科(教用卷).pdf",
+                "112學年度學科能力測驗複習試卷-化學考科(答題卷).pdf",
+                "112學年度學科能力測驗複習試卷-化學考科(解答卷).docx",
+                "112學年度學科能力測驗複習試卷-化學考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "國寫",
+              files: [
+                "112學年度學科能力測驗全真模擬試卷-國寫考科(學用卷).docx",
+                "112學年度學科能力測驗全真模擬試卷-國寫考科(學用卷).pdf",
+                "112學年度學科能力測驗全真模擬試卷-國寫考科(教用卷).docx",
+                "112學年度學科能力測驗全真模擬試卷-國寫考科(教用卷).pdf",
+                "112學年度學科能力測驗全真模擬試卷-國寫考科(答題卷).pdf",
+                "112學年度學科能力測驗全真模擬試卷-國寫考科(解答卷).docx",
+                "112學年度學科能力測驗全真模擬試卷-國寫考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "國文",
+              files: [
+                "112學年度學科能力測驗全真模擬試卷-國綜考科(學用卷).docx",
+                "112學年度學科能力測驗全真模擬試卷-國綜考科(學用卷).pdf",
+                "112學年度學科能力測驗全真模擬試卷-國綜考科(教用卷).docx",
+                "112學年度學科能力測驗全真模擬試卷-國綜考科(教用卷).pdf",
+                "112學年度學科能力測驗全真模擬試卷-國綜考科(答題卷).pdf",
+                "112學年度學科能力測驗全真模擬試卷-國綜考科(解答卷).docx",
+                "112學年度學科能力測驗全真模擬試卷-國綜考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "地科",
+              files: [
+                "112學年度學科能力測驗複習試卷-地球科學考科(學用卷).docx",
+                "112學年度學科能力測驗複習試卷-地球科學考科(學用卷).pdf",
+                "112學年度學科能力測驗複習試卷-地球科學考科(教用卷).docx",
+                "112學年度學科能力測驗複習試卷-地球科學考科(教用卷).pdf",
+                "112學年度學科能力測驗複習試卷-地球科學考科(答題卷).pdf",
+                "112學年度學科能力測驗複習試卷-地球科學考科(解答卷).docx",
+                "112學年度學科能力測驗複習試卷-地球科學考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "數學A",
+              files: [
+                "112學年度學科能力測驗全真模擬試卷-數學A考科(學用卷).docx",
+                "112學年度學科能力測驗全真模擬試卷-數學A考科(學用卷).pdf",
+                "112學年度學科能力測驗全真模擬試卷-數學A考科(教用卷).docx",
+                "112學年度學科能力測驗全真模擬試卷-數學A考科(教用卷).pdf",
+                "112學年度學科能力測驗全真模擬試卷-數學A考科(答題卷).pdf",
+                "112學年度學科能力測驗全真模擬試卷-數學A考科(解答卷).docx",
+                "112學年度學科能力測驗全真模擬試卷-數學A考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "數學B",
+              files: [
+                "112學年度學科能力測驗全真模擬試卷-數學B考科(學用卷).docx",
+                "112學年度學科能力測驗全真模擬試卷-數學B考科(學用卷).pdf",
+                "112學年度學科能力測驗全真模擬試卷-數學B考科(教用卷).docx",
+                "112學年度學科能力測驗全真模擬試卷-數學B考科(教用卷).pdf",
+                "112學年度學科能力測驗全真模擬試卷-數學B考科(答題卷).pdf",
+                "112學年度學科能力測驗全真模擬試卷-數學B考科(解答卷).docx",
+                "112學年度學科能力測驗全真模擬試卷-數學B考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "物理",
+              files: [
+                "112學年度學科能力測驗複習試卷-物理考科(學用卷).docx",
+                "112學年度學科能力測驗複習試卷-物理考科(學用卷).pdf",
+                "112學年度學科能力測驗複習試卷-物理考科(教用卷).docx",
+                "112學年度學科能力測驗複習試卷-物理考科(教用卷).pdf",
+                "112學年度學科能力測驗複習試卷-物理考科(答題卷).pdf",
+                "112學年度學科能力測驗複習試卷-物理考科(解答卷).docx",
+                "112學年度學科能力測驗複習試卷-物理考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "生物",
+              files: [
+                "112學年度學科能力測驗複習試卷-生物考科(學用卷).docx",
+                "112學年度學科能力測驗複習試卷-生物考科(學用卷).pdf",
+                "112學年度學科能力測驗複習試卷-生物考科(教用卷).docx",
+                "112學年度學科能力測驗複習試卷-生物考科(教用卷).pdf",
+                "112學年度學科能力測驗複習試卷-生物考科(答題卷).pdf",
+                "112學年度學科能力測驗複習試卷-生物考科(解答卷).docx",
+                "112學年度學科能力測驗複習試卷-生物考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "英文",
+              files: [
+                "112學年度學科能力測驗全真模擬試卷-英文考科(學用卷).docx",
+                "112學年度學科能力測驗全真模擬試卷-英文考科(學用卷).pdf",
+                "112學年度學科能力測驗全真模擬試卷-英文考科(教用卷).docx",
+                "112學年度學科能力測驗全真模擬試卷-英文考科(教用卷).pdf",
+                "112學年度學科能力測驗全真模擬試卷-英文考科(答題卷).pdf",
+                "112學年度學科能力測驗全真模擬試卷-英文考科(解答卷).docx",
+                "112學年度學科能力測驗全真模擬試卷-英文考科(解答卷).pdf",
+              ],
+            },
+          ],
+        },
+        {
+          year: "113",
+          type: "分科",
+          folderName: "龍騰113分科全真模擬卷",
+          subjects: [
+            {
+              name: "化學",
+              files: [
+                "113學年度分科測驗全真模擬試卷-化學考科(學用卷)(影印推薦).pdf",
+                "113學年度分科測驗全真模擬試卷-化學考科(學用卷).docx",
+                "113學年度分科測驗全真模擬試卷-化學考科(答題卷).pdf",
+                "113學年度分科測驗全真模擬試卷-化學考科(解答卷).docx",
+                "113學年度分科測驗全真模擬試卷-化學考科(解答卷).pdf",
+                "113學年度分科測驗全真模擬試卷-化學考科.docx",
+                "113學年度分科測驗全真模擬試卷-化學考科.pdf",
+              ],
+            },
+            {
+              name: "數乙",
+              files: [
+                "113學年度分科測驗全真模擬試卷-數學乙考科(學用卷)(影印推薦).pdf",
+                "113學年度分科測驗全真模擬試卷-數學乙考科(學用卷).docx",
+                "113學年度分科測驗全真模擬試卷-數學乙考科(教用卷).docx",
+                "113學年度分科測驗全真模擬試卷-數學乙考科(教用卷).pdf",
+                "113學年度分科測驗全真模擬試卷-數學乙考科(答題卷).pdf",
+                "113學年度分科測驗全真模擬試卷-數學乙考科(解答卷).docx",
+                "113學年度分科測驗全真模擬試卷-數學乙考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "數甲",
+              files: [
+                "113學年度分科測驗全真模擬試卷-數學甲考科(學用卷)(影印推薦).pdf",
+                "113學年度分科測驗全真模擬試卷-數學甲考科(學用卷).docx",
+                "113學年度分科測驗全真模擬試卷-數學甲考科(教用卷).docx",
+                "113學年度分科測驗全真模擬試卷-數學甲考科(教用卷).pdf",
+                "113學年度分科測驗全真模擬試卷-數學甲考科(答題卷).pdf",
+                "113學年度分科測驗全真模擬試卷-數學甲考科(解答卷).docx",
+                "113學年度分科測驗全真模擬試卷-數學甲考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "物理",
+              files: [
+                "113學年度分科測驗全真模擬試卷-物理考科(學用卷)(影印推薦).pdf",
+                "113學年度分科測驗全真模擬試卷-物理考科(學用卷).docx",
+                "113學年度分科測驗全真模擬試卷-物理考科(答題卷).pdf",
+                "113學年度分科測驗全真模擬試卷-物理考科(解答卷).docx",
+                "113學年度分科測驗全真模擬試卷-物理考科(解答卷).pdf",
+                "113學年度分科測驗全真模擬試卷-物理考科.docx",
+                "113學年度分科測驗全真模擬試卷-物理考科.pdf",
+              ],
+            },
+            {
+              name: "生物",
+              files: [
+                "113學年度分科測驗全真模擬試卷-生物考科(學用卷)(影印推薦).pdf",
+                "113學年度分科測驗全真模擬試卷-生物考科(學用卷).docx",
+                "113學年度分科測驗全真模擬試卷-生物考科(答題卷).pdf",
+                "113學年度分科測驗全真模擬試卷-生物考科(解答卷).docx",
+                "113學年度分科測驗全真模擬試卷-生物考科(解答卷).pdf",
+                "113學年度分科測驗全真模擬試卷-生物考科.docx",
+                "113學年度分科測驗全真模擬試卷-生物考科.pdf",
+              ],
+            },
+          ],
+        },
+        {
+          year: "113",
+          type: "學測",
+          folderName: "龍騰113學測全真模擬卷",
+          subjects: [
+            {
+              name: "化學",
+              files: [
+                "113學年度學科能力測驗模擬試卷-化學考科(學用卷).docx",
+                "113學年度學科能力測驗模擬試卷-化學考科(學用卷).pdf",
+                "113學年度學科能力測驗模擬試卷-化學考科(教用卷).docx",
+                "113學年度學科能力測驗模擬試卷-化學考科(教用卷).pdf",
+                "113學年度學科能力測驗模擬試卷-化學考科(答題卷).pdf",
+                "113學年度學科能力測驗模擬試卷-化學考科(解答卷).docx",
+                "113學年度學科能力測驗模擬試卷-化學考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "國寫",
+              files: [
+                "113學年度學科能力測驗全真模擬試卷-國寫考科(學用卷).docx",
+                "113學年度學科能力測驗全真模擬試卷-國寫考科(學用卷).pdf",
+                "113學年度學科能力測驗全真模擬試卷-國寫考科(教用卷).docx",
+                "113學年度學科能力測驗全真模擬試卷-國寫考科(教用卷).pdf",
+                "113學年度學科能力測驗全真模擬試卷-國寫考科(答題卷).pdf",
+                "113學年度學科能力測驗全真模擬試卷-國寫考科(解答卷).docx",
+                "113學年度學科能力測驗全真模擬試卷-國寫考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "國綜",
+              files: [
+                "113學年度學科能力測驗全真模擬試卷-國綜考科(學用卷).docx",
+                "113學年度學科能力測驗全真模擬試卷-國綜考科(學用卷).pdf",
+                "113學年度學科能力測驗全真模擬試卷-國綜考科(教用卷).docx",
+                "113學年度學科能力測驗全真模擬試卷-國綜考科(教用卷).pdf",
+                "113學年度學科能力測驗全真模擬試卷-國綜考科(答題卷).pdf",
+                "113學年度學科能力測驗全真模擬試卷-國綜考科(解答卷).docx",
+                "113學年度學科能力測驗全真模擬試卷-國綜考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "地科",
+              files: [
+                "113學年度學科能力測驗模擬試卷-地球科學考科(學用卷).docx",
+                "113學年度學科能力測驗模擬試卷-地球科學考科(學用卷).pdf",
+                "113學年度學科能力測驗模擬試卷-地球科學考科(教用卷).docx",
+                "113學年度學科能力測驗模擬試卷-地球科學考科(教用卷).pdf",
+                "113學年度學科能力測驗模擬試卷-地球科學考科(答題卷).pdf",
+                "113學年度學科能力測驗模擬試卷-地球科學考科(解答卷).docx",
+                "113學年度學科能力測驗模擬試卷-地球科學考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "數學A",
+              files: [
+                "113學年度學科能力測驗全真模擬試卷-數學A考科(學用卷).pdf",
+                "113學年度學科能力測驗全真模擬試卷-數學A考科(教用卷).pdf",
+                "113學年度學科能力測驗全真模擬試卷-數學A考科(答題卷).pdf",
+                "113學年度學科能力測驗全真模擬試卷-數學A考科(解答卷).docx",
+                "113學年度學科能力測驗全真模擬試卷-數學A考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "數學B",
+              files: [
+                "113學年度學科能力測驗全真模擬試卷-數學B考科(學用卷).pdf",
+
+                "113學年度學科能力測驗全真模擬試卷-數學B考科(教用卷).pdf",
+                "113學年度學科能力測驗全真模擬試卷-數學B考科(答題卷).pdf",
+                "113學年度學科能力測驗全真模擬試卷-數學B考科(解答卷).docx",
+                "113學年度學科能力測驗全真模擬試卷-數學B考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "物理",
+              files: [
+                "113學年度學科能力測驗模擬試卷-物理考科(學用卷).docx",
+                "113學年度學科能力測驗模擬試卷-物理考科(學用卷).pdf",
+                "113學年度學科能力測驗模擬試卷-物理考科(教用卷).docx",
+                "113學年度學科能力測驗模擬試卷-物理考科(教用卷).pdf",
+                "113學年度學科能力測驗模擬試卷-物理考科(答題卷).pdf",
+                "113學年度學科能力測驗模擬試卷-物理考科(解答卷).docx",
+                "113學年度學科能力測驗模擬試卷-物理考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "生物",
+              files: [
+                "113學年度學科能力測驗模擬試卷-生物考科(學用卷).docx",
+                "113學年度學科能力測驗模擬試卷-生物考科(學用卷).pdf",
+                "113學年度學科能力測驗模擬試卷-生物考科(教用卷).docx",
+                "113學年度學科能力測驗模擬試卷-生物考科(教用卷).pdf",
+                "113學年度學科能力測驗模擬試卷-生物考科(答題卷).pdf",
+                "113學年度學科能力測驗模擬試卷-生物考科(解答卷).docx",
+                "113學年度學科能力測驗模擬試卷-生物考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "英文",
+              files: [
+                "113學年度學科能力測驗全真模擬試卷-英文考科(學用卷).docx",
+                "113學年度學科能力測驗全真模擬試卷-英文考科(學用卷).pdf",
+                "113學年度學科能力測驗全真模擬試卷-英文考科(教用卷).docx",
+                "113學年度學科能力測驗全真模擬試卷-英文考科(教用卷).pdf",
+                "113學年度學科能力測驗全真模擬試卷-英文考科(答題卷).pdf",
+                "113學年度學科能力測驗全真模擬試卷-英文考科(解答卷).docx",
+                "113學年度學科能力測驗全真模擬試卷-英文考科(解答卷).pdf",
+              ],
+            },
+          ],
+        },
+        {
+          year: "114",
+          type: "分科",
+          folderName: "龍騰114分科全真模擬卷",
+          subjects: [
+            {
+              name: "化學",
+              files: [
+                "114學年度分科測驗全真模擬試卷-化學考科(學用卷).docx",
+                "114學年度分科測驗全真模擬試卷-化學考科(學用卷)影印推薦.pdf",
+                "114學年度分科測驗全真模擬試卷-化學考科(答題卷).pdf",
+                "114學年度分科測驗全真模擬試卷-化學考科(解答卷).docx",
+                "114學年度分科測驗全真模擬試卷-化學考科(解答卷).pdf",
+                "114學年度分科測驗全真模擬試卷-化學考科.docx",
+                "114學年度分科測驗全真模擬試卷-化學考科.pdf",
+              ],
+            },
+            {
+              name: "數學乙",
+              files: [
+                "114學年度分科測驗全真模擬試卷-數學乙考科(學用卷).doc",
+                "114學年度分科測驗全真模擬試卷-數學乙考科(學用卷)影印推薦.pdf",
+                "114學年度分科測驗全真模擬試卷-數學乙考科(教用卷).doc",
+                "114學年度分科測驗全真模擬試卷-數學乙考科(教用卷).pdf",
+                "114學年度分科測驗全真模擬試卷-數學乙考科(答題卷).pdf",
+                "114學年度分科測驗全真模擬試卷-數學乙考科(解答卷).doc",
+                "114學年度分科測驗全真模擬試卷-數學乙考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "數學甲",
+              files: [
+                "114學年度分科測驗全真模擬試卷-數學甲考科(學用卷).doc",
+                "114學年度分科測驗全真模擬試卷-數學甲考科(學用卷)影印推薦.pdf",
+                "114學年度分科測驗全真模擬試卷-數學甲考科(教用卷).doc",
+                "114學年度分科測驗全真模擬試卷-數學甲考科(教用卷).pdf",
+                "114學年度分科測驗全真模擬試卷-數學甲考科(答題卷).pdf",
+                "114學年度分科測驗全真模擬試卷-數學甲考科(解答卷).doc",
+                "114學年度分科測驗全真模擬試卷-數學甲考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "物理",
+              files: [
+                "114學年度分科測驗全真模擬試卷-物理考科(學用卷).docx",
+                "114學年度分科測驗全真模擬試卷-物理考科(學用卷)影印推薦.pdf",
+                "114學年度分科測驗全真模擬試卷-物理考科(答題卷).pdf",
+                "114學年度分科測驗全真模擬試卷-物理考科(解答卷).docx",
+                "114學年度分科測驗全真模擬試卷-物理考科(解答卷).pdf",
+                "114學年度分科測驗全真模擬試卷-物理考科.docx",
+                "114學年度分科測驗全真模擬試卷-物理考科.pdf",
+              ],
+            },
+            {
+              name: "生物",
+              files: [
+                "114學年度分科測驗全真模擬試卷-生物考科(學用卷).docx",
+                "114學年度分科測驗全真模擬試卷-生物考科(學用卷)影印推薦.pdf",
+                "114學年度分科測驗全真模擬試卷-生物考科(答題卷).pdf",
+                "114學年度分科測驗全真模擬試卷-生物考科(解答卷).docx",
+                "114學年度分科測驗全真模擬試卷-生物考科(解答卷).pdf",
+
+                "114學年度分科測驗全真模擬試卷-生物考科.pdf",
+              ],
+            },
+          ],
+        },
+        {
+          year: "114",
+          type: "學測",
+          folderName: "龍騰114學測全真模擬卷",
+          subjects: [
+            {
+              name: "化學",
+              files: [
+                "114學年度學科能力測驗模擬試卷-化學考科(學用卷).docx",
+                "114學年度學科能力測驗模擬試卷-化學考科(學用卷).pdf",
+                "114學年度學科能力測驗模擬試卷-化學考科(教用卷).docx",
+                "114學年度學科能力測驗模擬試卷-化學考科(教用卷).pdf",
+                "114學年度學科能力測驗模擬試卷-化學考科(答題卷).pdf",
+                "114學年度學科能力測驗模擬試卷-化學考科(解答卷).docx",
+                "114學年度學科能力測驗模擬試卷-化學考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "國寫",
+              files: [
+                "114學年度學科能力測驗全真模擬試卷-國文考科-國寫(學用卷).docx",
+                "114學年度學科能力測驗全真模擬試卷-國文考科-國寫(學用卷).pdf",
+                "114學年度學科能力測驗全真模擬試卷-國文考科-國寫(教用卷).docx",
+                "114學年度學科能力測驗全真模擬試卷-國文考科-國寫(教用卷).pdf",
+                "114學年度學科能力測驗全真模擬試卷-國文考科-國寫(答題卷).pdf",
+                "114學年度學科能力測驗全真模擬試卷-國文考科-國寫(解答卷).docx",
+                "114學年度學科能力測驗全真模擬試卷-國文考科-國寫(解答卷).pdf",
+              ],
+            },
+            {
+              name: "國綜",
+              files: [
+                "114學年度學科能力測驗全真模擬試卷-國文考科-國綜(學用卷).docx",
+                "114學年度學科能力測驗全真模擬試卷-國文考科-國綜(學用卷).pdf",
+                "114學年度學科能力測驗全真模擬試卷-國文考科-國綜(教用卷).docx",
+                "114學年度學科能力測驗全真模擬試卷-國文考科-國綜(教用卷).pdf",
+                "114學年度學科能力測驗全真模擬試卷-國文考科-國綜(答題卷).pdf",
+                "114學年度學科能力測驗全真模擬試卷-國文考科-國綜(解答卷).docx",
+                "114學年度學科能力測驗全真模擬試卷-國文考科-國綜(解答卷).pdf",
+              ],
+            },
+            {
+              name: "地科",
+              files: [
+                "114學年度學科能力測驗模擬試卷-地球科學考科(學用卷).docx",
+                "114學年度學科能力測驗模擬試卷-地球科學考科(學用卷).pdf",
+                "114學年度學科能力測驗模擬試卷-地球科學考科(教用卷).docx",
+                "114學年度學科能力測驗模擬試卷-地球科學考科(教用卷).pdf",
+                "114學年度學科能力測驗模擬試卷-地球科學考科(答題卷).pdf",
+                "114學年度學科能力測驗模擬試卷-地球科學考科(解答卷).docx",
+                "114學年度學科能力測驗模擬試卷-地球科學考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "數學A",
+              files: [
+                "114學年度學科能力測驗全真模擬試卷-數學A考科(學用卷).docx",
+                "114學年度學科能力測驗全真模擬試卷-數學A考科(學用卷).pdf",
+                "114學年度學科能力測驗全真模擬試卷-數學A考科(教用卷).docx",
+                "114學年度學科能力測驗全真模擬試卷-數學A考科(教用卷).pdf",
+                "114學年度學科能力測驗全真模擬試卷-數學A考科(答題卷).pdf",
+                "114學年度學科能力測驗全真模擬試卷-數學A考科(解答卷).docx",
+                "114學年度學科能力測驗全真模擬試卷-數學A考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "數學B",
+              files: [
+                "114學年度學科能力測驗全真模擬試卷-數學B考科(學用卷).docx",
+                "114學年度學科能力測驗全真模擬試卷-數學B考科(學用卷).pdf",
+                "114學年度學科能力測驗全真模擬試卷-數學B考科(教用卷).docx",
+                "114學年度學科能力測驗全真模擬試卷-數學B考科(教用卷).pdf",
+                "114學年度學科能力測驗全真模擬試卷-數學B考科(答題卷).pdf",
+                "114學年度學科能力測驗全真模擬試卷-數學B考科(解答卷).docx",
+                "114學年度學科能力測驗全真模擬試卷-數學B考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "物理",
+              files: [
+                "114學年度學科能力測驗模擬試卷-物理考科(學用卷).docx",
+                "114學年度學科能力測驗模擬試卷-物理考科(學用卷).pdf",
+                "114學年度學科能力測驗模擬試卷-物理考科(教用卷).docx",
+                "114學年度學科能力測驗模擬試卷-物理考科(教用卷).pdf",
+                "114學年度學科能力測驗模擬試卷-物理考科(答題卷).pdf",
+                "114學年度學科能力測驗模擬試卷-物理考科(解答卷).docx",
+                "114學年度學科能力測驗模擬試卷-物理考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "生物",
+              files: [
+                "114學年度學科能力測驗模擬試卷-生物考科(學用卷).docx",
+                "114學年度學科能力測驗模擬試卷-生物考科(學用卷).pdf",
+                "114學年度學科能力測驗模擬試卷-生物考科(教用卷).docx",
+                "114學年度學科能力測驗模擬試卷-生物考科(教用卷).pdf",
+                "114學年度學科能力測驗模擬試卷-生物考科(答題卷).pdf",
+                "114學年度學科能力測驗模擬試卷-生物考科(解答卷).docx",
+                "114學年度學科能力測驗模擬試卷-生物考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "英文",
+              files: [
+                "114學年度學科能力測驗全真模擬試卷-英文考科(學用卷).docx",
+                "114學年度學科能力測驗全真模擬試卷-英文考科(學用卷).pdf",
+                "114學年度學科能力測驗全真模擬試卷-英文考科(教用卷).docx",
+                "114學年度學科能力測驗全真模擬試卷-英文考科(教用卷).pdf",
+                "114學年度學科能力測驗全真模擬試卷-英文考科(答題卷).pdf",
+                "114學年度學科能力測驗全真模擬試卷-英文考科(解答卷).docx",
+                "114學年度學科能力測驗全真模擬試卷-英文考科(解答卷).pdf",
+              ],
+            },
+          ],
+        },
+        {
+          year: "115",
+          type: "學測",
+          folderName: "龍騰115學測全真模擬卷",
+          subjects: [
+            {
+              name: "化學",
+              files: [
+                "115學年度學科能力測驗全真模擬試卷-化學考科(學用卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-化學考科(學用卷)影印推薦.pdf",
+                "115學年度學科能力測驗全真模擬試卷-化學考科(教用卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-化學考科(教用卷).pdf",
+                "115學年度學科能力測驗全真模擬試卷-化學考科(答題卷).pdf",
+                "115學年度學科能力測驗全真模擬試卷-化學考科(解答卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-化學考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "國寫",
+              files: [
+                "115學年度學科能力測驗全真模擬試卷-國文考科-國寫(學用卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-國文考科-國寫(學用卷)影印推薦.pdf",
+                "115學年度學科能力測驗全真模擬試卷-國文考科-國寫(教用卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-國文考科-國寫(教用卷).pdf",
+                "115學年度學科能力測驗全真模擬試卷-國文考科-國寫(答題卷).pdf",
+                "115學年度學科能力測驗全真模擬試卷-國文考科-國寫(解答卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-國文考科-國寫(解答卷).pdf",
+              ],
+            },
+            {
+              name: "國綜",
+              files: [
+                "115學年度學科能力測驗全真模擬試卷-國文考科-國綜(學用卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-國文考科-國綜(學用卷)影印推薦.pdf",
+                "115學年度學科能力測驗全真模擬試卷-國文考科-國綜(教用卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-國文考科-國綜(教用卷).pdf",
+                "115學年度學科能力測驗全真模擬試卷-國文考科-國綜(答題卷).pdf",
+                "115學年度學科能力測驗全真模擬試卷-國文考科-國綜(解答卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-國文考科-國綜(解答卷).pdf",
+              ],
+            },
+            {
+              name: "地科",
+              files: [
+                "115學年度學科能力測驗全真模擬試卷-地球科學考科(學用卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-地球科學考科(學用卷)影印推薦.pdf",
+                "115學年度學科能力測驗全真模擬試卷-地球科學考科(教用卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-地球科學考科(教用卷).pdf",
+                "115學年度學科能力測驗全真模擬試卷-地球科學考科(答題卷).pdf",
+                "115學年度學科能力測驗全真模擬試卷-地球科學考科(解答卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-地球科學考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "數學A",
+              files: [
+                "115學年度學科能力測驗全真模擬試卷-數學A考科(學用卷)影印推薦.pdf",
+
+                "115學年度學科能力測驗全真模擬試卷-數學A考科(教用卷).pdf",
+                "115學年度學科能力測驗全真模擬試卷-數學A考科(答題卷).pdf",
+                "115學年度學科能力測驗全真模擬試卷-數學A考科(解答卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-數學A考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "數學B",
+              files: [
+                "115學年度學科能力測驗全真模擬試卷-數學B考科(學用卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-數學B考科(學用卷)影印推薦.pdf",
+                "115學年度學科能力測驗全真模擬試卷-數學B考科(教用卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-數學B考科(教用卷).pdf",
+                "115學年度學科能力測驗全真模擬試卷-數學B考科(答題卷).pdf",
+                "115學年度學科能力測驗全真模擬試卷-數學B考科(解答卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-數學B考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "物理",
+              files: [
+                "115學年度學科能力測驗全真模擬試卷-物理考科(學用卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-物理考科(學用卷)影印推薦.pdf",
+                "115學年度學科能力測驗全真模擬試卷-物理考科(教用卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-物理考科(教用卷).pdf",
+                "115學年度學科能力測驗全真模擬試卷-物理考科(答題卷).pdf",
+                "115學年度學科能力測驗全真模擬試卷-物理考科(解答卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-物理考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "生物",
+              files: [
+                "115學年度學科能力測驗全真模擬試卷-生物考科(學用卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-生物考科(學用卷)影印推薦.pdf",
+                "115學年度學科能力測驗全真模擬試卷-生物考科(教用卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-生物考科(教用卷).pdf",
+                "115學年度學科能力測驗全真模擬試卷-生物考科(答題卷).pdf",
+                "115學年度學科能力測驗全真模擬試卷-生物考科(解答卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-生物考科(解答卷).pdf",
+              ],
+            },
+            {
+              name: "英文",
+              files: [
+                "115學年度學科能力測驗全真模擬試卷-英文考科(學用卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-英文考科(學用卷)影印推薦.pdf",
+                "115學年度學科能力測驗全真模擬試卷-英文考科(教用卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-英文考科(教用卷).pdf",
+                "115學年度學科能力測驗全真模擬試卷-英文考科(答題卷).pdf",
+                "115學年度學科能力測驗全真模擬試卷-英文考科(解答卷).docx",
+                "115學年度學科能力測驗全真模擬試卷-英文考科(解答卷).pdf",
+              ],
+            },
+          ],
+        },
+      ];
+
+      const appState = {
+        step: 0,
+        selectedType: null,
+        selectedYear: null,
+        selectedSubject: null,
+        selectedCategory: null,
+        history: [],
+      };
+
+      const mainContainer = document.getElementById("mainContainer");
+      const breadcrumbs = document.getElementById("breadcrumbs");
+      const backBtn = document.getElementById("backBtn");
+      const previewModal = document.getElementById("previewModal");
+      const modalTitle = document.getElementById("modalTitle");
+      const modalFileList = document.getElementById("modalFileList");
+      const modalPreviewArea = document.getElementById("modalPreviewArea");
+      const modalBody = document.getElementById("modalBody");
+
+      function navigateTo(step, payload = {}) {
+        appState.history.push({ ...appState });
+        appState.step = step;
+        if (payload.type) appState.selectedType = payload.type;
+        if (payload.year) appState.selectedYear = payload.year;
+        if (payload.subject) appState.selectedSubject = payload.subject;
+        render();
+      }
+
+      function goBack() {
+        if (appState.history.length > 0) {
+          const prevState = appState.history.pop();
+          Object.assign(appState, prevState);
+          appState.history = appState.history.slice(0, appState.history.length);
+          render();
+        }
+      }
+
+      function render() {
+        updateHeader();
+        mainContainer.innerHTML = "";
+
+        const content = document.createElement("div");
+        content.className = "view-section";
+
+        switch (appState.step) {
+          case 0:
+            renderHome(content);
+            break;
+          case 1:
+            renderYearSelection(content);
+            break;
+          case 2:
+            renderSubjectSelection(content);
+            break;
+          case 3:
+            renderVersionSelection(content);
+            break;
+        }
+        mainContainer.appendChild(content);
+      }
+
+      function updateHeader() {
+        backBtn.classList.toggle("hidden", appState.step === 0);
+        let crumbsHtml = `<span class="crumb" onclick="resetApp()">Home</span>`;
+
+        if (appState.step >= 1) {
+          crumbsHtml += `<span class="crumb-sep">/</span><span class="crumb" onclick="jumpTo(1)">${appState.selectedType}</span>`;
+        }
+        if (appState.step >= 2) {
+          crumbsHtml += `<span class="crumb-sep">/</span><span class="crumb" onclick="jumpTo(2)">${appState.selectedYear}</span>`;
+        }
+        if (appState.step >= 3) {
+          crumbsHtml += `<span class="crumb-sep">/</span><span class="crumb">${appState.selectedSubject.name}</span>`;
+        }
+        breadcrumbs.innerHTML = crumbsHtml;
+      }
+
+      function resetApp() {
+        appState.step = 0;
+        appState.history = [];
+        render();
+      }
+
+      window.jumpTo = (step) => {
+        if (step < appState.step) {
+          appState.step = step;
+          render();
+        }
+      };
+
+      function renderHome(container) {
+        container.innerHTML = `
+                <h1 class="page-title">Exam Archive</h1>
+                <p class="page-subtitle">請選擇考試類別</p>
+                <div class="grid-2">
+                    <div class="nav-card" onclick="navigateTo(1, {type: '學測'})">
+                        <div class="card-icon-area">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                        </div>
+                        <div>
+                            <div class="card-title">學測模擬</div>
+                            <div class="card-desc">General Scholastic Ability Test</div>
+                        </div>
+                    </div>
+                    <div class="nav-card" onclick="navigateTo(1, {type: '分科'})">
+                        <div class="card-icon-area">
+                            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                        </div>
+                        <div>
+                            <div class="card-title">分科測驗</div>
+                            <div class="card-desc">Advanced Subject Test</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top: 40px; padding: 30px; text-align: center; opacity: 0.6;">
+                    <p style="font-size: 0.9rem; color: var(--text-tertiary2); margin-bottom: 8px;">以下檔案暫無法下載：</p>
+                    <ul style="list-style: none; font-size: 0.75rem; color: var(--text-tertiary2); line-height: 1.6;">
+                        <li>113數學A(教用卷)<span class="badge-doc">DOCX</span></li>
+                        <li>113數學A(學用卷)<span class="badge-doc">DOCX</span></li>
+                        <li>113數學B(教用卷)<span class="badge-doc">DOCX</span></li>
+                        <li>113數學B(學用卷)<span class="badge-doc">DOCX</span></li>
+                        <li>114生物(學用卷)<span class="badge-doc">DOCX</span></li>
+                        <li>115數學A(教用卷)<span class="badge-doc">DOCX</span></li>
+                        <li>115數學A(學用卷)<span class="badge-doc">DOCX</span></li>
+                    </ul>
+                </div>
+            `;
+      }
+
+      function renderYearSelection(container) {
+        const availableYears = [
+          ...new Set(
+            rawData
+              .filter((d) => d.type === appState.selectedType)
+              .map((d) => d.year)
+          ),
+        ].sort();
+
+        container.innerHTML = `
+                <h1 class="page-title">${appState.selectedType}</h1>
+                <p class="page-subtitle">請選擇年份</p>
+                <div class="grid-3">
+                    ${availableYears
+                      .map(
+                        (year) => `
+                        <div class="nav-card" onclick="navigateTo(2, {year: '${year}'})">
+                            <div class="card-icon-area" style="font-size:2rem; margin-bottom:12px;">
+                                <svg class="icon-svg" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                            </div>
+                            <div class="card-title">${year} 年度</div>
+                        </div>
+                    `
+                      )
+                      .join("")}
+                </div>
+            `;
+      }
+
+      function renderSubjectSelection(container) {
+        const group = rawData.find(
+          (d) =>
+            d.year === appState.selectedYear && d.type === appState.selectedType
+        );
+
+        if (!group) {
+          container.innerHTML = `<p>無資料</p>`;
+          return;
+        }
+
+        container.innerHTML = `
+                <h1 class="page-title">${appState.selectedYear} ${
+          appState.selectedType
+        }</h1>
+                <p class="page-subtitle">請選擇科目</p>
+                <div class="grid-4">
+                    ${group.subjects
+                      .map((sub) => {
+                        const char = sub.name.charAt(0);
+                        return `
+                        <div class="nav-card" style="min-height:160px; justify-content:center; align-items:center; text-align:center;" onclick='selectSubject("${sub.name}")'>
+                            <div class="subject-char">${char}</div>
+                            <div class="card-title" style="font-size:1rem; margin-top:8px;">${sub.name}</div>
+                        </div>
+                        `;
+                      })
+                      .join("")}
+                </div>
+            `;
+      }
+
+      window.selectSubject = (subName) => {
+        const group = rawData.find(
+          (d) =>
+            d.year === appState.selectedYear && d.type === appState.selectedType
+        );
+        const sub = group.subjects.find((s) => s.name === subName);
+        navigateTo(3, { subject: sub });
+      };
+
+      function renderVersionSelection(container) {
+        const subject = appState.selectedSubject;
+
+        const categories = {
+          student: {
+            title: "學用卷",
+            desc: "Student Version",
+            files: [],
+            iconContent:
+              '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>',
+            cls: "v-student",
+          },
+          teacher: {
+            title: "教用卷",
+            desc: "Teacher Version",
+            files: [],
+            iconContent:
+              '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+            cls: "v-teacher",
+          },
+          answer: {
+            title: "答題卷",
+            desc: "Answer Sheet",
+            files: [],
+            iconContent:
+              '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>',
+            cls: "v-answer",
+          },
+          key: {
+            title: "解答卷",
+            desc: "Solutions",
+            files: [],
+            iconContent:
+              '<path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>',
+            cls: "v-key",
+          },
+          other: {
+            title: "其他",
+            desc: "Other Files",
+            files: [],
+            iconContent:
+              '<path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>',
+            cls: "",
+          },
+        };
+
+        subject.files.forEach((file) => {
+          if (file.includes("學用")) categories.student.files.push(file);
+          else if (file.includes("教用")) categories.teacher.files.push(file);
+          else if (file.includes("解答")) categories.key.files.push(file);
+          else if (file.includes("答題")) categories.answer.files.push(file);
+          else categories.other.files.push(file);
+        });
+
+        let html = `
+                <h1 class="page-title">${subject.name}</h1>
+                <p class="page-subtitle">請選擇試卷版本</p>
+                <div class="version-list">
+            `;
+
+        for (const [key, cat] of Object.entries(categories)) {
+          if (cat.files.length > 0) {
+            const fileData = JSON.stringify(cat.files).replace(/"/g, "&quot;");
+
+            html += `
+                        <div class="version-card ${cat.cls}" onclick="openCategoryBrowser('${cat.title}', ${fileData})">
+                            <div class="version-icon-box">
+                                <svg class="icon-svg" viewBox="0 0 24 24">${cat.iconContent}</svg>
+                            </div>
+                            <div class="version-info">
+                                <h3>${cat.title}</h3>
+                                <p>${cat.desc} • ${cat.files.length} Files</p>
+                            </div>
+                            <div class="version-arrow">
+                                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </div>
+                        </div>
+                    `;
+          }
+        }
+
+        html += `</div>`;
+        container.innerHTML = html;
+      }
+
+      // New Browser Logic
+      window.openCategoryBrowser = (categoryTitle, files) => {
+        const group = rawData.find(
+          (d) =>
+            d.year === appState.selectedYear && d.type === appState.selectedType
+        );
+        const folderName = group.folderName;
+        const subjectName = appState.selectedSubject.name;
+        const basePath = `/全真考題/${folderName}/${subjectName}/`;
+
+        modalTitle.textContent = `${categoryTitle} (${files.length})`;
+
+        // Reset Sidebar and Preview
+        modalFileList.innerHTML = "";
+        // Reset mobile slide view
+        modalBody.classList.remove("show-preview");
+
+        modalPreviewArea.innerHTML = `
+                <div class="mobile-back-bar" onclick="backToList()">
+                    <svg class="icon-svg" viewBox="0 0 24 24" style="margin-right:6px;"><path d="M15 18l-6-6 6-6"/></svg>
+                    Back to List
+                </div>
+                <div class="preview-fallback">
+                    <svg class="icon-svg" viewBox="0 0 24 24" style="width:48px; height:48px; opacity:0.5;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <p>請從左側選擇檔案以預覽</p>
+                </div>
+            `;
+
+        // Populate List
+        files.forEach((file, index) => {
+          const ext = file.split(".").pop().toUpperCase();
+          const isPdf = ext === "PDF";
+          const badgeClass = isPdf ? "badge-pdf" : "badge-doc";
+          const fullPath = basePath + file;
+
+          const li = document.createElement("div");
+          li.className = "file-list-item";
+          // Add staggered animation delay
+          li.style.animationDelay = `${index * 0.05}s`;
+
+          li.innerHTML = `
+                    <div class="item-name">${file}</div>
+                    <div class="item-meta">
+                        <span class="${badgeClass}">${ext}</span>
+                        <span>View</span>
+                    </div>
+                `;
+          li.onclick = () => {
+            // Update active state
+            document
+              .querySelectorAll(".file-list-item")
+              .forEach((el) => el.classList.remove("active"));
+            li.classList.add("active");
+
+            // Mobile slide
+            if (window.innerWidth <= 768) {
+              modalBody.classList.add("show-preview");
+            }
+
+            // Show Preview
+            showFilePreview(file, fullPath, isPdf);
+          };
+          modalFileList.appendChild(li);
+        });
+
+        previewModal.classList.add("active");
+      };
+
+      window.backToList = () => {
+        modalBody.classList.remove("show-preview");
+      };
+
+      function showFilePreview(filename, fullPath, isPdf) {
+        // Keep the mobile back bar
+        const backBar = `
+                <div class="mobile-back-bar" onclick="backToList()">
+                    <svg class="icon-svg" viewBox="0 0 24 24" style="margin-right:6px;"><path d="M15 18l-6-6 6-6"/></svg>
+                    Back to List
+                </div>`;
+
+        const downloadButton = `
+                <a href="${fullPath}" download="${filename}" class="btn-download">
+                    <svg class="icon-svg" viewBox="0 0 24 24" style="width:16px;height:16px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Download
+                </a>
+            `;
+
+        if (isPdf) {
+          modalPreviewArea.innerHTML = `
+                    ${backBar}
+                    <iframe src="${fullPath}" class="preview-frame"></iframe>
+                    <div class="download-bar">${downloadButton}</div>
+                `;
+        } else {
+          modalPreviewArea.innerHTML = `
+                    ${backBar}
+                    <div class="preview-fallback">
+                        <svg class="icon-svg" viewBox="0 0 24 24" style="width:64px; height:64px; margin-bottom:16px; color:#4dabf7;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        <h3 style="font-weight:500; margin-bottom:8px;">${filename}</h3>
+                        <p style="font-size:0.9rem; margin-bottom:24px;">DOCX 檔案無法在瀏覽器中直接預覽，請下載後檢視。</p>
+                        ${downloadButton}
+                    </div>
+                `;
+        }
+      }
+
+      window.closePreview = () => {
+        previewModal.classList.remove("active");
+      };
+
+      // Init
+      render();
+    </script>
+  </body>
+</html>
