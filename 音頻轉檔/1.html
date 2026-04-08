@@ -324,6 +324,7 @@
 
     const ffmpeg = createFFmpeg({
       log: false,
+      corePath: 'https://unpkg.com/@ffmpeg/core-st@0.11.1/dist/ffmpeg-core.js',
       progress: ({ ratio }) => {
         if (totalFiles === 0) return;
         const overall = ((currentFileIdx / totalFiles) + (Math.max(0, ratio) / totalFiles)) * 100;
@@ -331,22 +332,6 @@
         progressPercent.textContent = `${Math.min(overall, 99).toFixed(1)}%`;
       }
     });
-
-    // 載入 FFmpeg（頁面一開始就嘗試載入）
-    (async () => {
-      try {
-        await ffmpeg.load();
-        ffmpegLoaded = true;
-        ffmpegDot.className = 'w-2 h-2 rounded-full bg-secondary inline-block';
-        ffmpegText.textContent = '引擎就緒';
-        // 有檔案的話啟用按鈕
-        if (files.length > 0) convertBtn.disabled = false;
-      } catch (e) {
-        ffmpegDot.className = 'w-2 h-2 rounded-full bg-red-400 inline-block';
-        ffmpegText.textContent = '引擎載入失敗';
-        console.error('FFmpeg load error:', e);
-      }
-    })();
 
     // ============================================================
     // DOM 元素
@@ -378,6 +363,21 @@
     let files = [];
     let currentFileIdx = 0;
     let totalFiles = 0;
+
+    // 載入 FFmpeg（頁面一開始就嘗試載入，放在 DOM 變數宣告之後確保安全）
+    (async () => {
+      try {
+        await ffmpeg.load();
+        ffmpegLoaded = true;
+        ffmpegDot.className = 'w-2 h-2 rounded-full bg-secondary inline-block';
+        ffmpegText.textContent = '引擎就緒';
+        if (files.length > 0) convertBtn.disabled = false;
+      } catch (e) {
+        ffmpegDot.className = 'w-2 h-2 rounded-full bg-red-400 inline-block';
+        ffmpegText.textContent = '引擎載入失敗';
+        console.error('FFmpeg load error:', e);
+      }
+    })();
 
     // ============================================================
     // 工具函式
