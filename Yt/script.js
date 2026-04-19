@@ -23,12 +23,10 @@ async function fetchVideoData() {
         const videoId = extractVideoId(urlInput);
         if (!videoId) throw new Error('無效的YouTube網址');
 
-        const proxyUrl = 'https://api.allorigins.win/get?url=';
         const apiUrl = `https://returnyoutubedislikeapi.com/votes?videoId=${videoId}`;
 
-        const response = await fetch(proxyUrl + encodeURIComponent(apiUrl));
-        const data = await response.json();
-        const stats = JSON.parse(data.contents);
+        const response = await fetch(apiUrl);
+        const stats = await response.json();
 
         const videoInfo = await getVideoInfo(videoId);
         showResult({ ...stats, ...videoInfo });
