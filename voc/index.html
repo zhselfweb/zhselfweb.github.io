@@ -1,0 +1,2817 @@
+<!doctype html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#8C7A6B" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="舔佛腳" />
+    <title>背吧少年</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="icon" type="image/png" href="icon.png" />
+    <link rel="apple-touch-icon" href="icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      :root {
+        --bg: #f2ede4;
+        --bg2: #eae3d8;
+        --bg3: #ddd5c4;
+        --glass: rgba(255, 252, 245, 0.62);
+        --glass2: rgba(255, 252, 245, 0.44);
+        --border: rgba(210, 188, 148, 0.5);
+        --border2: rgba(255, 255, 255, 0.72);
+        --shadow: 0 8px 32px rgba(100, 70, 20, 0.11);
+        --shadow2: 0 4px 16px rgba(100, 70, 20, 0.08);
+        --text: #2a1f0e;
+        --text2: #6b5c40;
+        --text3: #9b8a6a;
+        --accent: #8b6914;
+        --accent2: #c4992a;
+        --red: #b83232;
+        --orange: #c4691a;
+        --green: #2e7d52;
+        --blue: #2b5fa0;
+      }
+      html,
+      body {
+        height: 100%;
+        font-family: "Noto Serif TC", serif;
+        background: var(--bg);
+        color: var(--text);
+        overflow: hidden;
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      input,
+      textarea,
+      .import-preview,
+      .card-example {
+        -webkit-user-select: text;
+        user-select: text;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse at 15% 15%,
+            rgba(196, 153, 42, 0.14) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            ellipse at 85% 85%,
+            rgba(139, 105, 20, 0.1) 0%,
+            transparent 55%
+          );
+        pointer-events: none;
+        z-index: 0;
+      }
+      #app {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        max-width: 480px;
+        margin: 0 auto;
+        position: relative;
+      }
+      .view {
+        display: none;
+        flex-direction: column;
+        flex: 1;
+        overflow-y: auto;
+        padding: 0 16px 80px;
+        padding-top: env(safe-area-inset-top, 0px);
+        position: relative;
+        z-index: 1;
+      }
+      .view.active {
+        display: flex;
+      }
+      .view-header {
+        padding: 20px 0 10px;
+        position: sticky;
+        top: 0;
+        margin: 0 -16px;
+        padding-left: 16px;
+        padding-right: 16px;
+        z-index: 10;
+        background: linear-gradient(
+          to bottom,
+          rgba(242, 237, 228, 0.95) 85%,
+          transparent
+        );
+        backdrop-filter: blur(2px);
+      }
+      .view-header h1 {
+        font-size: 26px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+      }
+      .view-header .sub {
+        font-size: 13px;
+        color: var(--text3);
+        margin-top: 2px;
+        font-weight: 300;
+      }
+      .glass {
+        background: var(--glass);
+        backdrop-filter: blur(22px);
+        -webkit-backdrop-filter: blur(22px);
+        border: 1px solid var(--border2);
+        border-radius: 24px;
+        box-shadow: var(--shadow);
+      }
+      .glass2 {
+        background: var(--glass2);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: var(--shadow2);
+      }
+      /* TABBAR */
+      #tabbar {
+        position: fixed;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+        max-width: 480px;
+        padding: 8px 16px calc(8px + env(safe-area-inset-bottom, 0px));
+        display: flex;
+        gap: 4px;
+        z-index: 100;
+        background: rgba(242, 237, 228, 0.88);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-top: 1px solid var(--border);
+      }
+      .tab-btn {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        padding: 6px 4px;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        border-radius: 12px;
+        transition: background 0.15s;
+        font-family: "Noto Serif TC", serif;
+      }
+      .tab-btn:hover {
+        background: rgba(139, 105, 20, 0.08);
+      }
+      .tab-btn.active {
+        background: rgba(139, 105, 20, 0.13);
+      }
+      .tab-btn svg {
+        width: 21px;
+        height: 21px;
+        stroke: var(--text3);
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        transition: stroke 0.15s;
+      }
+      .tab-btn.active svg {
+        stroke: var(--accent);
+      }
+      .tab-btn span {
+        font-size: 10px;
+        font-weight: 500;
+        color: var(--text3);
+        letter-spacing: 0.02em;
+        transition: color 0.15s;
+      }
+      .tab-btn.active span {
+        color: var(--accent);
+      }
+      /* DASHBOARD */
+      .stats-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+      .stat-card {
+        padding: 14px 12px;
+        text-align: center;
+      }
+      .stat-num {
+        font-size: 28px;
+        font-weight: 700;
+        line-height: 1;
+      }
+      .stat-label {
+        font-size: 11px;
+        color: var(--text3);
+        margin-top: 4px;
+      }
+      .study-banner {
+        padding: 18px 20px;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        transition: transform 0.18s;
+      }
+      .study-banner:active {
+        transform: scale(0.98);
+      }
+      .banner-count {
+        font-size: 46px;
+        font-weight: 700;
+        color: var(--accent);
+        line-height: 1;
+      }
+      .banner-label {
+        font-size: 14px;
+        color: var(--text2);
+        margin-top: 2px;
+      }
+      .banner-sub {
+        font-size: 12px;
+        color: var(--text3);
+        margin-top: 1px;
+        font-weight: 300;
+      }
+      .start-btn {
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        border-radius: 50px;
+        padding: 11px 22px;
+        font-size: 14px;
+        font-weight: 700;
+        font-family: "Noto Serif TC", serif;
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          transform 0.1s;
+        white-space: nowrap;
+        letter-spacing: 0.02em;
+      }
+      .start-btn:hover {
+        background: var(--accent2);
+      }
+      .start-btn:active {
+        transform: scale(0.95);
+      }
+      .start-btn:disabled {
+        background: var(--bg3);
+        color: var(--text3);
+        cursor: default;
+      }
+      .section-title {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text3);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin: 16px 0 8px;
+      }
+      .streak-card {
+        padding: 16px 20px;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .streak-flame {
+        font-size: 34px;
+      }
+      .streak-num {
+        font-size: 22px;
+        font-weight: 700;
+      }
+      .streak-lbl {
+        font-size: 12px;
+        color: var(--text3);
+      }
+      .prog-card {
+        padding: 16px 20px;
+        margin-bottom: 14px;
+      }
+      .prog-bar-wrap {
+        background: var(--bg3);
+        border-radius: 100px;
+        height: 5px;
+        margin-top: 10px;
+        overflow: hidden;
+      }
+      .prog-bar {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent), var(--accent2));
+        border-radius: 100px;
+        transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .prog-labels {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 5px;
+      }
+      .prog-labels span {
+        font-size: 11px;
+        color: var(--text3);
+      }
+      /* STUDY VIEW */
+      #view-study {
+        padding: 0;
+        display: none;
+        flex-direction: column;
+        height: 100%;
+        position: relative;
+        z-index: 1;
+      }
+      #view-study.active {
+        display: flex;
+      }
+      .study-header {
+        padding: 14px 20px 10px;
+        padding-top: calc(14px + env(safe-area-inset-top, 0px));
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .back-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--glass);
+        backdrop-filter: blur(12px);
+        border: 1px solid var(--border2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        flex-shrink: 0;
+        box-shadow: var(--shadow2);
+      }
+      .study-prog-bar {
+        flex: 1;
+        height: 4px;
+        background: var(--bg3);
+        border-radius: 100px;
+        overflow: hidden;
+      }
+      .study-prog-fill {
+        height: 100%;
+        background: var(--accent);
+        border-radius: 100px;
+        transition: width 0.4s ease;
+      }
+      .study-counter {
+        font-size: 13px;
+        color: var(--text3);
+        flex-shrink: 0;
+      }
+      .study-main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 16px 20px 20px;
+        gap: 16px;
+      }
+      .type-badge {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 4px 14px;
+        border-radius: 100px;
+      }
+      .type-new {
+        color: var(--blue);
+        background: rgba(43, 95, 160, 0.09);
+        border: 1px solid rgba(43, 95, 160, 0.2);
+      }
+      .type-review {
+        color: var(--green);
+        background: rgba(46, 125, 82, 0.09);
+        border: 1px solid rgba(46, 125, 82, 0.2);
+      }
+      /* FLIP CARD */
+      .flip-wrap {
+        width: 100%;
+        max-width: 380px;
+        height: 210px;
+        perspective: 1200px;
+        cursor: pointer;
+        flex-shrink: 0;
+      }
+      .flip-card {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .flip-card.flipped {
+        transform: rotateY(180deg);
+      }
+      .flip-face {
+        position: absolute;
+        inset: 0;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        border-radius: 22px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 22px;
+        background: var(--glass);
+        backdrop-filter: blur(26px);
+        -webkit-backdrop-filter: blur(26px);
+        border: 1px solid var(--border2);
+        box-shadow:
+          0 14px 44px rgba(100, 70, 20, 0.15),
+          inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      }
+      .flip-face.back {
+        transform: rotateY(180deg);
+        justify-content: flex-start;
+        padding-top: 24px;
+      }
+      .card-word {
+        font-size: 34px;
+        font-weight: 700;
+        text-align: center;
+        letter-spacing: -0.03em;
+        line-height: 1.2;
+      }
+      .card-phonetic {
+        font-size: 13px;
+        color: var(--text3);
+        margin-top: 6px;
+        font-weight: 300;
+      }
+      .tap-hint {
+        font-size: 12px;
+        color: var(--text3);
+        margin-top: 14px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-weight: 300;
+      }
+      .tap-hint svg {
+        width: 13px;
+        height: 13px;
+        stroke: var(--text3);
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+      }
+      .card-word-sm {
+        font-size: 15px;
+        font-weight: 400;
+        color: var(--text3);
+        text-align: center;
+        margin-bottom: 8px;
+      }
+      .card-trans {
+        font-size: 21px;
+        font-weight: 700;
+        color: var(--text);
+        text-align: center;
+        line-height: 1.4;
+        width: 100%;
+      }
+      .card-example {
+        font-size: 12px;
+        color: var(--text2);
+        text-align: center;
+        margin-top: 10px;
+        font-style: italic;
+        font-weight: 300;
+        line-height: 1.7;
+        border-top: 1px solid var(--border);
+        padding-top: 10px;
+        width: 100%;
+      }
+      /* RATING */
+      .rating-area {
+        width: 100%;
+        max-width: 380px;
+      }
+      .rating-label {
+        font-size: 11px;
+        color: var(--text3);
+        text-align: center;
+        margin-bottom: 9px;
+        letter-spacing: 0.04em;
+      }
+      .rating-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+        gap: 7px;
+      }
+      .rating-btn {
+        padding: 11px 4px;
+        border: none;
+        border-radius: 13px;
+        font-family: "Noto Serif TC", serif;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        transition:
+          transform 0.12s,
+          opacity 0.12s;
+      }
+      .rating-btn:active {
+        transform: scale(0.93);
+      }
+      .rating-btn .itvl {
+        font-size: 10px;
+        font-weight: 300;
+        opacity: 0.75;
+      }
+      .btn-again {
+        background: rgba(184, 50, 50, 0.1);
+        color: var(--red);
+        border: 1px solid rgba(184, 50, 50, 0.18);
+      }
+      .btn-hard {
+        background: rgba(196, 105, 26, 0.1);
+        color: var(--orange);
+        border: 1px solid rgba(196, 105, 26, 0.18);
+      }
+      .btn-good {
+        background: rgba(46, 125, 82, 0.1);
+        color: var(--green);
+        border: 1px solid rgba(46, 125, 82, 0.18);
+      }
+      .btn-easy {
+        background: rgba(43, 95, 160, 0.1);
+        color: var(--blue);
+        border: 1px solid rgba(43, 95, 160, 0.18);
+      }
+      .rating-btn:disabled {
+        opacity: 0.28;
+        cursor: default;
+      }
+      /* SESSION COMPLETE */
+      .sess-complete {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        text-align: center;
+        gap: 10px;
+      }
+      .sc-icon {
+        font-size: 58px;
+      }
+      .sc-title {
+        font-size: 26px;
+        font-weight: 700;
+        margin-top: 6px;
+      }
+      .sc-sub {
+        font-size: 14px;
+        color: var(--text3);
+        font-weight: 300;
+        line-height: 1.7;
+      }
+      .sc-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+        width: 100%;
+        max-width: 320px;
+        margin: 14px 0;
+      }
+      .sc-item {
+        padding: 12px 8px;
+        border-radius: 14px;
+        background: var(--glass);
+        backdrop-filter: blur(12px);
+        border: 1px solid var(--border);
+        text-align: center;
+      }
+      .sc-num {
+        font-size: 24px;
+        font-weight: 700;
+      }
+      .sc-lbl {
+        font-size: 10px;
+        color: var(--text3);
+        margin-top: 1px;
+      }
+      .sc-num.red {
+        color: var(--red);
+      }
+      .sc-num.green {
+        color: var(--green);
+      }
+      .sec-btns {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        margin-top: 6px;
+      }
+      .ghost-btn {
+        background: transparent;
+        border: none;
+        color: var(--accent);
+        font-family: "Noto Serif TC", serif;
+        font-size: 14px;
+        cursor: pointer;
+        padding: 8px;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+      /* LIBRARY */
+      .lib-hdr {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .search-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        border-radius: 50px;
+        margin-bottom: 10px;
+      }
+      .search-bar input {
+        flex: 1;
+        border: none;
+        background: transparent;
+        font-family: "Noto Serif TC", serif;
+        font-size: 14px;
+        color: var(--text);
+        outline: none;
+      }
+      .search-bar input::placeholder {
+        color: var(--text3);
+      }
+      .lib-toolbar {
+        display: flex;
+        gap: 7px;
+        margin-bottom: 14px;
+        flex-wrap: wrap;
+      }
+      .chip {
+        padding: 6px 13px;
+        border-radius: 100px;
+        border: 1px solid var(--border);
+        background: var(--glass2);
+        backdrop-filter: blur(8px);
+        font-family: "Noto Serif TC", serif;
+        font-size: 12px;
+        color: var(--text2);
+        cursor: pointer;
+        transition: all 0.15s;
+        white-space: nowrap;
+      }
+      .chip:hover,
+      .chip.active {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+      .word-list {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+      }
+      .word-item {
+        padding: 13px 15px;
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        cursor: pointer;
+        transition: transform 0.15s;
+      }
+      .word-item:active {
+        transform: scale(0.98);
+      }
+      .word-main-txt {
+        font-size: 16px;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .word-sub-txt {
+        font-size: 12px;
+        color: var(--text3);
+        margin-top: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .word-tag {
+        font-size: 10px;
+        border-radius: 100px;
+        padding: 3px 8px;
+        flex-shrink: 0;
+        font-weight: 500;
+      }
+      .tag-new {
+        color: var(--blue);
+        background: rgba(43, 95, 160, 0.1);
+      }
+      .tag-due {
+        color: var(--orange);
+        background: rgba(196, 105, 26, 0.1);
+      }
+      .tag-ok {
+        color: var(--text3);
+        background: var(--bg3);
+      }
+      .fab {
+        position: fixed;
+        bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+        right: calc(50% - min(240px, 50vw) + 16px);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 18px rgba(139, 105, 20, 0.45);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        z-index: 50;
+      }
+      .fab:hover {
+        box-shadow: 0 6px 22px rgba(139, 105, 20, 0.55);
+        transform: scale(1.06);
+      }
+      .icon-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--glass);
+        backdrop-filter: blur(8px);
+        border: 1px solid var(--border2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: var(--shadow2);
+      }
+      /* STATS */
+      .stats-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+      .stat-big {
+        padding: 18px;
+        grid-column: span 2;
+      }
+      .stat-big-num {
+        font-size: 46px;
+        font-weight: 700;
+        color: var(--accent);
+        line-height: 1;
+      }
+      .stat-big-lbl {
+        font-size: 13px;
+        color: var(--text3);
+        margin-top: 4px;
+      }
+      .mini-stat {
+        padding: 14px;
+        text-align: center;
+      }
+      .mini-num {
+        font-size: 25px;
+        font-weight: 700;
+      }
+      .mini-lbl {
+        font-size: 11px;
+        color: var(--text3);
+        margin-top: 3px;
+      }
+      .heatmap {
+        display: grid;
+        grid-template-columns: repeat(13, 1fr);
+        gap: 3px;
+        margin-top: 8px;
+      }
+      .hm-cell {
+        aspect-ratio: 1;
+        border-radius: 3px;
+        background: var(--bg3);
+      }
+      .hm-cell.d1 {
+        background: rgba(139, 105, 20, 0.2);
+      }
+      .hm-cell.d2 {
+        background: rgba(139, 105, 20, 0.42);
+      }
+      .hm-cell.d3 {
+        background: rgba(139, 105, 20, 0.66);
+      }
+      .hm-cell.d4 {
+        background: rgba(139, 105, 20, 0.88);
+      }
+      .hm-legend {
+        display: flex;
+        justify-content: flex-end;
+        gap: 4px;
+        align-items: center;
+        margin-top: 6px;
+      }
+      .hm-sq {
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+      }
+      /* MODALS */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(42, 31, 14, 0.42);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 200;
+        display: none;
+        align-items: flex-end;
+        justify-content: center;
+      }
+      .modal-overlay.open {
+        display: flex;
+      }
+      .modal-sheet {
+        width: 100%;
+        max-width: 480px;
+        background: rgba(245, 240, 232, 0.97);
+        backdrop-filter: blur(26px);
+        -webkit-backdrop-filter: blur(26px);
+        border-radius: 28px 28px 0 0;
+        border-top: 1px solid var(--border2);
+        padding: 8px 20px calc(28px + env(safe-area-inset-bottom, 0px));
+        animation: slide-up 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+        max-height: 90vh;
+        overflow-y: auto;
+      }
+      @keyframes slide-up {
+        from {
+          transform: translateY(100%);
+        }
+        to {
+          transform: translateY(0);
+        }
+      }
+      .modal-handle {
+        width: 38px;
+        height: 4px;
+        background: var(--bg3);
+        border-radius: 100px;
+        margin: 8px auto 14px;
+      }
+      .modal-title {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 18px;
+      }
+      .form-field {
+        margin-bottom: 13px;
+      }
+      .form-label {
+        font-size: 11px;
+        color: var(--text3);
+        margin-bottom: 5px;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      .form-input {
+        width: 100%;
+        padding: 11px 13px;
+        border-radius: 11px;
+        border: 1.5px solid var(--border);
+        background: rgba(255, 252, 245, 0.55);
+        font-family: "Noto Serif TC", serif;
+        font-size: 15px;
+        color: var(--text);
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      .form-input:focus {
+        border-color: var(--accent);
+      }
+      .form-note {
+        font-size: 12px;
+        margin-top: 7px;
+        line-height: 1.6;
+      }
+      .form-note.warn {
+        color: var(--orange);
+      }
+      .suggest-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .suggest-chip {
+        border: 1px solid rgba(139, 105, 20, 0.18);
+        background: rgba(139, 105, 20, 0.08);
+        color: var(--text);
+        border-radius: 999px;
+        padding: 7px 12px;
+        font-family: "Noto Serif TC", serif;
+        font-size: 12px;
+        cursor: pointer;
+      }
+      .suggest-chip:hover {
+        background: rgba(139, 105, 20, 0.14);
+      }
+      .hl {
+        background: rgba(196, 153, 42, 0.22);
+        color: var(--text);
+        border-radius: 4px;
+        padding: 0 2px;
+      }
+      textarea.form-input {
+        resize: vertical;
+        min-height: 78px;
+      }
+      .modal-actions {
+        display: flex;
+        gap: 9px;
+        margin-top: 18px;
+      }
+      .btn-primary {
+        flex: 1;
+        padding: 13px;
+        background: var(--accent);
+        color: #fff;
+        border: none;
+        border-radius: 13px;
+        font-family: "Noto Serif TC", serif;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background 0.15s;
+        letter-spacing: 0.02em;
+      }
+      .btn-primary:hover {
+        background: var(--accent2);
+      }
+      .btn-sec {
+        padding: 13px 18px;
+        background: var(--bg2);
+        color: var(--text2);
+        border: 1px solid var(--border);
+        border-radius: 13px;
+        font-family: "Noto Serif TC", serif;
+        font-size: 15px;
+        cursor: pointer;
+      }
+      .btn-danger {
+        padding: 13px 18px;
+        background: rgba(184, 50, 50, 0.1);
+        color: var(--red);
+        border: 1px solid rgba(184, 50, 50, 0.2);
+        border-radius: 13px;
+        font-family: "Noto Serif TC", serif;
+        font-size: 15px;
+        cursor: pointer;
+      }
+      .import-drop {
+        border: 2px dashed var(--border);
+        border-radius: 14px;
+        padding: 22px;
+        text-align: center;
+        cursor: pointer;
+        transition:
+          border-color 0.2s,
+          background 0.2s;
+        margin-bottom: 11px;
+      }
+      .import-drop:hover,
+      .import-drop.drag-over {
+        border-color: var(--accent);
+        background: rgba(139, 105, 20, 0.04);
+      }
+      .import-drop .icon {
+        font-size: 30px;
+        margin-bottom: 6px;
+      }
+      .import-drop .hint {
+        font-size: 13px;
+        color: var(--text3);
+        line-height: 1.6;
+      }
+      .import-preview {
+        background: var(--bg2);
+        border-radius: 9px;
+        padding: 11px;
+        font-size: 12px;
+        color: var(--text2);
+        font-family: monospace;
+        max-height: 110px;
+        overflow-y: auto;
+        margin-bottom: 11px;
+        white-space: pre-wrap;
+        border: 1px solid var(--border);
+      }
+      .fmt-hint {
+        font-size: 12px;
+        color: var(--text3);
+        line-height: 1.7;
+        padding: 11px;
+        background: rgba(139, 105, 20, 0.05);
+        border-radius: 10px;
+        border: 1px solid rgba(139, 105, 20, 0.12);
+        margin-bottom: 11px;
+      }
+      .empty-state {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        text-align: center;
+        gap: 7px;
+      }
+      .empty-icon {
+        font-size: 46px;
+        margin-bottom: 6px;
+      }
+      .empty-title {
+        font-size: 18px;
+        font-weight: 600;
+      }
+      .empty-sub {
+        font-size: 14px;
+        color: var(--text3);
+        line-height: 1.6;
+        font-weight: 300;
+      }
+      .app-toast-wrap {
+        position: fixed;
+        top: calc(14px + env(safe-area-inset-top, 0px));
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(100% - 24px, 448px);
+        z-index: 320;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        pointer-events: none;
+      }
+      .app-toast {
+        padding: 14px 16px;
+        border-radius: 18px;
+        background: rgba(255, 252, 245, 0.92);
+        border: 1px solid var(--border2);
+        box-shadow: var(--shadow);
+        color: var(--text);
+        line-height: 1.6;
+        transform: translateY(-10px);
+        opacity: 0;
+        transition:
+          transform 0.22s ease,
+          opacity 0.22s ease;
+      }
+      .app-toast.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      .app-toast.success {
+        border-color: rgba(46, 125, 82, 0.24);
+      }
+      .app-toast.error {
+        border-color: rgba(184, 50, 50, 0.24);
+      }
+      .confirm-copy {
+        font-size: 14px;
+        color: var(--text2);
+        line-height: 1.8;
+        margin-bottom: 12px;
+      }
+      .stack-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      @keyframes card-in {
+        from {
+          opacity: 0;
+          transform: translateY(10px) scale(0.97);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      .card-in {
+        animation: card-in 0.25s ease;
+      }
+      ::-webkit-scrollbar {
+        width: 4px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: var(--bg3);
+        border-radius: 2px;
+      }
+      .ret-high {
+        color: var(--green);
+      }
+      .ret-mid {
+        color: var(--orange);
+      }
+      .ret-low {
+        color: var(--red);
+      }
+      @media (max-width: 360px) {
+        .card-word {
+          font-size: 27px;
+        }
+        .rating-btn {
+          font-size: 11px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <!-- DASHBOARD -->
+      <div class="view active" id="view-home">
+        <div class="view-header">
+          <h1 id="dash-title">今日學習</h1>
+          <div class="sub" id="dash-date"></div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card glass2">
+            <div class="stat-num" id="s-due">0</div>
+            <div class="stat-label">待複習</div>
+          </div>
+          <div class="stat-card glass2">
+            <div class="stat-num" id="s-total">0</div>
+            <div class="stat-label">總單字</div>
+          </div>
+          <div class="stat-card glass2">
+            <div class="stat-num" id="s-master">0</div>
+            <div class="stat-label">已熟悉</div>
+          </div>
+        </div>
+        <div class="glass study-banner" onclick="startStudy()">
+          <div>
+            <div class="banner-count" id="banner-count">0</div>
+            <div class="banner-label">張卡片待學習</div>
+            <div class="banner-sub" id="banner-sub">載入中…</div>
+          </div>
+          <button class="start-btn" id="start-btn">開始複習</button>
+        </div>
+        <div class="glass streak-card">
+          <div class="streak-flame">🔥</div>
+          <div>
+            <div class="streak-num"><span id="streak">0</span> 天</div>
+            <div class="streak-lbl">連續學習紀錄</div>
+          </div>
+        </div>
+        <div class="section-title">學習進度</div>
+        <div class="glass prog-card">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            <span style="font-size: 14px; font-weight: 500">熟悉程度分布</span>
+            <span style="font-size: 12px; color: var(--text3)" id="ret-label"
+              >—</span
+            >
+          </div>
+          <div class="prog-bar-wrap">
+            <div class="prog-bar" id="prog-bar" style="width: 0%"></div>
+          </div>
+          <div class="prog-labels">
+            <span>未學習</span><span id="prog-right">已熟悉 0/0</span>
+          </div>
+        </div>
+        <div class="section-title">最近新增</div>
+        <div id="recent-list"></div>
+        <div style="height: 16px"></div>
+      </div>
+
+      <!-- STUDY VIEW -->
+      <div id="view-study">
+        <div class="study-header">
+          <div class="back-btn" onclick="exitStudy()">
+            <svg
+              width="15"
+              height="15"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="var(--text2)"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </div>
+          <div class="study-prog-bar">
+            <div class="study-prog-fill" id="spf"></div>
+          </div>
+          <div class="study-counter" id="sctr">0/0</div>
+        </div>
+        <div class="study-main" id="study-main"></div>
+      </div>
+
+      <!-- LIBRARY -->
+      <div class="view" id="view-library">
+        <div class="view-header">
+          <div class="lib-hdr">
+            <div>
+              <h1>單字庫</h1>
+              <div class="sub" id="lib-sub">共 0 個單字</div>
+            </div>
+            <div style="display: flex; gap: 8px">
+              <div class="icon-btn" onclick="exportBackup()" title="匯出備份">
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="var(--text2)"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M12 3v12" />
+                  <polyline points="7 11 12 16 17 11" />
+                  <path d="M5 21h14" />
+                </svg>
+              </div>
+              <div class="icon-btn" onclick="openImport()" title="匯入">
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="var(--text2)"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" y1="3" x2="12" y2="15" />
+                </svg>
+              </div>
+              <div class="icon-btn" onclick="openSettings()" title="設定">
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="var(--text2)"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="12" cy="12" r="3" />
+                  <path
+                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="search-bar glass">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--text3)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            type="search"
+            placeholder="搜尋單字…"
+            id="lib-search"
+            oninput="renderLib()"
+          />
+        </div>
+        <div class="lib-toolbar">
+          <button
+            class="chip active"
+            data-f="all"
+            onclick="setFilter(this, 'all')"
+          >
+            全部
+          </button>
+          <button class="chip" data-f="due" onclick="setFilter(this, 'due')">
+            待複習
+          </button>
+          <button class="chip" data-f="new" onclick="setFilter(this, 'new')">
+            新單字
+          </button>
+          <button
+            class="chip"
+            data-f="mastered"
+            onclick="setFilter(this, 'mastered')"
+          >
+            已熟悉
+          </button>
+        </div>
+        <div class="word-list" id="word-list"></div>
+        <div style="height: 80px"></div>
+        <button class="fab" onclick="openAdd()">
+          <svg
+            width="21"
+            height="21"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="white"
+            stroke-width="2.5"
+            stroke-linecap="round"
+          >
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- STATS -->
+      <div class="view" id="view-stats">
+        <div class="view-header">
+          <h1>統計</h1>
+          <div class="sub">學習分析報告</div>
+        </div>
+        <div class="stats-grid">
+          <div class="glass2 stat-big">
+            <div class="stat-big-num" id="st-ret">--%</div>
+            <div class="stat-big-lbl">近 30 天記憶保留率</div>
+          </div>
+          <div class="glass2 mini-stat">
+            <div class="mini-num" id="st-today">0</div>
+            <div class="mini-lbl">今日複習</div>
+          </div>
+          <div class="glass2 mini-stat">
+            <div class="mini-num" id="st-total-rev">0</div>
+            <div class="mini-lbl">累計複習</div>
+          </div>
+          <div class="glass2 mini-stat">
+            <div class="mini-num" id="st-new-t">0</div>
+            <div class="mini-lbl">今日新學</div>
+          </div>
+          <div class="glass2 mini-stat">
+            <div class="mini-num" id="st-avg">0天</div>
+            <div class="mini-lbl">平均複習間隔</div>
+          </div>
+        </div>
+        <div class="section-title">學習熱度 — 近 91 天</div>
+        <div class="glass2" style="padding: 14px 16px; margin-bottom: 14px">
+          <div class="heatmap" id="heatmap"></div>
+          <div class="hm-legend">
+            <span style="font-size: 10px; color: var(--text3)">少</span>
+            <div class="hm-sq" style="background: var(--bg3)"></div>
+            <div
+              class="hm-sq"
+              style="background: rgba(139, 105, 20, 0.2)"
+            ></div>
+            <div
+              class="hm-sq"
+              style="background: rgba(139, 105, 20, 0.5)"
+            ></div>
+            <div
+              class="hm-sq"
+              style="background: rgba(139, 105, 20, 0.88)"
+            ></div>
+            <span style="font-size: 10px; color: var(--text3)">多</span>
+          </div>
+        </div>
+        <div class="section-title">熟悉度分布</div>
+        <div
+          class="glass2"
+          style="padding: 16px; margin-bottom: 16px"
+          id="mastery-dist"
+        ></div>
+        <div style="height: 20px"></div>
+      </div>
+
+      <!-- TABBAR -->
+      <nav id="tabbar">
+        <button
+          class="tab-btn active"
+          onclick="switchTab('home')"
+          id="tab-home"
+        >
+          <svg viewBox="0 0 24 24">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+          <span>首頁</span>
+        </button>
+        <button class="tab-btn" onclick="startStudy()" id="tab-study">
+          <svg viewBox="0 0 24 24">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="17" x2="12" y2="21" />
+          </svg>
+          <span>學習</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('library')" id="tab-library">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+            <path
+              d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"
+            />
+          </svg>
+          <span>單字庫</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('stats')" id="tab-stats">
+          <svg viewBox="0 0 24 24">
+            <line x1="18" y1="20" x2="18" y2="10" />
+            <line x1="12" y1="20" x2="12" y2="4" />
+            <line x1="6" y1="20" x2="6" y2="14" />
+          </svg>
+          <span>統計</span>
+        </button>
+      </nav>
+    </div>
+
+    <div class="app-toast-wrap" id="app-toast-wrap"></div>
+
+    <!-- ADD/EDIT MODAL -->
+    <div class="modal-overlay" id="modal-card">
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-title" id="modal-card-title">新增單字</div>
+        <input type="hidden" id="edit-id" />
+        <div class="form-field">
+          <div class="form-label">單字 / 詞彙 *</div>
+          <input
+            class="form-input"
+            id="inp-word"
+            placeholder="e.g. ephemeral"
+            type="text"
+          />
+          <div
+            class="form-note warn"
+            id="word-duplicate-note"
+            style="display: none"
+          ></div>
+          <div class="suggest-list" id="word-suggestions"></div>
+        </div>
+        <div class="form-field">
+          <div class="form-label">翻譯 / 定義 *</div>
+          <input
+            class="form-input"
+            id="inp-trans"
+            placeholder="e.g. 短暫的；瞬間的"
+            type="text"
+          />
+        </div>
+        <div class="form-field">
+          <div class="form-label">例句（選填）</div>
+          <textarea
+            class="form-input"
+            id="inp-ex"
+            placeholder="e.g. The beauty of cherry blossoms is ephemeral."
+          ></textarea>
+        </div>
+        <div class="form-field">
+          <div class="form-label">發音（選填）</div>
+          <input
+            class="form-input"
+            id="inp-ph"
+            placeholder="e.g. /ɪˈfɛm(ə)r(ə)l/"
+            type="text"
+          />
+        </div>
+        <div class="modal-actions">
+          <button class="btn-sec" onclick="closeModal('modal-card')">
+            取消
+          </button>
+          <button
+            class="btn-danger"
+            id="del-btn"
+            onclick="delCard()"
+            style="display: none"
+          >
+            刪除
+          </button>
+          <button class="btn-primary" onclick="saveCard()">儲存</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- IMPORT MODAL -->
+    <div class="modal-overlay" id="modal-import">
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-title">匯入單字</div>
+        <div class="fmt-hint">
+          <strong>支援格式（每行一個）：</strong><br />
+          • <code>vocab-backup-*.json</code> 備份檔<br />
+          • <code>單字,翻譯,例句</code>（逗號分隔，例句可省略）<br />
+          • <code>單字[Tab]翻譯</code>（Tab 分隔）<br />
+          • 純單字列表（每行一個）<br />
+          支援拖曳 .json / .txt / .csv 檔案上傳
+        </div>
+        <div
+          class="import-drop"
+          id="imp-drop"
+          onclick="document.getElementById('imp-file').click()"
+        >
+          <div class="icon">📁</div>
+          <div class="hint">
+            點擊選擇檔案或拖曳至此<br /><span
+              style="font-size: 11px; opacity: 0.7"
+              >.json / .txt / .csv</span
+            >
+          </div>
+        </div>
+        <input
+          type="file"
+          id="imp-file"
+          accept=".json,.txt,.csv"
+          style="display: none"
+          onchange="onFileSelect(this)"
+        />
+        <div class="form-field">
+          <div class="form-label">或直接貼上文字</div>
+          <textarea
+            class="form-input"
+            id="imp-text"
+            rows="5"
+            placeholder="apple,蘋果,I eat an apple every day.&#10;banana,香蕉&#10;ephemeral,短暫的"
+          ></textarea>
+        </div>
+        <div id="imp-preview-area" style="display: none">
+          <div class="form-label" style="margin-bottom: 6px">
+            預覽（<span id="imp-count">0</span> 個單字）
+          </div>
+          <div class="import-preview" id="imp-preview"></div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-sec" onclick="closeModal('modal-import')">
+            取消
+          </button>
+          <button class="btn-primary" onclick="doImport()">匯入</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div class="modal-overlay" id="modal-settings">
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-title">學習設定</div>
+        <div class="form-field">
+          <div class="form-label">每日新單字上限</div>
+          <input
+            class="form-input"
+            id="s-new"
+            type="number"
+            min="1"
+            max="200"
+            value="20"
+          />
+          <div style="font-size: 11px; color: var(--text3); margin-top: 4px">
+            建議 10–30 個，避免過度負荷
+          </div>
+        </div>
+        <div class="form-field">
+          <div class="form-label">每日複習上限</div>
+          <input
+            class="form-input"
+            id="s-rev"
+            type="number"
+            min="10"
+            max="1000"
+            value="100"
+          />
+        </div>
+        <div class="modal-actions" style="flex-direction: column; gap: 9px">
+          <button class="btn-primary" onclick="doSaveSettings()">
+            儲存設定
+          </button>
+          <button class="btn-danger" onclick="doClearData()">
+            清除所有資料
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONFIRM MODAL -->
+    <div class="modal-overlay" id="modal-confirm">
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-title" id="confirm-title">請確認</div>
+        <div class="confirm-copy" id="confirm-message"></div>
+        <div class="modal-actions">
+          <button class="btn-sec" id="confirm-cancel-btn">取消</button>
+          <button class="btn-danger" id="confirm-ok-btn">確認</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="modal-import-mode">
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-title">匯入 JSON 備份</div>
+        <div class="confirm-copy" id="import-mode-message"></div>
+        <div class="stack-actions">
+          <button class="btn-primary" onclick="resolveImportMode('merge')">
+            合併到現有資料
+          </button>
+          <button class="btn-danger" onclick="resolveImportMode('replace')">
+            覆蓋目前資料
+          </button>
+          <button class="btn-sec" onclick="resolveImportMode('cancel')">
+            取消
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ═══════════════════════════════════
+      // STORAGE
+      // ═══════════════════════════════════
+      const SK = "mem_cards",
+        SK2 = "mem_stats",
+        SK3 = "mem_cfg";
+      const getCards = () => {
+        try {
+          return JSON.parse(localStorage.getItem(SK) || "[]");
+        } catch (e) {
+          return [];
+        }
+      };
+      const setCards = (c) => localStorage.setItem(SK, JSON.stringify(c));
+      const getStats = () => {
+        try {
+          return JSON.parse(localStorage.getItem(SK2) || "{}");
+        } catch (e) {
+          return {};
+        }
+      };
+      const setStats = (s) => localStorage.setItem(SK2, JSON.stringify(s));
+      const getCfg = () => {
+        try {
+          const c = JSON.parse(localStorage.getItem(SK3) || "{}");
+          return { newPD: c.newPD || 20, revPD: c.revPD || 100 };
+        } catch (e) {
+          return { newPD: 20, revPD: 100 };
+        }
+      };
+      const setCfg = (c) => localStorage.setItem(SK3, JSON.stringify(c));
+      let toastTimer = null;
+      let confirmResolver = null;
+      let importModeResolver = null;
+      function normText(value) {
+        return (value || "").trim().toLowerCase();
+      }
+      function showToast(message, type = "info", duration = 2600) {
+        const wrap = document.getElementById("app-toast-wrap");
+        const toast = document.createElement("div");
+        toast.className = `app-toast ${type}`;
+        toast.textContent = message;
+        wrap.appendChild(toast);
+        requestAnimationFrame(() => toast.classList.add("show"));
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(() => {
+          toast.classList.remove("show");
+          window.setTimeout(() => toast.remove(), 220);
+        }, duration);
+      }
+      function askConfirm(message, title = "請確認") {
+        document.getElementById("confirm-title").textContent = title;
+        document.getElementById("confirm-message").textContent = message;
+        openModal("modal-confirm");
+        return new Promise((resolve) => {
+          confirmResolver = resolve;
+        });
+      }
+      function resolveConfirm(result) {
+        closeModal("modal-confirm");
+        if (confirmResolver) confirmResolver(result);
+        confirmResolver = null;
+      }
+      function askImportMode(message) {
+        document.getElementById("import-mode-message").textContent = message;
+        openModal("modal-import-mode");
+        return new Promise((resolve) => {
+          importModeResolver = resolve;
+        });
+      }
+      function resolveImportMode(mode) {
+        closeModal("modal-import-mode");
+        if (importModeResolver) importModeResolver(mode);
+        importModeResolver = null;
+      }
+      const uid = () =>
+        Date.now().toString(36) + Math.random().toString(36).slice(2);
+      const today = () => new Date().toISOString().slice(0, 10);
+
+      // ═══════════════════════════════════
+      // SM-2 ALGORITHM
+      // ═══════════════════════════════════
+      // quality: 0=完全不會 2=模糊 4=記得 5=非常熟
+      function sm2(card, q) {
+        let { interval: I, repetitions: R, easeFactor: EF } = card;
+        if (q >= 3) {
+          if (R === 0) I = 1;
+          else if (R === 1) I = 6;
+          else I = Math.round(I * EF);
+          R++;
+        } else {
+          R = 0;
+          I = 1;
+        }
+        EF = EF + 0.1 - (5 - q) * (0.08 + (5 - q) * 0.02);
+        if (EF < 1.3) EF = 1.3;
+        if (EF > 3.0) EF = 3.0;
+        const nr = new Date();
+        nr.setDate(nr.getDate() + Math.max(1, I));
+        return {
+          interval: Math.max(1, I),
+          repetitions: R,
+          easeFactor: +EF.toFixed(3),
+          nextReview: nr.toISOString().slice(0, 10),
+        };
+      }
+
+      function itvlText(d) {
+        if (d <= 1) return "明天";
+        if (d < 7) return d + "天後";
+        if (d < 30) return Math.round(d / 7) + "週後";
+        return Math.round(d / 30) + "月後";
+      }
+      function prevItvl(card, q) {
+        return itvlText(sm2({ ...card }, q).interval);
+      }
+
+      // ═══════════════════════════════════
+      // CARD HELPERS
+      // ═══════════════════════════════════
+      function mkCard(word, trans, ex = "", ph = "") {
+        return {
+          id: uid(),
+          word: word.trim(),
+          translation: trans.trim(),
+          example: ex.trim(),
+          phonetic: ph.trim(),
+          interval: 0,
+          repetitions: 0,
+          easeFactor: 2.5,
+          nextReview: today(),
+          createdAt: new Date().toISOString(),
+          lastReview: null,
+          totalReviews: 0,
+          correctReviews: 0,
+          isNew: true,
+        };
+      }
+      const isDue = (c) => c.nextReview <= today();
+      const isMastered = (c) => c.interval >= 21;
+      function escH(s) {
+        return (s || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+      function escAttr(s) {
+        return escH(s).replace(/'/g, "&#39;");
+      }
+      function escR(value) {
+        return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      }
+      function highlightMatch(text, query) {
+        const raw = text || "";
+        if (!query) return escH(raw);
+        const reg = new RegExp(`(${escR(query)})`, "ig");
+        return escH(raw).replace(reg, '<span class="hl">$1</span>');
+      }
+      function getWordSuggestions(input, limit = 6) {
+        const q = normText(input);
+        if (q.length < 2) return [];
+        const seen = new Set();
+        return getCards()
+          .filter((card) => {
+            const word = normText(card.word);
+            return word.startsWith(q) && word !== q;
+          })
+          .sort((a, b) => a.word.localeCompare(b.word))
+          .filter((card) => {
+            const key = normText(card.word);
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+          })
+          .slice(0, limit);
+      }
+      function renderWordAssist() {
+        const input = document.getElementById("inp-word");
+        const note = document.getElementById("word-duplicate-note");
+        const list = document.getElementById("word-suggestions");
+        const eid = document.getElementById("edit-id").value;
+        const q = normText(input.value);
+        const duplicate = getCards().find(
+          (card) => normText(card.word) === q && card.id !== eid,
+        );
+        if (duplicate && q) {
+          note.textContent = `已存在單字：${duplicate.word}，可改成其他拼字或直接編輯原項目。`;
+          note.style.display = "block";
+        } else {
+          note.textContent = "";
+          note.style.display = "none";
+        }
+        const suggestions = getWordSuggestions(input.value);
+        list.innerHTML = suggestions
+          .map(
+            (card) =>
+              `<button type="button" class="suggest-chip" onclick="applySuggestion('${escAttr(card.word)}')">${escH(card.word)}</button>`,
+          )
+          .join("");
+      }
+      function applySuggestion(word) {
+        document.getElementById("inp-word").value = word;
+        renderWordAssist();
+        document.getElementById("inp-trans").focus();
+      }
+
+      // ═══════════════════════════════════
+      // STUDY SESSION
+      // ═══════════════════════════════════
+      let queue = [],
+        qi = 0,
+        flipped = false,
+        sStats = {},
+        failedQueue = [],
+        curTab = "home",
+        studying = false;
+
+      function buildQueue() {
+        const cards = getCards(),
+          cfg = getCfg(),
+          t = today();
+        const stats = getStats();
+        const td = stats[t] || { newC: 0, revC: 0 };
+        const due = cards.filter((c) => !c.isNew && isDue(c));
+        const nw = cards.filter((c) => c.isNew);
+        const rLim = Math.max(0, cfg.revPD - (td.revC || 0));
+        const nLim = Math.max(0, cfg.newPD - (td.newC || 0));
+        const rQ = due.slice(0, rLim),
+          nQ = nw.slice(0, nLim);
+        // Interleave new into reviews
+        const q = [...rQ];
+        if (nQ.length) {
+          const step = Math.max(1, Math.floor(q.length / (nQ.length + 1)));
+          nQ.forEach((c, i) =>
+            q.splice(Math.min((i + 1) * step - 1 + i, q.length), 0, c),
+          );
+        }
+        return q.length ? q : [...due, ...nw].slice(0, 20);
+      }
+
+      function getTodayCount() {
+        const cards = getCards(),
+          cfg = getCfg(),
+          stats = getStats(),
+          t = today();
+        const td = stats[t] || { newC: 0, revC: 0 };
+        const due = cards.filter((c) => !c.isNew && isDue(c));
+        const nw = cards.filter((c) => c.isNew);
+        return (
+          Math.min(due.length, Math.max(0, cfg.revPD - (td.revC || 0))) +
+          Math.min(nw.length, Math.max(0, cfg.newPD - (td.newC || 0)))
+        );
+      }
+
+      function startStudy() {
+        queue = buildQueue();
+        if (!queue.length) {
+          showToast("今天沒有待複習的單字，請先到單字庫新增或匯入。");
+          return;
+        }
+        qi = 0;
+        flipped = false;
+        studying = true;
+        sStats = { again: 0, hard: 0, good: 0, easy: 0, total: 0 };
+        failedQueue = [];
+        document
+          .querySelectorAll(".view")
+          .forEach((v) => v.classList.remove("active"));
+        document.getElementById("view-study").style.display = "flex";
+        document.getElementById("tabbar").style.display = "none";
+        renderCard();
+      }
+
+      function exitStudy() {
+        studying = false;
+        document.getElementById("view-study").style.display = "none";
+        document.getElementById("tabbar").style.display = "flex";
+        switchTab(curTab === "home" ? "home" : curTab);
+      }
+
+      function renderCard() {
+        if (qi >= queue.length) {
+          showComplete();
+          return;
+        }
+        flipped = false;
+        const c = queue[qi],
+          tot = queue.length;
+        document.getElementById("spf").style.width = (qi / tot) * 100 + "%";
+        document.getElementById("sctr").textContent = `${qi + 1}/${tot}`;
+        document.getElementById("study-main").innerHTML = `
+    <span class="type-badge ${c.isNew ? "type-new" : "type-review"}">${c.isNew ? "新單字" : "複習"}</span>
+    <div class="flip-wrap card-in" onclick="doFlip()">
+      <div class="flip-card" id="fc">
+        <div class="flip-face">
+          <div class="card-word">${escH(c.word)}</div>
+          ${c.phonetic ? `<div class="card-phonetic">${escH(c.phonetic)}</div>` : ""}
+          <div class="tap-hint"><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>點擊翻牌</div>
+        </div>
+        <div class="flip-face back">
+          <div class="card-word-sm">${escH(c.word)}</div>
+          <div class="card-trans">${escH(c.translation)}</div>
+          ${c.example ? `<div class="card-example">${escH(c.example)}</div>` : ""}
+        </div>
+      </div>
+    </div>
+    <div class="rating-area">
+      <div class="rating-label" id="rl">翻牌後評分</div>
+      <div class="rating-buttons">
+        <button class="rating-btn btn-again" onclick="rate(0)" disabled id="rb0">不會<span class="itvl">${prevItvl(c, 0)}</span></button>
+        <button class="rating-btn btn-hard"  onclick="rate(2)" disabled id="rb2">模糊<span class="itvl">${prevItvl(c, 2)}</span></button>
+        <button class="rating-btn btn-good"  onclick="rate(4)" disabled id="rb4">記得<span class="itvl">${prevItvl(c, 4)}</span></button>
+        <button class="rating-btn btn-easy"  onclick="rate(5)" disabled id="rb5">熟悉<span class="itvl">${prevItvl(c, 5)}</span></button>
+      </div>
+    </div>`;
+      }
+
+      function doFlip() {
+        if (flipped) return;
+        flipped = true;
+        document.getElementById("fc")?.classList.add("flipped");
+        ["rb0", "rb2", "rb4", "rb5"].forEach((id) => {
+          const b = document.getElementById(id);
+          if (b) b.disabled = false;
+        });
+        const rl = document.getElementById("rl");
+        if (rl) rl.textContent = "你記得多少？";
+      }
+
+      function rate(q) {
+        const c = queue[qi];
+        const cards = getCards();
+        const idx = cards.findIndex((x) => x.id === c.id);
+        if (idx >= 0) {
+          const upd = sm2(c, q);
+          cards[idx] = {
+            ...cards[idx],
+            ...upd,
+            isNew: false,
+            lastReview: new Date().toISOString(),
+            totalReviews: (cards[idx].totalReviews || 0) + 1,
+            correctReviews: (cards[idx].correctReviews || 0) + (q >= 3 ? 1 : 0),
+          };
+          setCards(cards);
+        }
+        if (q === 0) sStats.again++;
+        else if (q === 2) sStats.hard++;
+        else if (q === 4) sStats.good++;
+        else sStats.easy++;
+        if (q <= 2) failedQueue.push(cards[idx >= 0 ? idx : 0]);
+        sStats.total++;
+        // Update daily stats
+        const t = today(),
+          stats = getStats();
+        if (!stats[t])
+          stats[t] = { newC: 0, revC: 0, correct: 0, total: 0, reviews: 0 };
+        if (c.isNew) stats[t].newC++;
+        else stats[t].revC++;
+        stats[t].total = (stats[t].total || 0) + 1;
+        stats[t].correct = (stats[t].correct || 0) + (q >= 3 ? 1 : 0);
+        stats[t].reviews = (stats[t].reviews || 0) + 1;
+        setStats(stats);
+        qi++;
+        renderCard();
+      }
+
+      function showComplete() {
+        const { again, hard, good, easy, total } = sStats;
+        const correct = good + easy,
+          rate2 = total > 0 ? Math.round((correct / total) * 100) : 0;
+        const retryCount = failedQueue.length;
+        document.getElementById("spf").style.width = "100%";
+        document.getElementById("sctr").textContent = `${total}/${total}`;
+        const emoji = rate2 >= 80 ? "🎉" : rate2 >= 60 ? "👍" : "💪";
+        const title =
+          rate2 >= 80 ? "太棒了！" : rate2 >= 60 ? "不錯喔！" : "繼續加油！";
+        document.getElementById("study-main").innerHTML = `
+    <div class="sess-complete card-in">
+      <div class="sc-icon">${emoji}</div>
+      <div class="sc-title">${title}</div>
+      <div class="sc-sub">本次複習完成<br>記憶保留率 <strong>${rate2}%</strong></div>
+      <div class="sc-stats">
+        <div class="sc-item"><div class="sc-num red">${again + hard}</div><div class="sc-lbl">需加強</div></div>
+        <div class="sc-item"><div class="sc-num green">${correct}</div><div class="sc-lbl">記住了</div></div>
+        <div class="sc-item"><div class="sc-num">${total}</div><div class="sc-lbl">總計</div></div>
+      </div>
+      <div class="sec-btns">
+        <button class="start-btn" onclick="exitStudy()">返回首頁</button>
+        ${
+          retryCount
+            ? `<button class="start-btn" onclick="retryFailed()" style="background: var(--orange)">再看一次答錯 ${retryCount} 題</button>`
+            : ""
+        }
+        <button class="ghost-btn" onclick="redoStudy()">再練一次</button>
+      </div>
+    </div>`;
+      }
+
+      function retryFailed() {
+        const seen = new Set();
+        queue = failedQueue.filter((card) => {
+          if (!card || seen.has(card.id)) return false;
+          seen.add(card.id);
+          return true;
+        });
+        if (!queue.length) {
+          showToast("這輪沒有需要重看的題目。");
+          return;
+        }
+        qi = 0;
+        flipped = false;
+        sStats = { again: 0, hard: 0, good: 0, easy: 0, total: 0 };
+        failedQueue = [];
+        renderCard();
+      }
+
+      function redoStudy() {
+        queue = buildQueue();
+        if (!queue.length) {
+          exitStudy();
+          return;
+        }
+        qi = 0;
+        flipped = false;
+        sStats = { again: 0, hard: 0, good: 0, easy: 0, total: 0 };
+        failedQueue = [];
+        renderCard();
+      }
+
+      // ═══════════════════════════════════
+      // NAVIGATION
+      // ═══════════════════════════════════
+      function switchTab(tab) {
+        if (studying) return;
+        curTab = tab;
+        document
+          .querySelectorAll(".view")
+          .forEach((v) => v.classList.remove("active"));
+        document.getElementById("view-study").style.display = "none";
+        document.getElementById("tabbar").style.display = "flex";
+        document.getElementById("view-" + tab).classList.add("active");
+        document
+          .querySelectorAll(".tab-btn")
+          .forEach((b) => b.classList.remove("active"));
+        const m = {
+          home: "tab-home",
+          library: "tab-library",
+          stats: "tab-stats",
+        };
+        if (m[tab]) document.getElementById(m[tab]).classList.add("active");
+        if (tab === "home") renderDash();
+        if (tab === "library") renderLib();
+        if (tab === "stats") renderStats();
+      }
+
+      // ═══════════════════════════════════
+      // DASHBOARD
+      // ═══════════════════════════════════
+      function renderDash() {
+        const cards = getCards(),
+          t = today(),
+          stats = getStats(),
+          cfg = getCfg();
+        const td = stats[t] || { newC: 0, revC: 0 };
+        // Greeting
+        const h = new Date().getHours();
+        document.getElementById("dash-title").textContent =
+          h < 12
+            ? "早安，開始今天的學習 ☀️"
+            : h < 18
+              ? "下午好，繼續努力 📖"
+              : "晚上好，複習一下 🌙";
+        const d = new Date(),
+          wd = ["日", "一", "二", "三", "四", "五", "六"];
+        document.getElementById("dash-date").textContent =
+          `${d.getFullYear()} 年 ${d.getMonth() + 1} 月 ${d.getDate()} 日 · 星期${wd[d.getDay()]}`;
+        const due = cards.filter((c) => !c.isNew && isDue(c));
+        const nwC = cards.filter((c) => c.isNew);
+        const mast = cards.filter((c) => isMastered(c));
+        document.getElementById("s-due").textContent = due.length;
+        document.getElementById("s-total").textContent = cards.length;
+        document.getElementById("s-master").textContent = mast.length;
+        const cnt = getTodayCount();
+        document.getElementById("banner-count").textContent = cnt;
+        document.getElementById("banner-sub").textContent =
+          `複習 ${Math.min(due.length, Math.max(0, cfg.revPD - (td.revC || 0)))} · 新單字 ${Math.min(nwC.length, Math.max(0, cfg.newPD - (td.newC || 0)))}`;
+        const sb = document.getElementById("start-btn");
+        if (cnt === 0) {
+          sb.textContent = "今日完成 ✓";
+          sb.disabled = true;
+        } else {
+          sb.textContent = "開始複習";
+          sb.disabled = false;
+        }
+        // Streak
+        document.getElementById("streak").textContent = calcStreak(stats);
+        // Progress
+        const p = cards.length
+          ? Math.round((mast.length / cards.length) * 100)
+          : 0;
+        document.getElementById("prog-bar").style.width = p + "%";
+        document.getElementById("prog-right").textContent =
+          `已熟悉 ${mast.length}/${cards.length}`;
+        document.getElementById("ret-label").textContent =
+          `保留率 ${calcRet(stats)}%`;
+        // Recent
+        const rec = [...cards]
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .slice(0, 5);
+        const el = document.getElementById("recent-list");
+        if (!rec.length) {
+          el.innerHTML = `<div class="empty-state" style="padding:16px 0">
+      <div class="empty-icon">📚</div><div class="empty-title">還沒有單字</div>
+      <div class="empty-sub">前往「單字庫」新增或匯入單字</div>
+      <button class="start-btn" onclick="switchTab('library')" style="margin-top:12px">前往單字庫</button>
+    </div>`;
+        } else {
+          el.innerHTML = rec
+            .map(
+              (c) => `
+      <div class="glass2 word-item" onclick="openEdit('${c.id}')">
+        <div style="flex:1;min-width:0"><div class="word-main-txt">${escH(c.word)}</div><div class="word-sub-txt">${escH(c.translation || "(未填翻譯)")}</div></div>
+        <div class="word-tag ${c.isNew ? "tag-new" : "tag-ok"}">${c.isNew ? "新" : c.interval + "天"}</div>
+      </div>`,
+            )
+            .join("");
+        }
+      }
+
+      function calcStreak(stats) {
+        let s = 0;
+        const n = new Date();
+        for (let i = 0; i < 365; i++) {
+          const d = new Date(n);
+          d.setDate(d.getDate() - i);
+          const k = d.toISOString().slice(0, 10);
+          if (stats[k]?.reviews > 0) s++;
+          else if (i > 0) break;
+        }
+        return s;
+      }
+      function calcRet(stats) {
+        let tot = 0,
+          cor = 0;
+        const n = new Date();
+        for (let i = 0; i < 30; i++) {
+          const d = new Date(n);
+          d.setDate(d.getDate() - i);
+          const k = d.toISOString().slice(0, 10);
+          if (stats[k]) {
+            tot += stats[k].total || 0;
+            cor += stats[k].correct || 0;
+          }
+        }
+        return tot ? Math.round((cor / tot) * 100) : 0;
+      }
+
+      // ═══════════════════════════════════
+      // LIBRARY
+      // ═══════════════════════════════════
+      let libFilter = "all";
+      function setFilter(btn, f) {
+        libFilter = f;
+        document
+          .querySelectorAll(".chip")
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        renderLib();
+      }
+      function renderLib() {
+        const cards = getCards(),
+          q = (document.getElementById("lib-search").value || "").toLowerCase();
+        document.getElementById("lib-sub").textContent =
+          `共 ${cards.length} 個單字`;
+        let fl = cards;
+        if (libFilter === "due") fl = cards.filter((c) => !c.isNew && isDue(c));
+        else if (libFilter === "new") fl = cards.filter((c) => c.isNew);
+        else if (libFilter === "mastered")
+          fl = cards.filter((c) => isMastered(c));
+        if (q)
+          fl = fl.filter(
+            (c) =>
+              c.word.toLowerCase().includes(q) ||
+              (c.translation || "").toLowerCase().includes(q),
+          );
+        fl.sort((a, b) => {
+          if (a.isNew && !b.isNew) return -1;
+          if (!a.isNew && b.isNew) return 1;
+          return a.nextReview.localeCompare(b.nextReview);
+        });
+        const el = document.getElementById("word-list");
+        if (!fl.length) {
+          el.innerHTML = `<div class="empty-state" style="padding:24px 0">
+      <div class="empty-icon">${q ? "🔍" : "📭"}</div>
+      <div class="empty-title">${q ? "找不到結果" : "這裡還空空的"}</div>
+      <div class="empty-sub">${q ? "試試其他關鍵字" : "點右下角 + 新增，或點上方箭頭匯入"}</div>
+    </div>`;
+          return;
+        }
+        el.innerHTML = fl
+          .map((c) => {
+            const due = !c.isNew && isDue(c);
+            const tag = c.isNew ? "新" : due ? "待複習" : itvlText(c.interval);
+            const tc = c.isNew ? "tag-new" : due ? "tag-due" : "tag-ok";
+            return `<div class="glass2 word-item" onclick="openEdit('${c.id}')">
+      <div style="flex:1;min-width:0"><div class="word-main-txt">${highlightMatch(c.word, q)}</div><div class="word-sub-txt">${highlightMatch(c.translation || "(未填翻譯)", q)}</div></div>
+      <div class="word-tag ${tc}">${tag}</div>
+    </div>`;
+          })
+          .join("");
+      }
+
+      // ═══════════════════════════════════
+      // STATS
+      // ═══════════════════════════════════
+      function renderStats() {
+        const cards = getCards(),
+          stats = getStats(),
+          t = today();
+        const ret = calcRet(stats);
+        const rEl = document.getElementById("st-ret");
+        rEl.textContent = ret + "%";
+        rEl.className =
+          "stat-big-num " +
+          (ret >= 80 ? "ret-high" : ret >= 60 ? "ret-mid" : "ret-low");
+        const td = stats[t] || {};
+        document.getElementById("st-today").textContent = td.reviews || 0;
+        document.getElementById("st-new-t").textContent = td.newC || 0;
+        let totRev = 0;
+        cards.forEach((c) => (totRev += c.totalReviews || 0));
+        document.getElementById("st-total-rev").textContent = totRev;
+        const revd = cards.filter((c) => !c.isNew && c.interval > 0);
+        const avg = revd.length
+          ? Math.round(revd.reduce((s, c) => s + c.interval, 0) / revd.length)
+          : 0;
+        document.getElementById("st-avg").textContent = avg + "天";
+        // Heatmap
+        const hm = document.getElementById("heatmap");
+        hm.innerHTML = Array.from({ length: 91 }, (_, i) => {
+          const d = new Date();
+          d.setDate(d.getDate() - (90 - i));
+          const k = d.toISOString().slice(0, 10),
+            n = stats[k]?.reviews || 0;
+          const lvl = n >= 50 ? 4 : n >= 25 ? 3 : n >= 10 ? 2 : n > 0 ? 1 : 0;
+          return `<div class="hm-cell d${lvl}" title="${k}: ${n}次"></div>`;
+        }).join("");
+        // Mastery dist
+        const bk = [
+          { l: "新單字", n: 0, c: "var(--blue)" },
+          { l: "初學 (1-3天)", n: 0, c: "var(--orange)" },
+          { l: "學習中 (4-13天)", n: 0, c: "var(--accent)" },
+          { l: "鞏固中 (14-20天)", n: 0, c: "#2E7D52" },
+          { l: "已熟悉 (21天+)", n: 0, c: "var(--green)" },
+        ];
+        cards.forEach((c) => {
+          if (c.isNew) bk[0].n++;
+          else if (c.interval <= 3) bk[1].n++;
+          else if (c.interval <= 13) bk[2].n++;
+          else if (c.interval <= 20) bk[3].n++;
+          else bk[4].n++;
+        });
+        const tot = cards.length || 1;
+        document.getElementById("mastery-dist").innerHTML = bk
+          .map(
+            (b) => `
+    <div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:13px;color:var(--text2)">${b.l}</span>
+        <span style="font-size:11px;color:var(--text3)">${b.n} 個 · ${Math.round((b.n / tot) * 100)}%</span>
+      </div>
+      <div style="background:var(--bg3);border-radius:100px;height:5px;overflow:hidden">
+        <div style="width:${Math.round((b.n / tot) * 100)}%;height:100%;background:${b.c};border-radius:100px;transition:width .8s ease"></div>
+      </div>
+    </div>`,
+          )
+          .join("");
+      }
+
+      // ═══════════════════════════════════
+      // MODALS
+      // ═══════════════════════════════════
+      function openModal(id) {
+        document.getElementById(id).classList.add("open");
+      }
+      function closeModal(id) {
+        document.getElementById(id).classList.remove("open");
+      }
+      document.querySelectorAll(".modal-overlay").forEach((o) => {
+        o.addEventListener("click", (e) => {
+          if (e.target !== o) return;
+          if (o.id === "modal-confirm") {
+            resolveConfirm(false);
+            return;
+          }
+          if (o.id === "modal-import-mode") {
+            resolveImportMode("cancel");
+            return;
+          }
+          closeModal(o.id);
+        });
+      });
+      document
+        .getElementById("confirm-cancel-btn")
+        .addEventListener("click", () => resolveConfirm(false));
+      document
+        .getElementById("confirm-ok-btn")
+        .addEventListener("click", () => resolveConfirm(true));
+      document
+        .getElementById("inp-word")
+        .addEventListener("input", renderWordAssist);
+
+      function openAdd() {
+        document.getElementById("modal-card-title").textContent = "新增單字";
+        document.getElementById("edit-id").value = "";
+        ["inp-word", "inp-trans", "inp-ex", "inp-ph"].forEach(
+          (id) => (document.getElementById(id).value = ""),
+        );
+        document.getElementById("del-btn").style.display = "none";
+        renderWordAssist();
+        openModal("modal-card");
+        setTimeout(() => document.getElementById("inp-word").focus(), 300);
+      }
+
+      function openEdit(id) {
+        const c = getCards().find((x) => x.id === id);
+        if (!c) return;
+        document.getElementById("modal-card-title").textContent = "編輯單字";
+        document.getElementById("edit-id").value = id;
+        document.getElementById("inp-word").value = c.word;
+        document.getElementById("inp-trans").value = c.translation;
+        document.getElementById("inp-ex").value = c.example || "";
+        document.getElementById("inp-ph").value = c.phonetic || "";
+        document.getElementById("del-btn").style.display = "block";
+        renderWordAssist();
+        openModal("modal-card");
+      }
+
+      function saveCard() {
+        const word = document.getElementById("inp-word").value.trim();
+        const trans = document.getElementById("inp-trans").value.trim();
+        if (!word) {
+          document.getElementById("inp-word").style.borderColor = "var(--red)";
+          setTimeout(
+            () => (document.getElementById("inp-word").style.borderColor = ""),
+            2000,
+          );
+          return;
+        }
+        const ex = document.getElementById("inp-ex").value.trim();
+        const ph = document.getElementById("inp-ph").value.trim();
+        const eid = document.getElementById("edit-id").value;
+        const cards = getCards();
+        const duplicate = cards.find(
+          (c) => normText(c.word) === normText(word) && c.id !== eid,
+        );
+        if (duplicate) {
+          showToast(`「${duplicate.word}」已存在，請避免重複新增。`, "error");
+          renderWordAssist();
+          return;
+        }
+        if (eid) {
+          const i = cards.findIndex((c) => c.id === eid);
+          if (i >= 0)
+            cards[i] = {
+              ...cards[i],
+              word,
+              translation: trans,
+              example: ex,
+              phonetic: ph,
+            };
+        } else {
+          cards.push(mkCard(word, trans, ex, ph));
+        }
+        setCards(cards);
+        closeModal("modal-card");
+        if (curTab === "library") renderLib();
+        renderDash();
+        showToast(eid ? "單字已更新。" : "單字已新增。", "success");
+      }
+
+      async function delCard() {
+        const id = document.getElementById("edit-id").value;
+        if (!id) return;
+        const confirmed = await askConfirm("確定要刪除這個單字嗎？", "刪除單字");
+        if (!confirmed) return;
+        setCards(getCards().filter((c) => c.id !== id));
+        closeModal("modal-card");
+        renderLib();
+        renderDash();
+        showToast("單字已刪除。", "success");
+      }
+
+      // IMPORT
+      function openImport() {
+        document.getElementById("imp-text").value = "";
+        document.getElementById("imp-preview-area").style.display = "none";
+        openModal("modal-import");
+      }
+      function onFileSelect(inp) {
+        const f = inp.files[0];
+        if (!f) return;
+        const r = new FileReader();
+        r.onload = (e) => {
+          document.getElementById("imp-text").value = e.target.result;
+          parsePreview();
+        };
+        r.readAsText(f, "UTF-8");
+      }
+      document
+        .getElementById("imp-text")
+        .addEventListener("input", parsePreview);
+      function parseLines(text) {
+        return text
+          .split("\n")
+          .map((l) => l.trim())
+          .filter((l) => l && !l.startsWith("#"))
+          .map((line) => {
+            let parts;
+            if (line.includes("\t"))
+              parts = line.split("\t").map((p) => p.trim());
+            else if (line.includes(","))
+              parts = line.split(",").map((p) => p.trim());
+            else parts = [line.trim()];
+            return {
+              word: parts[0] || "",
+              translation: parts[1] || "",
+              example: parts[2] || "",
+            };
+          })
+          .filter((x) => x.word);
+      }
+      function parseImportText(text) {
+        const raw = (text || "").trim();
+        if (!raw) return { mode: "empty" };
+        try {
+          const data = JSON.parse(raw);
+          if (data && Array.isArray(data.cards)) {
+            return {
+              mode: "backup",
+              cards: data.cards,
+              stats: data.stats && typeof data.stats === "object" ? data.stats : {},
+              config:
+                data.config && typeof data.config === "object"
+                  ? data.config
+                  : null,
+            };
+          }
+        } catch (e) {}
+        return { mode: "lines", cards: parseLines(raw) };
+      }
+      function parsePreview() {
+        const txt = document.getElementById("imp-text").value;
+        if (!txt.trim()) {
+          document.getElementById("imp-preview-area").style.display = "none";
+          return;
+        }
+        const parsed = parseImportText(txt);
+        if (parsed.mode === "backup") {
+          document.getElementById("imp-count").textContent = parsed.cards.length;
+          document.getElementById("imp-preview").textContent =
+            "偵測到 JSON 備份檔\n" +
+            parsed.cards
+              .slice(0, 10)
+              .map((c) => `${c.word || "(未命名)"} → ${c.translation || "(待填)"}`)
+              .join("\n") +
+            (parsed.cards.length > 10
+              ? `\n… 還有 ${parsed.cards.length - 10} 個`
+              : "");
+        } else {
+          const p = parsed.cards || [];
+          document.getElementById("imp-count").textContent = p.length;
+          document.getElementById("imp-preview").textContent =
+            p
+              .slice(0, 10)
+              .map((c) => `${c.word} → ${c.translation || "(待填)"}`)
+              .join("\n") + (p.length > 10 ? `\n… 還有 ${p.length - 10} 個` : "");
+        }
+        document.getElementById("imp-preview-area").style.display = "block";
+      }
+      function sanitizeImportedCard(card) {
+        if (!card || !card.word) return null;
+        const safeWord = String(card.word).trim();
+        if (!safeWord) return null;
+        return {
+          id: card.id || uid(),
+          word: safeWord,
+          translation: String(card.translation || "").trim(),
+          example: String(card.example || "").trim(),
+          phonetic: String(card.phonetic || "").trim(),
+          interval: Number.isFinite(+card.interval) ? +card.interval : 0,
+          repetitions: Number.isFinite(+card.repetitions) ? +card.repetitions : 0,
+          easeFactor: Number.isFinite(+card.easeFactor) ? +card.easeFactor : 2.5,
+          nextReview: card.nextReview || today(),
+          createdAt: card.createdAt || new Date().toISOString(),
+          lastReview: card.lastReview || null,
+          totalReviews: Number.isFinite(+card.totalReviews) ? +card.totalReviews : 0,
+          correctReviews: Number.isFinite(+card.correctReviews)
+            ? +card.correctReviews
+            : 0,
+          isNew: typeof card.isNew === "boolean" ? card.isNew : true,
+        };
+      }
+      async function doImport() {
+        const parsed = parseImportText(document.getElementById("imp-text").value);
+        if (
+          parsed.mode === "empty" ||
+          !parsed.cards ||
+          !parsed.cards.length
+        ) {
+          showToast("沒有解析到任何單字，請確認匯入格式。", "error");
+          return;
+        }
+        if (parsed.mode === "backup") {
+          const importMode = await askImportMode(
+            `偵測到 JSON 備份檔，共 ${parsed.cards.length} 個單字。你要合併到現有資料，還是直接覆蓋目前資料？`,
+          );
+          if (importMode === "cancel") return;
+          const importedCards = parsed.cards.map(sanitizeImportedCard).filter(Boolean);
+          if (importMode === "replace") {
+            setCards(importedCards);
+            setStats(parsed.stats || {});
+            if (parsed.config) setCfg(parsed.config);
+          } else {
+            const existingCards = getCards();
+            const wordSet = new Set(existingCards.map((c) => normText(c.word)));
+            const mergedCards = [...existingCards];
+            let added = 0;
+            let skipped = 0;
+            importedCards.forEach((card) => {
+              const key = normText(card.word);
+              if (!key || wordSet.has(key)) {
+                skipped++;
+                return;
+              }
+              wordSet.add(key);
+              mergedCards.push(card);
+              added++;
+            });
+            setCards(mergedCards);
+            setStats({ ...getStats(), ...(parsed.stats || {}) });
+            if (parsed.config) setCfg({ ...getCfg(), ...parsed.config });
+            closeModal("modal-import");
+            if (curTab === "library") renderLib();
+            if (curTab === "stats") renderStats();
+            renderDash();
+            showToast(
+              `JSON 備份已合併，新增 ${added} 個單字${skipped ? `，跳過 ${skipped} 個重複` : ""}。`,
+              "success",
+              3200,
+            );
+            return;
+          }
+          closeModal("modal-import");
+          if (curTab === "library") renderLib();
+          if (curTab === "stats") renderStats();
+          renderDash();
+          showToast(
+            `JSON 備份已覆蓋匯入，共 ${importedCards.length} 個單字。`,
+            "success",
+            3200,
+          );
+          return;
+        }
+        const importedCards = parsed.cards;
+        const ex = getCards(),
+          ew = new Set(ex.map((c) => c.word.toLowerCase()));
+        let added = 0,
+          skipped = 0;
+        const nc = [...ex];
+        importedCards.forEach(({ word, translation, example }) => {
+          if (ew.has(word.toLowerCase())) {
+            skipped++;
+          } else {
+            nc.push(mkCard(word, translation, example));
+            ew.add(word.toLowerCase());
+            added++;
+          }
+        });
+        setCards(nc);
+        closeModal("modal-import");
+        if (curTab === "library") renderLib();
+        if (curTab === "stats") renderStats();
+        renderDash();
+        showToast(
+          `匯入完成，新增 ${added} 個單字${skipped ? `，跳過 ${skipped} 個重複` : ""}。`,
+          "success",
+          3200,
+        );
+      }
+      function exportBackup() {
+        const cards = getCards();
+        const stats = getStats();
+        const cfg = getCfg();
+        const payload = {
+          exportedAt: new Date().toISOString(),
+          version: 1,
+          cards,
+          stats,
+          config: cfg,
+        };
+        const blob = new Blob([JSON.stringify(payload, null, 2)], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        const stamp = today().replace(/-/g, "");
+        a.href = url;
+        a.download = `vocab-backup-${stamp}.json`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+        showToast("備份已匯出。", "success");
+      }
+      // Drag drop
+      const dd = document.getElementById("imp-drop");
+      dd.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dd.classList.add("drag-over");
+      });
+      dd.addEventListener("dragleave", () => dd.classList.remove("drag-over"));
+      dd.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dd.classList.remove("drag-over");
+        const f = e.dataTransfer.files[0];
+        if (!f) return;
+        const r = new FileReader();
+        r.onload = (ev) => {
+          document.getElementById("imp-text").value = ev.target.result;
+          parsePreview();
+        };
+        r.readAsText(f, "UTF-8");
+      });
+
+      // SETTINGS
+      function openSettings() {
+        const cfg = getCfg();
+        document.getElementById("s-new").value = cfg.newPD;
+        document.getElementById("s-rev").value = cfg.revPD;
+        openModal("modal-settings");
+      }
+      function doSaveSettings() {
+        setCfg({
+          newPD: +document.getElementById("s-new").value || 20,
+          revPD: +document.getElementById("s-rev").value || 100,
+        });
+        closeModal("modal-settings");
+        renderDash();
+        showToast("設定已更新。", "success");
+      }
+      async function doClearData() {
+        const firstConfirm = await askConfirm(
+          "確定要清除所有資料嗎？此操作無法復原。",
+          "清除所有資料",
+        );
+        if (!firstConfirm) return;
+        const secondConfirm = await askConfirm(
+          "再次確認：所有單字和學習紀錄都會永久刪除。",
+          "最後確認",
+        );
+        if (!secondConfirm) return;
+        localStorage.removeItem(SK);
+        localStorage.removeItem(SK2);
+        renderDash();
+        renderLib();
+        closeModal("modal-settings");
+        showToast("所有資料已清除。", "success");
+      }
+
+      // ═══════════════════════════════════
+      // KEYBOARD
+      // ═══════════════════════════════════
+      document.addEventListener("keydown", (e) => {
+        if (document.querySelector(".modal-overlay.open")) return;
+        if (!studying) return;
+        if (e.code === "Space" || e.code === "Enter") {
+          e.preventDefault();
+          if (!flipped) doFlip();
+        }
+        if (flipped) {
+          if (e.key === "1") rate(0);
+          else if (e.key === "2") rate(2);
+          else if (e.key === "3") rate(4);
+          else if (e.key === "4") rate(5);
+          else if (e.key === "Escape") exitStudy();
+        }
+      });
+
+      // ═══════════════════════════════════
+      // PWA
+      // ═══════════════════════════════════
+      (function () {
+        const manifest = {
+          name: "Memoria 記憶卡",
+          short_name: "Memoria",
+          description: "SM-2 科學化間隔重複背單字",
+          start_url: ".",
+          display: "standalone",
+          background_color: "#F2EDE4",
+          theme_color: "#F2EDE4",
+          icons: [
+            {
+              src:
+                "data:image/svg+xml," +
+                encodeURIComponent(
+                  `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='120' fill='%23F2EDE4'/><text x='256' y='360' font-size='300' text-anchor='middle'>📚</text></svg>`,
+                ),
+              sizes: "512x512",
+              type: "image/svg+xml",
+            },
+          ],
+        };
+        try {
+          const bl = new Blob([JSON.stringify(manifest)], {
+              type: "application/json",
+            }),
+            lk = document.createElement("link");
+          lk.rel = "manifest";
+          lk.href = URL.createObjectURL(bl);
+          document.head.appendChild(lk);
+        } catch (e) {}
+        if ("serviceWorker" in navigator) {
+          const sw = `const C='mem-v2';self.addEventListener('install',()=>self.skipWaiting());self.addEventListener('activate',e=>e.waitUntil(clients.claim()));self.addEventListener('fetch',e=>{if(e.request.url.includes('fonts')){e.respondWith(caches.open(C).then(ca=>ca.match(e.request).then(r=>r||fetch(e.request).then(res=>{ca.put(e.request,res.clone());return res;}))));}});`;
+          try {
+            const bl = new Blob([sw], { type: "application/javascript" });
+            navigator.serviceWorker
+              .register(URL.createObjectURL(bl))
+              .catch(() => {});
+          } catch (e) {}
+        }
+      })();
+
+      renderDash();
+    </script>
+  </body>
+</html>

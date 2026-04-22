@@ -1,0 +1,21 @@
+{
+  "name": "舔佛腳",
+  "short_name": "舔佛腳",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#F5F0E6",
+  "theme_color": "#8C7A6B",
+  "description": "佛祖說舔的真好，賜你高分",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
