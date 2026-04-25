@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>展示用</title>
+  <style>
+    :root {
+      --bg: #10141f;
+      --panel: rgba(17, 24, 39, 0.78);
+      --panel-strong: #0f172a;
+      --border: rgba(148, 163, 184, 0.18);
+      --text: #e5eefc;
+      --muted: #8fa0bf;
+      --accent: #59c3ff;
+      --accent-soft: rgba(89, 195, 255, 0.14);
+      --green: #6ee7b7;
+      --yellow: #facc15;
+      --red: #fb7185;
+      --blue: #7dd3fc;
+      --purple: #c084fc;
+      --string: #ecc48d;
+      --comment: #6b7a99;
+      --number: #fda4af;
+      --function: #82aaff;
+      --keyword: #c792ea;
+      --class: #ffcb6b;
+      --line: #8592ad;
+      --terminal-line: #daf5e4;
+      --shadow: 0 20px 80px rgba(2, 6, 23, 0.48);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", "Noto Sans TC", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), transparent 34%),
+        radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.16), transparent 30%),
+        linear-gradient(135deg, #090d16 0%, #111827 48%, #0b1220 100%);
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: auto;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      filter: blur(30px);
+      opacity: 0.24;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      top: -100px;
+      right: -80px;
+      background: #1d4ed8;
+    }
+
+    body::after {
+      left: -120px;
+      bottom: -100px;
+      background: #059669;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 48px 0 56px;
+    }
+
+    .hero {
+      display: grid;
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      width: fit-content;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.68);
+      color: var(--blue);
+      font-size: 0.9rem;
+      letter-spacing: 0.03em;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 10px rgba(110, 231, 183, 0.8);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.2rem, 4vw, 4.3rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .hero p {
+      max-width: 760px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.75;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .chip {
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.64);
+      color: #c8d5f0;
+      font-size: 0.94rem;
+    }
+
+    .showcase {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(15, 23, 42, 0.86);
+    }
+
+    .window-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .window-controls span {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .window-controls span:nth-child(1) { background: #fb7185; }
+    .window-controls span:nth-child(2) { background: #facc15; }
+    .window-controls span:nth-child(3) { background: #4ade80; }
+
+    .tab-strip {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .tab {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      max-width: 100%;
+      padding: 10px 14px;
+      border: 1px solid rgba(125, 211, 252, 0.12);
+      border-radius: 14px 14px 0 0;
+      background: linear-gradient(180deg, rgba(29, 78, 216, 0.25), rgba(15, 23, 42, 0.92));
+      color: #dce8ff;
+      font-size: 0.95rem;
+    }
+
+    .tab svg {
+      flex: none;
+    }
+
+    .tab-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .panel-body {
+      padding: 0;
+    }
+
+    .editor-grid {
+      display: grid;
+      grid-template-columns: 56px minmax(0, 1fr);
+      align-items: start;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.95rem;
+      line-height: 1.8;
+    }
+
+    .line-numbers {
+      margin: 0;
+      padding: 18px 0 18px 18px;
+      list-style: none;
+      color: var(--line);
+      text-align: right;
+      user-select: none;
+      background: rgba(8, 12, 22, 0.5);
+      border-right: 1px solid rgba(148, 163, 184, 0.08);
+    }
+
+    .line-numbers li {
+      padding-right: 12px;
+    }
+
+    pre {
+      margin: 0;
+      padding: 18px 20px 18px 18px;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    code {
+      color: #dbeafe;
+    }
+
+    .kw { color: var(--keyword); }
+    .str { color: var(--string); }
+    .com { color: var(--comment); font-style: italic; }
+    .num { color: var(--number); }
+    .fn { color: var(--function); }
+    .cls { color: var(--class); }
+    .op { color: #89ddff; }
+    .id { color: #e5eefc; }
+
+    .terminal {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      min-height: 100%;
+      background:
+        linear-gradient(180deg, rgba(8, 16, 14, 0.96), rgba(6, 18, 14, 0.98)),
+        radial-gradient(circle at top, rgba(52, 211, 153, 0.08), transparent 35%);
+    }
+
+    .terminal .panel-header {
+      background: rgba(7, 15, 14, 0.96);
+    }
+
+    .terminal-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #b8f7d0;
+      font-size: 0.9rem;
+    }
+
+    .terminal-status::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 12px rgba(110, 231, 183, 0.9);
+    }
+
+    .terminal-body {
+      padding: 18px 20px 12px;
+      font-family: Consolas, "Courier New", monospace;
+      color: var(--terminal-line);
+      min-height: 420px;
+    }
+
+    .terminal-body p {
+      margin: 0 0 8px;
+      white-space: pre-wrap;
+    }
+
+    .prompt {
+      color: #86efac;
+    }
+
+    .command {
+      color: #fef08a;
+    }
+
+    .output {
+      color: #d1fae5;
+    }
+
+    .error {
+      color: #fda4af;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 10px;
+      height: 1.1em;
+      margin-left: 3px;
+      transform: translateY(3px);
+      background: #dcfce7;
+      animation: blink 1s step-end infinite;
+    }
+
+    .terminal-footer {
+      padding: 14px 20px 18px;
+      border-top: 1px solid rgba(148, 163, 184, 0.08);
+      color: #86a996;
+      font-size: 0.92rem;
+    }
+
+    .notes {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .note {
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      background: rgba(15, 23, 42, 0.64);
+      box-shadow: var(--shadow);
+    }
+
+    .note h2 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+    }
+
+    .note p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    @media (max-width: 980px) {
+      .showcase,
+      .notes {
+        grid-template-columns: 1fr;
+      }
+
+      .terminal-body {
+        min-height: 340px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: min(100% - 20px, 1180px);
+        padding-top: 26px;
+      }
+
+      .panel-header {
+        flex-wrap: wrap;
+      }
+
+      .editor-grid {
+        grid-template-columns: 46px minmax(0, 1fr);
+        font-size: 0.86rem;
+      }
+
+      .hero p {
+        font-size: 0.98rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="eyebrow">Python 練習作品展示頁</div>
+      <h1>質數判斷程式<br>展示介面</h1>
+      <p>
+        這是一個由AI生成的純前端製作展示頁。
+      </p>
+
+
+    <section class="showcase">
+      <article class="panel">
+        <div class="panel-header">
+          <div class="window-controls" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <div class="tab-strip">
+            <div class="tab" aria-label="0.py">
+              <svg width="16" height="16" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                <path d="M15.3 4c-4.1 0-3.8 1.8-3.8 1.8v1.8h3.9v.5H10c-3.9 0-7.3 2.3-8.4 6.7-1.3 5.1 0 8.3 0 8.3s1.5 3.7 5.5 3.7h1.8V24s-.1-3.7 3.7-3.7h6.2c3.4 0 6.1-2.8 6.1-6.1V8.1c0-3.5-3-6.1-6.5-6.1h-3.1Zm-2.2 2.3a1.4 1.4 0 1 1 0 2.8 1.4 1.4 0 0 1 0-2.8Z" fill="#3776AB"/>
+                <path d="M16.7 28c4.1 0 3.8-1.8 3.8-1.8v-1.8h-3.9v-.5H22c3.9 0 7.3-2.3 8.4-6.7 1.3-5.1 0-8.3 0-8.3s-1.5-3.7-5.5-3.7h-1.8V8s.1 3.7-3.7 3.7h-6.2c-3.4 0-6.1 2.8-6.1 6.1v6.1c0 3.5 3 6.1 6.5 6.1h3.1Zm2.2-2.3a1.4 1.4 0 1 1 0-2.8 1.4 1.4 0 0 1 0 2.8Z" fill="#FFD43B"/>
+              </svg>
+              <span class="tab-label">質數判斷.py</span>
+            </div>
+          </div>
+        </div>
+        <div class="panel-body">
+          <div class="editor-grid">
+            <ol class="line-numbers">
+              <li>1</li>
+              <li>2</li>
+              <li>3</li>
+              <li>4</li>
+              <li>5</li>
+              <li>6</li>
+              <li>7</li>
+              <li>8</li>
+              <li>9</li>
+              <li>10</li>
+              <li>11</li>
+              <li>12</li>
+              <li>13</li>
+              <li>14</li>
+              <li>15</li>
+              <li>16</li>
+              <li>17</li>
+              <li>18</li>
+              <li>19</li>
+              <li>20</li>
+              <li>21</li>
+              <li>22</li>
+              <li>23</li>
+              <li>24</li>
+              <li>25</li>
+              <li>26</li>
+              <li>27</li>
+              <li>28</li>
+              <li>29</li>
+              <li>30</li>
+              <li>31</li>
+              <li>32</li>
+              <li>33</li>
+              <li>34</li>
+              <li>35</li>
+              <li>36</li>
+              <li>37</li>
+              <li>38</li>
+              <li>39</li>
+            </ol>
+            <pre><code><span class="kw">import</span> <span class="id">math</span>
+
+<span class="fn">print</span>(<span class="str">"質數判斷\n輸入0結束"</span>)
+
+<span class="kw">while</span> <span class="kw">True</span>:
+    <span class="com"># 詢問</span>
+    <span class="id">user_input</span> <span class="op">=</span> <span class="fn">input</span>(<span class="str">"\n你要問的數: "</span>)
+    <span class="com"># 退出</span>
+    <span class="kw">if</span> <span class="id">user_input</span> <span class="op">==</span> <span class="str">'0'</span>:
+        <span class="fn">print</span>(<span class="str">"\n行"</span>)
+        <span class="kw">break</span>
+    <span class="kw">try</span>:
+        <span class="id">num</span> <span class="op">=</span> <span class="cls">int</span>(<span class="id">user_input</span>)
+    <span class="kw">except</span> <span class="cls">ValueError</span>:
+        <span class="fn">print</span>(<span class="str">"非整數"</span>)
+        <span class="kw">continue</span>
+    <span class="com"># 判斷小2等2大2</span>
+    <span class="kw">if</span> <span class="id">num</span> <span class="op">&lt;</span> <span class="num">2</span>:
+        <span class="fn">print</span>(<span class="str">f"{num} 不是"</span>)
+    <span class="kw">elif</span> <span class="id">num</span> <span class="op">==</span> <span class="num">2</span>:
+        <span class="fn">print</span>(<span class="str">f"{num} 是"</span>)
+    <span class="kw">elif</span> <span class="id">num</span> <span class="op">%</span> <span class="num">2</span> <span class="op">==</span> <span class="num">0</span>:  <span class="com"># 整除</span>
+        <span class="fn">print</span>(<span class="str">f"{num} 不是"</span>)
+    <span class="kw">else</span>:
+        <span class="com"># 平方轉整</span>
+        <span class="id">limit</span> <span class="op">=</span> <span class="cls">int</span>(<span class="id">math</span>.<span class="fn">sqrt</span>(<span class="id">num</span>))
+        <span class="com"># 預設是質數</span>
+        <span class="id">is_prime</span> <span class="op">=</span> <span class="kw">True</span>
+        <span class="com"># 迴圈</span>
+        <span class="kw">for</span> <span class="id">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num">3</span>, <span class="id">limit</span> <span class="op">+</span> <span class="num">1</span>, <span class="num">2</span>):
+            <span class="com"># 可以整除</span>
+            <span class="kw">if</span> <span class="id">num</span> <span class="op">%</span> <span class="id">i</span> <span class="op">==</span> <span class="num">0</span>:
+                <span class="id">is_prime</span> <span class="op">=</span> <span class="kw">False</span>
+                <span class="kw">break</span> <span class="com"># 停止迴圈</span>
+        <span class="com"># 輸出</span>
+        <span class="kw">if</span> <span class="id">is_prime</span>:
+            <span class="fn">print</span>(<span class="str">f"{num} 是"</span>)
+        <span class="kw">else</span>:
+            <span class="fn">print</span>(<span class="str">f"{num} 不"</span>)</code></pre>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel terminal">
+        <div class="panel-header">
+          <div class="window-controls" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+        <div class="terminal-body" id="terminal"></div>
+        <div class="terminal-footer">
+          模擬 Python 執行流程，會自動播放幾組輸入輸出結果。
+        </div>
+      </article>
+    </section>
+
+
+  </main>
+
+  <script>
+    const frames = [
+      { type: "command", text: "python 質數判斷.py" },
+      { type: "output", text: "質數判斷" },
+      { type: "output", text: "輸入0結束" },
+      { type: "command", text: "你要問的數: 7" },
+      { type: "output", text: "7 是" },
+      { type: "command", text: "你要問的數: 8" },
+      { type: "output", text: "8 不是" },
+      { type: "command", text: "你要問的數: abc" },
+      { type: "error", text: "非整數" },
+      { type: "command", text: "你要問的數: 13" },
+      { type: "output", text: "13 是" },
+      { type: "command", text: "你要問的數: 0" },
+      { type: "output", text: "行" }
+    ];
+
+    const terminal = document.getElementById("terminal");
+
+    function createLine(type, text) {
+      const line = document.createElement("p");
+
+      if (type === "command") {
+        line.innerHTML = '<span class="prompt">PS C:\\Users\\判斷質數&gt;</span> <span class="command"></span><span class="cursor"></span>';
+        terminal.appendChild(line);
+        typeText(line.querySelector(".command"), text, line.querySelector(".cursor"));
+        return;
+      }
+
+      line.className = type;
+      line.textContent = text;
+      terminal.appendChild(line);
+    }
+
+    function typeText(target, text, cursor) {
+      let index = 0;
+      const timer = setInterval(() => {
+        target.textContent += text[index];
+        index += 1;
+        terminal.scrollTop = terminal.scrollHeight;
+
+        if (index >= text.length) {
+          clearInterval(timer);
+          if (cursor) cursor.remove();
+        }
+      }, 100);
+    }
+
+    function playDemo() {
+      terminal.innerHTML = "";
+      let delay = 400;
+
+      frames.forEach((frame) => {
+        setTimeout(() => {
+          createLine(frame.type, frame.text);
+          terminal.scrollTop = terminal.scrollHeight;
+        }, delay);
+
+        delay += frame.type === "command" ? frame.text.length * 100 + 420 : 650;
+      });
+
+      setTimeout(playDemo, delay + 3000);
+    }
+
+    playDemo();
+  </script>
+</body>
+</html>
