@@ -1,120 +1,210 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>T</title>
-    <!-- 引入 Font Awesome 6.5.1 -->
+    <title>Threads 連結淨化</title>
+    <!-- 引入 Noto Serif TC 與 Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
-            user-select: none;
         }
 
         body {
             background-color: #F7F4EE;
             background-image: radial-gradient(circle at 50% 50%, #FAF8F5 0%, #F1ECE1 100%);
             margin: 0;
-            padding: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            min-height: 100vh;
+            font-family: 'Noto Serif TC', serif;
+            color: #4A453B;
         }
 
-        /* 毛玻璃極簡面板 */
+        /* 毛玻璃主要卡片 */
         .glass-card {
-            background: rgba(255, 255, 255, 0.55);
+            background: rgba(255, 255, 255, 0.65);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
             border: 1px solid rgba(255, 255, 255, 0.8);
-            border-radius: 36px;
-            padding: 28px 36px;
-            box-shadow:
-                0 16px 32px -8px rgba(180, 170, 150, 0.18),
-                0 4px 12px rgba(0, 0, 0, 0.02);
+            border-radius: 32px;
+            padding: 28px 24px;
+            box-shadow: 0 16px 32px -8px rgba(180, 170, 150, 0.18);
+            width: 100%;
+            max-width: 380px;
             display: flex;
-            gap: 28px;
-            align-items: center;
+            flex-direction: column;
+            gap: 20px;
         }
 
-        /* 圖標按鈕基底 */
-        .icon-btn {
-            text-decoration: none;
-            width: 76px;
-            height: 76px;
-            border-radius: 24px;
+        /* 手動貼上按鈕 */
+        .paste-btn {
+            background: #7A7060;
+            color: #F7F4EE;
+            border: none;
+            border-radius: 18px;
+            padding: 14px;
+            font-family: 'Noto Serif TC', serif;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 38px;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(122, 112, 96, 0.2);
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .paste-btn:active {
+            transform: scale(0.96);
+            background: #655C4F;
+        }
+
+        /* Terminal 終端機控制台 */
+        .terminal {
+            background: #2B2823;
+            color: #DCD3C5;
+            border-radius: 18px;
+            padding: 16px;
+            font-family: monospace;
+            font-size: 0.82rem;
+            line-height: 1.6;
+            min-height: 120px;
+            max-height: 160px;
+            overflow-y: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        .terminal-line {
+            margin: 0;
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            animation: fadeIn 0.3s forwards;
+        }
+
+        .terminal-line .prompt {
+            color: #8C8273;
+        }
+
+        .terminal-line .success {
+            color: #62C584;
+        }
+
+        .terminal-line .error {
+            color: #E86C6C;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* LINE 與 Telegram 按鈕區塊 */
+        .action-group {
+            display: flex;
+            justify-content: space-around;
+            gap: 16px;
+            padding-top: 4px;
+        }
+
+        .icon-btn {
+            text-decoration: none;
+            width: 68px;
+            height: 68px;
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
             transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
         }
 
-        /* LINE 按鈕風格 */
         .btn-line {
-            background: rgba(6, 199, 85, 0.08);
+            background: rgba(6, 199, 85, 0.1);
             color: #06C755;
-            border: 1px solid rgba(6, 199, 85, 0.15);
+            border: 1px solid rgba(6, 199, 85, 0.2);
         }
 
-        /* Telegram 按鈕風格 */
         .btn-tg {
-            background: rgba(42, 171, 238, 0.08);
+            background: rgba(42, 171, 238, 0.1);
             color: #2AABEE;
-            border: 1px solid rgba(42, 171, 238, 0.15);
+            border: 1px solid rgba(42, 171, 238, 0.2);
         }
 
-        /* 觸控與點擊時的彈簧軟回彈動畫 */
         .icon-btn:active {
             transform: scale(0.88);
-            opacity: 0.85;
         }
 
-        .btn-line:active {
-            background: rgba(6, 199, 85, 0.18);
-        }
-
-        .btn-tg:active {
-            background: rgba(42, 171, 238, 0.18);
-        }
+        .btn-line:active { background: rgba(6, 199, 85, 0.25); }
+        .btn-tg:active { background: rgba(42, 171, 238, 0.25); }
     </style>
 </head>
-
 <body>
 
     <div class="glass-card">
-        <!-- LINE 圖標按鈕 -->
-        <a id="line-btn" href="#" class="icon-btn btn-line" aria-label="LINE">
-            <i class="fa-brands fa-line"></i>
-        </a>
+        <!-- 點擊手動貼上並讀取權限 -->
+        <button id="paste-btn" class="paste-btn">
+            <i class="fa-solid fa-paste"></i> 讀取剪貼簿並淨化
+        </button>
 
-        <!-- Telegram 圖標按鈕 -->
-        <a id="tg-btn" href="#" class="icon-btn btn-tg" aria-label="Telegram">
-            <i class="fa-brands fa-telegram"></i>
-        </a>
+        <!-- Terminal 狀態顯示區域 -->
+        <div class="terminal" id="terminal">
+            <div class="terminal-line"><span class="prompt">$</span> 等待讀取連結...</div>
+        </div>
+
+        <!-- 跳轉圖標 -->
+        <div class="action-group">
+            <a id="line-btn" href="#" class="icon-btn btn-line" aria-label="LINE">
+                <i class="fa-brands fa-line"></i>
+            </a>
+            <a id="tg-btn" href="#" class="icon-btn btn-tg" aria-label="Telegram">
+                <i class="fa-brands fa-telegram"></i>
+            </a>
+        </div>
     </div>
 
     <script>
-        async function processSharedUrl() {
-            const params = new URLSearchParams(window.location.search);
-            const sharedUrl = params.get('url') || '';
+        const terminal = document.getElementById('terminal');
 
-            if (!sharedUrl) return;
+        function printLog(msg, type = 'info') {
+            const line = document.createElement('p');
+            line.className = 'terminal-line';
+            
+            let colorClass = '';
+            if (type === 'success') colorClass = 'class="success"';
+            if (type === 'error') colorClass = 'class="error"';
+
+            line.innerHTML = `<span class="prompt">$</span> <span ${colorClass}>${msg}</span>`;
+            terminal.appendChild(line);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        async function processUrl(sharedUrl) {
+            if (!sharedUrl) {
+                printLog('未偵測到有效網址！', 'error');
+                return;
+            }
+
+            printLog(`已讀取網址: ${sharedUrl.substring(0, 28)}...`);
 
             let cleanUrl = sharedUrl;
             try {
+                // 還原短網址處理
                 if (sharedUrl.includes('/share/')) {
+                    printLog('正在還原 Threads 短網址...');
                     const response = await fetch(sharedUrl, { method: 'HEAD', redirect: 'follow' });
                     cleanUrl = response.url || sharedUrl;
                 }
 
+                // 移除問號後方的追蹤碼
+                printLog('正在移除追蹤碼...');
                 const urlObj = new URL(cleanUrl);
                 cleanUrl = `${urlObj.origin}${urlObj.pathname}`;
             } catch (err) {
@@ -122,21 +212,42 @@
                 if (queryIndex !== -1) cleanUrl = cleanUrl.substring(0, queryIndex);
             }
 
-            // 自動複製乾淨連結
-            await navigator.clipboard.writeText(cleanUrl);
+            // 寫回剪貼簿
+            try {
+                await navigator.clipboard.writeText(cleanUrl);
+                printLog('已自動將淨化網址複製至剪貼簿！', 'success');
+            } catch (e) {
+                printLog('複製失敗，請手動複製', 'error');
+            }
 
-            // 更新目標點擊連結
+            // 設定連結
             const encodedUrl = encodeURIComponent(cleanUrl);
-
-            // LINE：使用 official LINE Scheme 喚起
             document.getElementById('line-btn').href = `https://line.me/R/msg/text/?${encodedUrl}`;
-
-            // Telegram：改用 tg:// 原生协议，跳過 t.me 網頁直接喚起 Telegram App
             document.getElementById('tg-btn').href = `tg://msg_url?url=${encodedUrl}`;
+            
+            printLog('準備完成，點擊下方圖標即可傳送！', 'success');
         }
 
-        processSharedUrl();
+        // 手動點擊貼上
+        document.getElementById('paste-btn').addEventListener('click', async () => {
+            try {
+                const text = await navigator.clipboard.readText();
+                printLog('成功取得剪貼簿權限', 'success');
+                processUrl(text);
+            } catch (err) {
+                printLog('未能取得剪貼簿存取權限', 'error');
+            }
+        });
+
+        // 頁面載入時檢查是否有外部 Share Target 自動傳遞的參數
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const sharedUrl = params.get('url') || params.get('text') || '';
+            if (sharedUrl) {
+                printLog('接收到外部 App 分享內容', 'success');
+                processUrl(sharedUrl);
+            }
+        });
     </script>
 </body>
-
 </html>
