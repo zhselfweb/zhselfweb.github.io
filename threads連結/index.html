@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -75,15 +76,16 @@
             font-family: monospace;
             font-size: 0.82rem;
             line-height: 1.6;
-            min-height: 120px;
-            max-height: 160px;
+            min-height: 130px;
+            max-height: 180px;
             overflow-y: auto;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.3);
+            word-break: break-all;
         }
 
         .terminal-line {
-            margin: 0;
+            margin: 0 0 6px 0;
             display: flex;
             gap: 8px;
             opacity: 0;
@@ -92,6 +94,7 @@
 
         .terminal-line .prompt {
             color: #8C8273;
+            flex-shrink: 0;
         }
 
         .terminal-line .success {
@@ -103,7 +106,9 @@
         }
 
         @keyframes fadeIn {
-            to { opacity: 1; }
+            to {
+                opacity: 1;
+            }
         }
 
         /* LINE 與 Telegram 按鈕區塊 */
@@ -142,24 +147,27 @@
             transform: scale(0.88);
         }
 
-        .btn-line:active { background: rgba(6, 199, 85, 0.25); }
-        .btn-tg:active { background: rgba(42, 171, 238, 0.25); }
+        .btn-line:active {
+            background: rgba(6, 199, 85, 0.25);
+        }
+
+        .btn-tg:active {
+            background: rgba(42, 171, 238, 0.25);
+        }
     </style>
 </head>
+
 <body>
 
     <div class="glass-card">
-        <!-- 點擊手動貼上並讀取權限 -->
         <button id="paste-btn" class="paste-btn">
             <i class="fa-solid fa-paste"></i> 讀取剪貼簿並淨化
         </button>
 
-        <!-- Terminal 狀態顯示區域 -->
         <div class="terminal" id="terminal">
             <div class="terminal-line"><span class="prompt">$</span> 等待讀取連結...</div>
         </div>
 
-        <!-- 跳轉圖標 -->
         <div class="action-group">
             <a id="line-btn" href="#" class="icon-btn btn-line" aria-label="LINE">
                 <i class="fa-brands fa-line"></i>
@@ -174,9 +182,9 @@
         const terminal = document.getElementById('terminal');
 
         function printLog(msg, type = 'info') {
-            const line = document.createElement('p');
+            const line = document.createElement('div');
             line.className = 'terminal-line';
-            
+
             let colorClass = '';
             if (type === 'success') colorClass = 'class="success"';
             if (type === 'error') colorClass = 'class="error"';
@@ -186,68 +194,88 @@
             terminal.scrollTop = terminal.scrollHeight;
         }
 
+        // 解析並還原短網址的核心函式
+        async function expandShortUrl(shortUrl) {
+            printLog('正在透過 Cloudflare Worker 解析短網址...');
+            try {
+                // 帶入主人的專屬 Worker 網址
+                const workerUrl = `https://threads-unshorten.b25553336.workers.dev/?url=${encodeURIComponent(shortUrl)}`;
+                const response = await fetch(workerUrl);
+                const data = await response.json();
+
+                if (data && data.finalUrl) {
+                    return data.finalUrl;
+                }
+            } catch (e) {
+                printLog('解析短網址失敗，嘗試直接清理...', 'error');
+            }
+            return shortUrl;
+        }
         async function processUrl(sharedUrl) {
             if (!sharedUrl) {
                 printLog('未偵測到有效網址！', 'error');
                 return;
             }
 
-            printLog(`已讀取網址: ${sharedUrl.substring(0, 28)}...`);
+            printLog(`已讀取原始連結: ${sharedUrl}`);
 
-            let cleanUrl = sharedUrl;
+            let targetUrl = sharedUrl;
+
+            // 1. 如果是短網址，進行還原
+            if (sharedUrl.includes('/share/')) {
+                targetUrl = await expandShortUrl(sharedUrl);
+                printLog(`還原後完整網址: ${targetUrl}`);
+            }
+
+            // 2. 切除問號及後方的所有追蹤碼
+            let cleanUrl = targetUrl;
             try {
-                // 還原短網址處理
-                if (sharedUrl.includes('/share/')) {
-                    printLog('正在還原 Threads 短網址...');
-                    const response = await fetch(sharedUrl, { method: 'HEAD', redirect: 'follow' });
-                    cleanUrl = response.url || sharedUrl;
-                }
-
-                // 移除問號後方的追蹤碼
-                printLog('正在移除追蹤碼...');
-                const urlObj = new URL(cleanUrl);
+                const urlObj = new URL(targetUrl);
                 cleanUrl = `${urlObj.origin}${urlObj.pathname}`;
             } catch (err) {
                 const queryIndex = cleanUrl.indexOf('?');
-                if (queryIndex !== -1) cleanUrl = cleanUrl.substring(0, queryIndex);
+                if (queryIndex !== -1) {
+                    cleanUrl = cleanUrl.substring(0, queryIndex);
+                }
             }
 
-            // 寫回剪貼簿
+            printLog(`淨化後網址: ${cleanUrl}`, 'success');
+
+            // 3. 寫回剪貼簿
             try {
                 await navigator.clipboard.writeText(cleanUrl);
-                printLog('已自動將淨化網址複製至剪貼簿！', 'success');
+                printLog('已複製乾淨網址至剪貼簿！', 'success');
             } catch (e) {
-                printLog('複製失敗，請手動複製', 'error');
+                printLog('複製失敗，請檢查權限', 'error');
             }
 
-            // 設定連結
+            // 4. 設定跳轉按鈕
             const encodedUrl = encodeURIComponent(cleanUrl);
             document.getElementById('line-btn').href = `https://line.me/R/msg/text/?${encodedUrl}`;
             document.getElementById('tg-btn').href = `tg://msg_url?url=${encodedUrl}`;
-            
-            printLog('準備完成，點擊下方圖標即可傳送！', 'success');
+
+            printLog('處理完畢，請點擊下方圖標！', 'success');
         }
 
-        // 手動點擊貼上
+        // 手動貼上按鈕點擊
         document.getElementById('paste-btn').addEventListener('click', async () => {
             try {
                 const text = await navigator.clipboard.readText();
-                printLog('成功取得剪貼簿權限', 'success');
                 processUrl(text);
             } catch (err) {
-                printLog('未能取得剪貼簿存取權限', 'error');
+                printLog('未能取得剪貼簿讀取權限', 'error');
             }
         });
 
-        // 頁面載入時檢查是否有外部 Share Target 自動傳遞的參數
+        // 自動接收 Share Target 參數
         window.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(window.location.search);
             const sharedUrl = params.get('url') || params.get('text') || '';
             if (sharedUrl) {
-                printLog('接收到外部 App 分享內容', 'success');
                 processUrl(sharedUrl);
             }
         });
     </script>
 </body>
+
 </html>
