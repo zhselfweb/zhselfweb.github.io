@@ -166,7 +166,7 @@
 
     <div class="glass-card">
         <button id="paste-btn" class="paste-btn">
-            <i class="fa-solid fa-paste"></i> 讀取剪貼簿並淨化
+            <i class="fa-solid fa-paste"></i>
         </button>
 
         <div class="terminal" id="terminal">
@@ -201,9 +201,9 @@
 
         // 解析並還原短網址的核心函式
         async function expandShortUrl(shortUrl) {
-            printLog('正在透過 Cloudflare Worker 解析短網址...');
+            printLog('正在解析...');
             try {
-                // 帶入主人的專屬 Worker 網址
+                // 帶入 Worker 網址
                 const workerUrl = `https://threads-unshorten.b25553336.workers.dev/?url=${encodeURIComponent(shortUrl)}`;
                 const response = await fetch(workerUrl);
                 const data = await response.json();
@@ -244,12 +244,12 @@
                 }
             }
 
-            printLog(`淨化後網址: ${cleanUrl}`, 'success');
+            printLog(`處理後網址: ${cleanUrl}`, 'success');
 
             // 3. 寫回剪貼簿
             try {
                 await navigator.clipboard.writeText(cleanUrl);
-                printLog('已複製乾淨網址至剪貼簿！', 'success');
+                printLog('已自動複製', 'success');
             } catch (e) {
                 printLog('複製失敗，請檢查權限', 'error');
             }
