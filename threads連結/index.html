@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>T</title>
+    <!-- 引入 Font Awesome 6.5.1 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            background-color: #F7F4EE;
+            background-image: radial-gradient(circle at 50% 50%, #FAF8F5 0%, #F1ECE1 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        /* 毛玻璃極簡面板 */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 36px;
+            padding: 28px 36px;
+            box-shadow:
+                0 16px 32px -8px rgba(180, 170, 150, 0.18),
+                0 4px 12px rgba(0, 0, 0, 0.02);
+            display: flex;
+            gap: 28px;
+            align-items: center;
+        }
+
+        /* 圖標按鈕基底 */
+        .icon-btn {
+            text-decoration: none;
+            width: 76px;
+            height: 76px;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 38px;
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+
+        /* LINE 按鈕風格 */
+        .btn-line {
+            background: rgba(6, 199, 85, 0.08);
+            color: #06C755;
+            border: 1px solid rgba(6, 199, 85, 0.15);
+        }
+
+        /* Telegram 按鈕風格 */
+        .btn-tg {
+            background: rgba(42, 171, 238, 0.08);
+            color: #2AABEE;
+            border: 1px solid rgba(42, 171, 238, 0.15);
+        }
+
+        /* 觸控與點擊時的彈簧軟回彈動畫 */
+        .icon-btn:active {
+            transform: scale(0.88);
+            opacity: 0.85;
+        }
+
+        .btn-line:active {
+            background: rgba(6, 199, 85, 0.18);
+        }
+
+        .btn-tg:active {
+            background: rgba(42, 171, 238, 0.18);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="glass-card">
+        <!-- LINE 圖標按鈕 -->
+        <a id="line-btn" href="#" class="icon-btn btn-line" aria-label="LINE">
+            <i class="fa-brands fa-line"></i>
+        </a>
+
+        <!-- Telegram 圖標按鈕 -->
+        <a id="tg-btn" href="#" class="icon-btn btn-tg" aria-label="Telegram">
+            <i class="fa-brands fa-telegram"></i>
+        </a>
+    </div>
+
+    <script>
+        async function processSharedUrl() {
+            const params = new URLSearchParams(window.location.search);
+            const sharedUrl = params.get('url') || '';
+
+            if (!sharedUrl) return;
+
+            let cleanUrl = sharedUrl;
+            try {
+                if (sharedUrl.includes('/share/')) {
+                    const response = await fetch(sharedUrl, { method: 'HEAD', redirect: 'follow' });
+                    cleanUrl = response.url || sharedUrl;
+                }
+
+                const urlObj = new URL(cleanUrl);
+                cleanUrl = `${urlObj.origin}${urlObj.pathname}`;
+            } catch (err) {
+                const queryIndex = cleanUrl.indexOf('?');
+                if (queryIndex !== -1) cleanUrl = cleanUrl.substring(0, queryIndex);
+            }
+
+            // 自動複製乾淨連結
+            await navigator.clipboard.writeText(cleanUrl);
+
+            // 更新目標點擊連結
+            const encodedUrl = encodeURIComponent(cleanUrl);
+
+            // LINE：使用 official LINE Scheme 喚起
+            document.getElementById('line-btn').href = `https://line.me/R/msg/text/?${encodedUrl}`;
+
+            // Telegram：改用 tg:// 原生协议，跳過 t.me 網頁直接喚起 Telegram App
+            document.getElementById('tg-btn').href = `tg://msg_url?url=${encodedUrl}`;
+        }
+
+        processSharedUrl();
+    </script>
+</body>
+
+</html>
