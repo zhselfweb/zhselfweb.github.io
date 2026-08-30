@@ -1,374 +1,517 @@
-// 主要元素引用
+// 主要 DOM 元素引用
 const container = document.getElementById('container');
+const dropZone = document.getElementById('drop-zone');
 const previewList = document.getElementById('preview-list');
 const offsetControl = document.getElementById('offset-control');
 const offsetValue = document.getElementById('offset-value');
 const downloadBtn = document.getElementById('download-btn');
+const clearBtn = document.getElementById('clear-btn');
 const fileInput = document.getElementById('file-input');
+const layerCount = document.getElementById('layer-count');
 
-// 全局状态
+// 全域狀態
 let images = [];
 let currentOffset = 0;
 
-// 初始化应用
+// 初始化應用
 function initApp() {
-    console.log('初始化应用...');
+    console.log('正在初始化疊圖工具...');
     
-    // 初始化排序功能
+    // 初始化 Sortable 拖曳排序
     Sortable.create(previewList, {
-        animation: 150,
+        animation: 180,
         handle: '.layer-handle',
-        onStart: function(evt) {
-            console.log('开始拖拽:', evt.oldIndex);
-        },
-        onEnd: function(evt) {
-            console.log('结束拖拽, 从', evt.oldIndex, '到', evt.newIndex);
+        ghostClass: 'sortable-ghost',
+        chosenClass: 'sortable-chosen',
+        onEnd: function() {
             updateLayersOrder();
         }
     });
 
-    // 绑定事件监听器
-    fileInput.addEventListener('change', handleFileUpload);
+    // 綁定檔案上傳與拖放事件
+    fileInput.addEventListener('change', handleFileInputChange);
+    setupDragAndDrop();
+
+    // 綁定控制項事件
     offsetControl.addEventListener('input', handleOffsetChange);
     downloadBtn.addEventListener('click', handleDownload);
+    if (clearBtn) {
+        clearBtn.addEventListener('click', handleClearAll);
+    }
     
-    // 初始显示滑块值
+    // 監聽視窗縮放
+    window.addEventListener('resize', debounce(handleResize, 150));
+
+    // 初始介面更新
     updateOffsetDisplay();
-    console.log('应用初始化完成');
+    updateUIState();
+    console.log('疊圖工具初始化完成');
 }
 
-// 文件上传处理
-function handleFileUpload(e) {
-    const files = Array.from(e.target.files);
-    if (!files.length) return;
-    
-    // 处理每个文件
-    files.forEach((file, index) => {
-        // 验证是否为图片
-        if (!file.type.startsWith('image/')) {
-            console.warn('跳过非图片文件:', file.name);
-            return;
-        }
+// 設置拖曳上傳
+function setupDragAndDrop() {
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        container.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+    });
 
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            createImageLayer(event.target.result, Date.now() + index);
-        };
-        reader.onerror = () => {
-            console.error('读取文件失败:', file.name);
-        };
-        reader.readAsDataURL(file);
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    container.addEventListener('dragover', () => {
+        container.classList.add('drag-over');
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        container.addEventListener(eventName, () => {
+            container.classList.remove('drag-over');
+        });
+    });
+
+    container.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        const files = dt ? Array.from(dt.files) : [];
+        if (files.length > 0) {
+            processFiles(files);
+        }
     });
 }
 
-// 创建图层 - 添加可见性控制
-function createImageLayer(src, id) {
-    const img = new Image();
-    img.src = src;
-    img.className = 'draggable-img';
+// 檔案選擇變更
+function handleFileInputChange(e) {
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+        processFiles(files);
+    }
+    // 重置 input 值，確保再次選擇相同檔案時也能正常觸發 change
+    fileInput.value = '';
+}
+
+// 批次處理上傳檔案
+function processFiles(files) {
+    const imageFiles = files.filter(file => file.type.startsWith('image/'));
     
-    // 确保 ID 是字符串类型
-    const layerId = String(id);
-    img.dataset.id = layerId;
+    if (imageFiles.length === 0) {
+        alert('請選擇有效的圖片檔案 (PNG, JPG, WebP 等)');
+        return;
+    }
+
+    imageFiles.forEach((file, index) => {
+        const objectUrl = URL.createObjectURL(file);
+        const layerId = 'layer_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+        createImageLayer(file, objectUrl, layerId);
+    });
+}
+
+// 建立圖層物件與介面項目
+function createImageLayer(file, objectUrl, id) {
+    const img = new Image();
+    img.src = objectUrl;
+    img.className = 'draggable-img';
+    img.dataset.id = id;
 
     img.onload = () => {
-        // 创建图层项目，添加可见性控制按钮
+        // 建立列表項目
         const listItem = document.createElement('li');
         listItem.className = 'layer-item';
+        listItem.dataset.id = id;
+
         listItem.innerHTML = `
-            <div class="layer-handle"></div>
-            <span>圖層 ${images.length + 1}</span>
-            <button class="visibility-toggle" aria-label="切換可見性">👁️</button>
+            <div class="layer-handle" title="按住拖曳調整順序">☰</div>
+            <img class="layer-thumb" src="${objectUrl}" alt="圖層預覽">
+            <div class="layer-info">
+                <span class="layer-title">圖層</span>
+                <span class="layer-sub" title="${file.name}">${file.name} (${img.naturalWidth}×${img.naturalHeight})</span>
+            </div>
+            <div class="layer-actions">
+                <button class="icon-btn visibility-toggle" title="顯示/隱藏圖層" aria-label="切換可見性">👁️</button>
+                <button class="icon-btn delete-btn" title="刪除此圖層" aria-label="刪除圖層">🗑️</button>
+            </div>
         `;
-        listItem.dataset.id = layerId;
-        
-        // 为可见性按钮添加事件
+
+        // 綁定可見性按鈕
         const visibilityBtn = listItem.querySelector('.visibility-toggle');
         visibilityBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // 防止事件冒泡
-            toggleLayerVisibility(layerId);
+            e.stopPropagation();
+            toggleLayerVisibility(id);
         });
-        
+
+        // 綁定刪除按鈕
+        const deleteBtn = listItem.querySelector('.delete-btn');
+        deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            deleteLayer(id);
+        });
+
         previewList.appendChild(listItem);
 
-        // 存储图片信息，确保 ID 保持一致
+        // 加入圖層陣列
         images.push({
-            id: layerId, // 存储为字符串
+            id: id,
+            file: file,
+            objectUrl: objectUrl,
             element: img,
             originalWidth: img.naturalWidth,
             originalHeight: img.naturalHeight,
-            visible: true // 默认可见
+            visible: true
         });
 
         container.appendChild(img);
-        
-        // 更新UI
+
+        // 更新排序與排版
         updateLayersOrder();
     };
-    
+
     img.onerror = () => {
-        console.error('图片加载失败');
+        console.error('圖片載入失敗:', file.name);
+        URL.revokeObjectURL(objectUrl);
     };
 }
 
-// 切换图层可见性
-function toggleLayerVisibility(id) {
-    const imgIndex = images.findIndex(img => img.id === id);
-    if (imgIndex === -1) return;
-    
-    // 切换可见性
-    images[imgIndex].visible = !images[imgIndex].visible;
-    
-    // 更新DOM
-    const img = images[imgIndex].element;
-    img.style.display = images[imgIndex].visible ? 'block' : 'none';
-    
-    // 更新图层列表中的视觉反馈
-    const layerItem = Array.from(previewList.children).find(li => li.dataset.id === id);
-    if (layerItem) {
-        const visibilityBtn = layerItem.querySelector('.visibility-toggle');
-        if (visibilityBtn) {
-            visibilityBtn.textContent = images[imgIndex].visible ? '👁️' : '👁️‍🗨️';
-            visibilityBtn.style.opacity = images[imgIndex].visible ? 1 : 0.5;
-        }
+// 刪除單一圖層
+function deleteLayer(id) {
+    const index = images.findIndex(item => item.id === id);
+    if (index === -1) return;
+
+    const layerData = images[index];
+
+    // 釋放記憶體
+    if (layerData.objectUrl) {
+        URL.revokeObjectURL(layerData.objectUrl);
     }
-    
-    console.log(`图层 ${id} 可见性已切换为: ${images[imgIndex].visible}`);
+
+    // 移除 DOM
+    if (layerData.element && layerData.element.parentNode) {
+        layerData.element.parentNode.removeChild(layerData.element);
+    }
+
+    const listItem = Array.from(previewList.children).find(li => li.dataset.id === id);
+    if (listItem && listItem.parentNode) {
+        listItem.parentNode.removeChild(listItem);
+    }
+
+    // 從陣列中移除
+    images.splice(index, 1);
+
+    // 更新圖層排版與序號
+    updateLayersOrder();
 }
 
-// 偏移量控制
+// 清空所有圖層
+function handleClearAll() {
+    if (images.length === 0) return;
+    
+    if (!confirm('確定要清空所有圖層嗎？')) return;
+
+    // 釋放所有 ObjectURL
+    images.forEach(img => {
+        if (img.objectUrl) {
+            URL.revokeObjectURL(img.objectUrl);
+        }
+        if (img.element && img.element.parentNode) {
+            img.element.parentNode.removeChild(img.element);
+        }
+    });
+
+    images = [];
+    previewList.innerHTML = '';
+    
+    // 重置偏移量
+    currentOffset = 0;
+    offsetControl.value = 0;
+    updateOffsetDisplay();
+    
+    updateLayersOrder();
+}
+
+// 切換圖層可見性
+function toggleLayerVisibility(id) {
+    const imgData = images.find(img => img.id === id);
+    if (!imgData) return;
+
+    imgData.visible = !imgData.visible;
+
+    // 更新 DOM 圖片顯示狀態
+    imgData.element.style.display = imgData.visible ? 'block' : 'none';
+
+    // 更新列表項目樣式
+    const listItem = Array.from(previewList.children).find(li => li.dataset.id === id);
+    if (listItem) {
+        const visibilityBtn = listItem.querySelector('.visibility-toggle');
+        if (visibilityBtn) {
+            visibilityBtn.textContent = imgData.visible ? '👁️' : '🚫';
+            visibilityBtn.title = imgData.visible ? '隱藏圖層' : '顯示圖層';
+        }
+        if (imgData.visible) {
+            listItem.classList.remove('layer-hidden');
+        } else {
+            listItem.classList.add('layer-hidden');
+        }
+    }
+
+    // 重新計算排版
+    applyImageLayout();
+}
+
+// 偏移量滑塊變更
 function handleOffsetChange(e) {
-    currentOffset = parseInt(e.target.value);
+    currentOffset = parseInt(e.target.value, 10) || 0;
     updateOffsetDisplay();
     applyImageLayout();
 }
 
-// 更新偏移量显示
+// 更新偏移量標籤
 function updateOffsetDisplay() {
     offsetValue.textContent = currentOffset;
 }
 
-// 更新图层顺序
+// 更新圖層順序（包含列表重新命名與 DOM 疊加順序）
 function updateLayersOrder() {
-    // 获取新的顺序
-    const newOrder = Array.from(previewList.children)
-        .map(li => li.dataset.id);
-    
-    console.log('排序前:', images.map(img => img.id));
-    console.log('新顺序:', newOrder);
-    
-    // 重要修复：确保类型匹配进行比较
-    // 问题在于 dataset.id 是字符串，而我们可能存储的是数字
+    const newOrderIds = Array.from(previewList.children).map(li => li.dataset.id);
+
+    // 根據列表的新順序重排 images 陣列
     images.sort((a, b) => {
-        const indexA = newOrder.indexOf(String(a.id));
-        const indexB = newOrder.indexOf(String(b.id));
-        return indexA - indexB;
+        const idxA = newOrderIds.indexOf(String(a.id));
+        const idxB = newOrderIds.indexOf(String(b.id));
+        return idxA - idxB;
     });
-    
-    console.log('排序后:', images.map(img => img.id));
-    
-    // 手动更新 DOM 顺序，确保图片在容器中的顺序也被更新
-    container.innerHTML = ''; // 清空容器
-    images.forEach((img, index) => {
-        // 重新添加图片到容器，确保 DOM 中的顺序正确
-        container.appendChild(img.element);
+
+    // 更新列表文字標題（圖層 1 (最上層), 圖層 2, ...）
+    Array.from(previewList.children).forEach((li, idx) => {
+        const titleSpan = li.querySelector('.layer-title');
+        if (titleSpan) {
+            if (idx === 0) {
+                titleSpan.textContent = `圖層 1 (最上層)`;
+            } else if (idx === previewList.children.length - 1) {
+                titleSpan.textContent = `圖層 ${idx + 1} (最底層)`;
+            } else {
+                titleSpan.textContent = `圖層 ${idx + 1}`;
+            }
+        }
     });
-    
-    // 重新应用布局和调整 z-index
+
+    // 重新排序 container 內的 DOM 節點
+    images.forEach(img => {
+        if (img.element.parentNode === container) {
+            container.appendChild(img.element);
+        }
+    });
+
+    // 更新介面狀態（空狀態與數量計數）
+    updateUIState();
+
+    // 重新應用版面排版
     applyImageLayout();
-    
-    console.log('图层顺序已更新:', newOrder);
 }
 
-// 应用布局
+// 更新全域 UI 狀態
+function updateUIState() {
+    if (layerCount) {
+        layerCount.textContent = images.length;
+    }
+
+    if (images.length === 0) {
+        container.classList.remove('has-images');
+        dropZone.classList.remove('hidden');
+        container.style.height = '480px';
+    } else {
+        container.classList.add('has-images');
+        dropZone.classList.add('hidden');
+    }
+}
+
+// 應用預覽視圖版面排版
 function applyImageLayout() {
     if (images.length === 0) return;
-    
-    let maxHeight = 0;
-    
-    console.log('应用布局，当前图层顺序:', images.map(img => img.id));
-    
-    // 使用 forEach 而不是 map，因为我们不需要返回值
-    images.forEach((img, index) => {
-        // 计算缩放比例
-        const scale = Math.min(
-            container.offsetWidth / img.originalWidth,
-            600 / img.originalHeight
-        ) * 0.8;
 
-        const width = img.originalWidth * scale;
-        const height = img.originalHeight * scale;
-        const offset = currentOffset * index;
+    const containerWidth = container.clientWidth || 860;
+    const visibleImages = images.filter(img => img.visible !== false);
 
-        img.scaledWidth = width;
-        img.scaledHeight = height;
-        
-        const bottomPosition = offset + height;
-        if (bottomPosition > maxHeight) {
-            maxHeight = bottomPosition;
-        }
-
-        // z-index 从最大值开始递减，确保排序正确
-        const zIndex = images.length - index;
-        
-        // 显示调试信息，检查是否正确应用
-        console.log(`应用样式 - 图层 ${index}:`, img.id, 'z-index:', zIndex, 'visible:', img.visible || true);
-        
-        // 直接设置样式，确保每个属性都被设置
-        img.element.style.width = `${width}px`;
-        img.element.style.height = `${height}px`;
-        img.element.style.top = `${offset}px`;
-        img.element.style.left = `${(container.offsetWidth - width) / 2}px`;
-        img.element.style.position = 'absolute';
-        img.element.style.zIndex = zIndex;
-        
-        // 应用可见性状态
-        if (img.visible === false) {
-            img.element.style.display = 'none';
-        } else {
-            img.element.style.display = 'block';
-        }
-    });
-    
-    // 设置容器高度
-    container.style.height = `${maxHeight + 50}px`;
-}
-
-// 下载功能
-async function handleDownload() {
-    if (images.length === 0) {
-        alert('沒有圖片可供下載');
+    if (visibleImages.length === 0) {
+        container.style.height = '480px';
         return;
     }
 
-    // 显示加载指示器
+    // 計算最大原始尺寸作為縮放基準
+    const maxNaturalWidth = Math.max(...visibleImages.map(img => img.originalWidth));
+    const maxNaturalHeight = Math.max(...visibleImages.map(img => img.originalHeight));
+
+    // 計算預覽縮放比例
+    const previewScale = Math.min(
+        (containerWidth - 40) / maxNaturalWidth,
+        500 / maxNaturalHeight
+    );
+
+    let maxBottom = 0;
+
+    // 僅針對可見圖層依序計算向下位移
+    visibleImages.forEach((img, visibleIdx) => {
+        const width = img.originalWidth * previewScale;
+        const height = img.originalHeight * previewScale;
+        const topOffset = currentOffset * visibleIdx;
+        const leftOffset = (containerWidth - width) / 2;
+
+        // z-index 讓第 1 個圖層在最上方，後續圖層依次在下方
+        const zIndex = 100 - visibleIdx;
+
+        img.element.style.width = `${width}px`;
+        img.element.style.height = `${height}px`;
+        img.element.style.top = `${topOffset}px`;
+        img.element.style.left = `${leftOffset}px`;
+        img.element.style.zIndex = zIndex;
+        img.element.style.display = 'block';
+
+        const bottom = topOffset + height;
+        if (bottom > maxBottom) {
+            maxBottom = bottom;
+        }
+    });
+
+    // 隱藏不可見圖層
+    images.filter(img => img.visible === false).forEach(img => {
+        img.element.style.display = 'none';
+    });
+
+    // 動態調整預覽容器高度
+    container.style.height = `${Math.max(480, maxBottom + 40)}px`;
+}
+
+// 高解析度無損下載功能
+async function handleDownload() {
+    const visibleImages = images.filter(img => img.visible !== false);
+
+    if (visibleImages.length === 0) {
+        alert('請先上傳圖片且至少保留一個可見圖層');
+        return;
+    }
+
+    // 顯示載入指示器
     const loadingMsg = document.createElement('div');
-    loadingMsg.textContent = '正在生成圖片...';
-    loadingMsg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.8);color:white;padding:20px;border-radius:10px;z-index:9999;';
+    loadingMsg.innerHTML = '<div style="font-size:24px;margin-bottom:8px;">⏳</div>正在進行原圖高畫質合成輸出...';
+    loadingMsg.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(18, 20, 26, 0.95);
+        border: 1px solid #374151;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        color: #f3f4f6;
+        padding: 24px 36px;
+        border-radius: 12px;
+        z-index: 99999;
+        text-align: center;
+        font-family: inherit;
+        font-size: 15px;
+    `;
     document.body.appendChild(loadingMsg);
 
     try {
-        // 筛选出可见的图片，保持原始顺序
-        const visibleImages = images.filter(img => img.visible !== false);
-        
-        if (visibleImages.length === 0) {
-            alert('沒有可見的圖片可供下載');
-            return;
-        }
+        // 確保所有圖片完成載入
+        await Promise.all(visibleImages.map(img => {
+            if (img.element.complete) return Promise.resolve();
+            return new Promise(resolve => {
+                img.element.onload = resolve;
+                img.element.onerror = resolve;
+            });
+        }));
 
-        // 创建画布
+        // 1. 計算原圖座標系下的基準尺寸
+        const maxNaturalWidth = Math.max(...visibleImages.map(img => img.originalWidth));
+        const maxNaturalHeight = Math.max(...visibleImages.map(img => img.originalHeight));
+
+        // 2. 獲取當前預覽縮放比例
+        const containerWidth = container.clientWidth || 860;
+        const previewScale = Math.min(
+            (containerWidth - 40) / maxNaturalWidth,
+            500 / maxNaturalHeight
+        );
+
+        // 3. 將網頁預覽的向下偏移量準確轉換為原圖自然座標系下的偏移量
+        const naturalStepOffset = currentOffset / previewScale;
+
+        // 4. 計算畫布所需完整長寬
+        let maxCanvasHeight = 0;
+        const renderList = visibleImages.map((img, visibleIdx) => {
+            const naturalTop = naturalStepOffset * visibleIdx;
+            const naturalLeft = (maxNaturalWidth - img.originalWidth) / 2;
+            const bottom = naturalTop + img.originalHeight;
+            if (bottom > maxCanvasHeight) {
+                maxCanvasHeight = bottom;
+            }
+
+            return {
+                element: img.element,
+                x: naturalLeft,
+                y: naturalTop,
+                width: img.originalWidth,
+                height: img.originalHeight,
+                visibleIdx: visibleIdx
+            };
+        });
+
         const canvas = document.createElement('canvas');
+        canvas.width = Math.round(maxNaturalWidth);
+        canvas.height = Math.round(maxCanvasHeight);
+
         const ctx = canvas.getContext('2d');
         
-        // 导出比例
-        const exportScale = 2;
-        
-        // 计算每个可见图片的信息
-        const imageDataList = [];
-        
-        // 重要：从0开始重新计算偏移量，忽略隐藏的图片
-        visibleImages.forEach((img, visibleIndex) => {
-            // 使用与预览完全相同的缩放逻辑
-            const scale = Math.min(
-                container.offsetWidth / img.originalWidth,
-                600 / img.originalHeight
-            ) * 0.8;
-            
-            // 计算预览尺寸
-            const width = img.originalWidth * scale;
-            const height = img.originalHeight * scale;
-            
-            // 关键修改：使用可见图片的索引计算偏移，而不是原始索引
-            const offset = currentOffset * visibleIndex;
-            
-            // 保存数据
-            imageDataList.push({
-                img: img,
-                originalIndex: images.indexOf(img), // 保留原始索引用于调试
-                visibleIndex: visibleIndex, // 在可见图片中的索引
-                previewWidth: width,
-                previewHeight: height,
-                previewOffset: offset,
-                bottom: offset + height  // 记录底部位置
-            });
-        });
-        
-        // 寻找最后一张图片（底部位置最低的图片）
-        const lastImage = imageDataList.reduce((prev, current) => {
-            return (current.bottom > prev.bottom) ? current : prev;
-        }, imageDataList[0]);
-        
-        // 使用第一张可见图片的宽度作为基准
-        const firstVisibleImg = visibleImages[0];
-        const firstImgScale = Math.min(
-            container.offsetWidth / firstVisibleImg.originalWidth,
-            600 / firstVisibleImg.originalHeight
-        ) * 0.8;
-        const firstImgWidth = firstVisibleImg.originalWidth * firstImgScale;
-        
-        // 设置画布尺寸
-        canvas.width = firstImgWidth * exportScale;
-        canvas.height = lastImage.bottom * exportScale;  // 精确匹配最低点
-        
-        console.log(`画布尺寸: ${canvas.width} x ${canvas.height}`);
-        console.log(`最底部图层：${lastImage.img.id}, 底部位置: ${lastImage.bottom}`);
-        console.log(`可见图片数量: ${visibleImages.length}, 总图片数量: ${images.length}`);
-        
-        // 确保所有图片加载完毕
-        await Promise.all(visibleImages.map(img =>
-            new Promise(resolve => {
-                if (img.element.complete) resolve();
-                else img.element.onload = resolve;
-            })
-        ));
+        // 開啟最高畫質圖片插值平滑處理
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
 
-        // 清除背景
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // 5. 依圖層順序由底至頂（由後向前）繪製
+        // 在陣列中 index 0 是最頂層，index N 是最底層
+        // 因此畫布繪製必須由 index N 畫到 index 0
+        const reversedRenderList = [...renderList].reverse();
 
-        // 按从底到顶的顺序绘制
-        imageDataList.slice().reverse().forEach(data => {
-            // 计算导出尺寸和位置
-            const exportWidth = data.previewWidth * exportScale;
-            const exportHeight = data.previewHeight * exportScale;
-            const exportOffset = data.previewOffset * exportScale;
-            const exportX = (canvas.width - exportWidth) / 2;
-            
-            console.log(`绘制图层 ${data.img.id}: 原始索引=${data.originalIndex}, 可见索引=${data.visibleIndex}`);
-            console.log(`位置(${exportX}, ${exportOffset}), 尺寸${exportWidth}x${exportHeight}`);
-            
-            // 绘制图片
+        reversedRenderList.forEach(item => {
             ctx.drawImage(
-                data.img.element,
-                exportX, exportOffset,
-                exportWidth, exportHeight
+                item.element,
+                Math.round(item.x),
+                Math.round(item.y),
+                Math.round(item.width),
+                Math.round(item.height)
             );
         });
 
-        // 生成下载链接
-        const link = document.createElement('a');
-        link.download = `疊圖-${Date.now()}.png`;
-        link.href = canvas.toDataURL('image/png', 1.0);
-        link.click();
-        
-    } catch (error) {
-        console.error('下載圖片時發生錯誤:', error);
-        console.error(error.stack);
-        alert('下載失敗，請重試');
+        // 6. 導出最高品質無損 PNG
+        canvas.toBlob((blob) => {
+            if (!blob) {
+                alert('圖片產生失敗，請重試');
+                return;
+            }
+
+            const downloadUrl = URL.createObjectURL(blob);
+            const downloadLink = document.createElement('a');
+            const timestamp = new Date().toISOString().slice(0, 19).replace(/[-:T]/g, '');
+            downloadLink.download = `疊圖合成_${timestamp}.png`;
+            downloadLink.href = downloadUrl;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+
+            setTimeout(() => URL.revokeObjectURL(downloadUrl), 2000);
+        }, 'image/png');
+
+    } catch (err) {
+        console.error('合成下載時發生錯誤:', err);
+        alert('下載失敗: ' + (err.message || err));
     } finally {
-        // 移除加载指示器
-        document.body.removeChild(loadingMsg);
+        if (loadingMsg && loadingMsg.parentNode) {
+            document.body.removeChild(loadingMsg);
+        }
     }
 }
 
-// 窗口大小调整处理
+// 視窗縮放處理
 function handleResize() {
     applyImageLayout();
 }
 
-// 添加窗口大小变化监听
-window.addEventListener('resize', debounce(handleResize, 250));
-
-// Debounce 函数，避免频繁调用
+// 防抖函數
 function debounce(func, wait) {
     let timeout;
     return function(...args) {
@@ -377,5 +520,6 @@ function debounce(func, wait) {
     };
 }
 
-// 初始化应用
+// DOM 載入後啟動
 document.addEventListener('DOMContentLoaded', initApp);
+
