@@ -7,26 +7,46 @@
     <link rel="stylesheet" href="css.css">
 </head>
 <body>
+    <div class="header-section">
+        <h1>疊圖工具</h1>
+        <p class="subtitle">支援多圖無損高清合成、圖層自由排序與向下等距偏移</p>
+    </div>
+
     <div class="file-input">
         <input type="file" id="file-input" multiple accept="image/*">
-        <label for="file-input">選擇圖片</label>
+        <label for="file-input">
+            <span class="upload-icon">📷</span>
+            <span>選擇圖片上傳 (可多選)</span>
+        </label>
     </div>
 
     <div id="controls">
         <div class="controls-container">
             <div class="slider-container">
                 <label for="offset-control">向下偏移：</label>
-                <input type="range" id="offset-control" min="0" max="150" value="0">
-                <span id="offset-value">0</span>
+                <input type="range" id="offset-control" min="0" max="300" value="0">
+                <span class="offset-badge"><span id="offset-value">0</span> px</span>
             </div>
-            <button id="download-btn" aria-label="下載合成圖片">下載</button>
+            <div class="btn-group">
+                <button id="clear-btn" class="btn btn-secondary" title="清空所有圖層">清空</button>
+                <button id="download-btn" class="btn btn-primary" title="下載最高畫質合成圖">下載圖片</button>
+            </div>
         </div>
     </div>
 
-    <div id="container" aria-label="圖片預覽區域"></div>
+    <div id="container" aria-label="圖片預覽區域">
+        <div id="drop-zone" class="drop-zone">
+            <div class="drop-icon">📁</div>
+            <p class="drop-title">拖曳圖片至此處，或點擊上方按鈕選取</p>
+            <p class="drop-desc">支援 PNG, JPG, WebP 等常見圖片格式</p>
+        </div>
+    </div>
     
     <div class="layers-panel">
-        <h3>圖層管理</h3>
+        <div class="layers-header">
+            <h3>圖層管理 (<span id="layer-count">0</span>)</h3>
+            <span class="layers-tip">可拖曳 ☰ 圖示調整圖層上下順序</span>
+        </div>
         <ul id="preview-list" aria-label="圖層列表"></ul>
     </div>
 
