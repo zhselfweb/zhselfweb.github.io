@@ -16,7 +16,7 @@
       --card-bg: #ffffff;
       --border: #e2e8f0;
       --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
-      --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
       --radius: 16px;
     }
 
@@ -34,19 +34,19 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 24px 16px;
+      padding: 40px 16px;
+      line-height: 1.5;
     }
 
     .container {
       width: 100%;
-      max-width: 680px;
+      max-width: 720px;
       margin: 0 auto;
     }
 
     .header {
       text-align: center;
-      margin-bottom: 28px;
+      margin-bottom: 32px;
     }
 
     .badge {
@@ -62,7 +62,7 @@
     }
 
     .header h1 {
-      font-size: 1.85rem;
+      font-size: 2rem;
       font-weight: 700;
       color: var(--text-main);
       margin-bottom: 8px;
@@ -71,6 +71,40 @@
     .header p {
       color: var(--text-muted);
       font-size: 0.95rem;
+      margin-bottom: 16px;
+    }
+
+    .header-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .btn-batch {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      border-radius: 9999px;
+      background: #f1f5f9;
+      color: #334155;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-batch:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .cards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
     }
 
     .card {
@@ -78,7 +112,7 @@
       border-radius: var(--radius);
       border: 1px solid var(--border);
       box-shadow: var(--shadow);
-      padding: 32px;
+      padding: 28px;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
@@ -89,15 +123,15 @@
     .file-header {
       display: flex;
       align-items: flex-start;
-      gap: 20px;
-      padding-bottom: 24px;
+      gap: 18px;
+      padding-bottom: 20px;
       border-bottom: 1px solid var(--border);
     }
 
     .file-icon {
       flex-shrink: 0;
-      width: 64px;
-      height: 64px;
+      width: 58px;
+      height: 58px;
       background: #fee2e2;
       border-radius: 12px;
       display: flex;
@@ -108,22 +142,41 @@
 
     .file-info {
       flex-grow: 1;
+      min-width: 0;
+    }
+
+    .file-title-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+
+    .file-unit-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      background: #e0e7ff;
+      color: #4338ca;
+      border-radius: 6px;
+      white-space: nowrap;
     }
 
     .file-name {
-      font-size: 1.25rem;
+      font-size: 1.15rem;
       font-weight: 600;
       color: var(--text-main);
       word-break: break-all;
-      margin-bottom: 6px;
     }
 
     .file-meta {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 14px;
       font-size: 0.85rem;
       color: var(--text-muted);
+      margin-top: 4px;
     }
 
     .meta-item {
@@ -132,24 +185,14 @@
       gap: 4px;
     }
 
-    .file-desc {
-      margin-top: 20px;
-      padding: 14px 16px;
-      background: #f1f5f9;
-      border-radius: 10px;
-      font-size: 0.9rem;
-      line-height: 1.6;
-      color: #334155;
-    }
-
     .actions {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      margin-top: 24px;
+      gap: 10px;
+      margin-top: 20px;
     }
 
-    @media (min-width: 520px) {
+    @media (min-width: 540px) {
       .actions {
         flex-direction: row;
       }
@@ -160,20 +203,21 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 12px 24px;
+      padding: 10px 18px;
       border-radius: 10px;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 600;
       text-decoration: none;
       transition: all 0.2s ease;
       cursor: pointer;
       border: none;
-      flex: 1;
+      white-space: nowrap;
     }
 
     .btn-primary {
       background-color: var(--primary);
       color: #ffffff;
+      flex: 1.2;
     }
 
     .btn-primary:hover {
@@ -184,6 +228,7 @@
       background-color: #f1f5f9;
       color: #334155;
       border: 1px solid var(--border);
+      flex: 1;
     }
 
     .btn-secondary:hover {
@@ -191,37 +236,52 @@
       color: #0f172a;
     }
 
+    .btn-ghost {
+      background-color: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+    }
+
+    .btn-ghost:hover {
+      background-color: #f1f5f9;
+      color: var(--text-main);
+    }
+
     .preview-section {
-      margin-top: 28px;
+      margin-top: 20px;
       border-top: 1px solid var(--border);
-      padding-top: 20px;
+      padding-top: 16px;
     }
 
     .preview-toggle-btn {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       color: var(--primary);
       background: none;
       border: none;
       cursor: pointer;
       font-weight: 500;
       padding: 4px 0;
+      transition: color 0.2s;
     }
 
     .preview-toggle-btn:hover {
+      color: var(--primary-hover);
       text-decoration: underline;
     }
 
     .preview-container {
-      margin-top: 16px;
+      margin-top: 14px;
       width: 100%;
       height: 480px;
       border-radius: 10px;
       overflow: hidden;
       border: 1px solid var(--border);
       display: none;
+      background: #ffffff;
     }
 
     .preview-container.active {
@@ -236,7 +296,7 @@
 
     .footer {
       text-align: center;
-      margin-top: 24px;
+      margin-top: 36px;
       color: var(--text-muted);
       font-size: 0.85rem;
     }
@@ -270,116 +330,297 @@
   <div class="container">
     <header class="header">
       <span class="badge">計概講義資料</span>
-      <h1>檔案下載</h1>
-
-    </header>
-
-    <main class="card">
-      <div class="file-header">
-        <div class="file-icon" aria-hidden="true">
-          <!-- PDF SVG Icon -->
-          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-            <polyline points="14 2 14 8 20 8"></polyline>
-            <line x1="16" y1="13" x2="8" y2="13"></line>
-            <line x1="16" y1="17" x2="8" y2="17"></line>
-            <polyline points="10 9 9 9 8 9"></polyline>
-          </svg>
-        </div>
-
-        <div class="file-info">
-          <h2 class="file-name" id="fileNameDisplay">2-Number Systems(2).pdf</h2>
-          <div class="file-meta">
-            <span class="meta-item">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
-                <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
-                <line x1="6" y1="6" x2="6.01" y2="6"></line>
-                <line x1="6" y1="18" x2="6.01" y2="18"></line>
-              </svg>
-              約 458 KB
-            </span>
-            <span class="meta-item">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
-              PDF 格式
-            </span>
-            <span class="meta-item">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-              </svg>
-              Unit 2 數字系統
-            </span>
-          </div>
-        </div>
-      </div>
-
-
-      <div class="actions">
-        <!-- 下載按鈕 -->
-        <a href="2-Number%20Systems(2).pdf" download="2-Number Systems(2).pdf" class="btn btn-primary" id="downloadBtn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      <h1>計算機概論 - 檔案下載</h1>
+      <div class="header-actions">
+        <button class="btn-batch" type="button" onclick="downloadAll()">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
             <polyline points="7 10 12 15 17 10"></polyline>
             <line x1="12" y1="15" x2="12" y2="3"></line>
           </svg>
-          立即下載檔案
-        </a>
-
-        <!-- 線上預覽按鈕 (另開新分頁) -->
-        <a href="2-Number%20Systems(2).pdf" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-            <polyline points="15 3 21 3 21 9"></polyline>
-            <line x1="10" y1="14" x2="21" y2="3"></line>
-          </svg>
-          新分頁開啟
-        </a>
-
-
-      </div>
-
-      <div class="preview-section">
-        <button class="preview-toggle-btn" type="button" onclick="togglePreview()">
-          <span id="previewToggleText">▼ 展開頁面內直接預覽</span>
+          一鍵下載全部檔案 (共 3 份)
         </button>
-        <div class="preview-container" id="previewContainer">
-          <iframe id="pdfFrame" src="" title="PDF Preview"></iframe>
-        </div>
       </div>
+    </header>
+
+    <main class="cards-list">
+
+      <!-- Unit 2 -->
+      <article class="card">
+        <div class="file-header">
+          <div class="file-icon" aria-hidden="true">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+          </div>
+
+          <div class="file-info">
+            <div class="file-title-row">
+              <span class="file-unit-tag">Unit 2</span>
+              <h2 class="file-name">2-Number Systems(2).pdf</h2>
+            </div>
+            <div class="file-meta">
+              <span class="meta-item">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                  <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                  <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                  <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                </svg>
+                約 458 KB
+              </span>
+              <span class="meta-item">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                PDF 格式
+              </span>
+              <span class="meta-item">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                </svg>
+                數字系統 (Number Systems)
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <a href="2-Number%20Systems(2).pdf" download="2-Number Systems(2).pdf" class="btn btn-primary">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            立即下載檔案
+          </a>
+
+          <a href="2-Number%20Systems(2).pdf" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+            新分頁開啟
+          </a>
+
+
+        </div>
+
+        <div class="preview-section">
+          <button class="preview-toggle-btn" type="button" aria-expanded="false"
+            onclick="togglePreview(this, '2-Number%20Systems(2).pdf')">
+            <span class="preview-toggle-text">▼ 展開頁面內直接預覽</span>
+          </button>
+          <div class="preview-container">
+            <iframe class="pdf-frame" src="" title="PDF Preview - Unit 2"></iframe>
+          </div>
+        </div>
+      </article>
+
+      <!-- Unit 3 -->
+      <article class="card">
+        <div class="file-header">
+          <div class="file-icon" aria-hidden="true">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+          </div>
+
+          <div class="file-info">
+            <div class="file-title-row">
+              <span class="file-unit-tag">Unit 3</span>
+              <h2 class="file-name">3-Gates and Circuits(2).pdf</h2>
+            </div>
+            <div class="file-meta">
+              <span class="meta-item">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                  <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                  <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                  <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                </svg>
+                約 466 KB
+              </span>
+              <span class="meta-item">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                PDF 格式
+              </span>
+              <span class="meta-item">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                </svg>
+                閘與電路 (Gates and Circuits)
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <a href="3-Gates%20and%20Circuits(2).pdf" download="3-Gates and Circuits(2).pdf" class="btn btn-primary">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            立即下載檔案
+          </a>
+
+          <a href="3-Gates%20and%20Circuits(2).pdf" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+            新分頁開啟
+          </a>
+
+
+        </div>
+
+        <div class="preview-section">
+          <button class="preview-toggle-btn" type="button" aria-expanded="false"
+            onclick="togglePreview(this, '3-Gates%20and%20Circuits(2).pdf')">
+            <span class="preview-toggle-text">▼ 展開頁面內直接預覽</span>
+          </button>
+          <div class="preview-container">
+            <iframe class="pdf-frame" src="" title="PDF Preview - Unit 3"></iframe>
+          </div>
+        </div>
+      </article>
+
+      <!-- Unit 4 -->
+      <article class="card">
+        <div class="file-header">
+          <div class="file-icon" aria-hidden="true">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+          </div>
+
+          <div class="file-info">
+            <div class="file-title-row">
+              <span class="file-unit-tag">Unit 4</span>
+              <h2 class="file-name">4-Data Manipulation(2).pdf</h2>
+            </div>
+            <div class="file-meta">
+              <span class="meta-item">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                  <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                  <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                  <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                </svg>
+                約 1.08 MB
+              </span>
+              <span class="meta-item">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                PDF 格式
+              </span>
+              <span class="meta-item">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                </svg>
+                資料處理與運算 (Data Manipulation)
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <a href="4-Data%20Manipulation(2).pdf" download="4-Data Manipulation(2).pdf" class="btn btn-primary">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            立即下載檔案
+          </a>
+
+          <a href="4-Data%20Manipulation(2).pdf" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+            新分頁開啟
+          </a>
+
+
+        </div>
+      </article>
+
     </main>
 
-    <footer class="footer">
-      <p>若下載遇到問題，請嘗試右鍵「另存連結為...」</p>
-    </footer>
   </div>
 
   <div id="toast" class="toast">已複製下載連結至剪貼簿！</div>
 
   <script>
-    const fileUrl = new URL('2-Number%20Systems(2).pdf', window.location.href).href;
+    function copyFileLink(fileRelUrl) {
+      const fullUrl = new URL(fileRelUrl, window.location.href).href;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(fullUrl).then(() => {
+          showToast('已複製下載連結至剪貼簿！');
+        }).catch(() => fallbackCopy(fullUrl));
+      } else {
+        fallbackCopy(fullUrl);
+      }
+    }
 
-    function copyFileLink() {
-      navigator.clipboard.writeText(fileUrl).then(() => {
-        showToast('已複製下載連結至剪貼簿！');
-      }).catch(() => {
-        // Fallback
-        const textarea = document.createElement('textarea');
-        textarea.value = fileUrl;
-        document.body.appendChild(textarea);
-        textarea.select();
+    function fallbackCopy(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.opacity = '0';
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+      try {
         document.execCommand('copy');
-        document.body.removeChild(textarea);
         showToast('已複製下載連結至剪貼簿！');
-      });
+      } catch (err) {
+        showToast('複製失敗，請手動複製連結');
+      }
+      document.body.removeChild(textarea);
     }
 
     function showToast(msg) {
@@ -391,21 +632,44 @@
       }, 2500);
     }
 
-    function togglePreview() {
-      const container = document.getElementById('previewContainer');
-      const text = document.getElementById('previewToggleText');
-      const frame = document.getElementById('pdfFrame');
+    function togglePreview(btn, fileUrl) {
+      const card = btn.closest('.card');
+      const container = card.querySelector('.preview-container');
+      const text = btn.querySelector('.preview-toggle-text');
+      const frame = card.querySelector('.pdf-frame');
 
       if (container.classList.contains('active')) {
         container.classList.remove('active');
         text.textContent = '▼ 展開頁面內直接預覽';
+        btn.setAttribute('aria-expanded', 'false');
       } else {
         if (!frame.src || frame.src === '' || frame.src === window.location.href) {
-          frame.src = '2-Number%20Systems(2).pdf';
+          frame.src = fileUrl;
         }
         container.classList.add('active');
         text.textContent = '▲ 收起頁面內預覽';
+        btn.setAttribute('aria-expanded', 'true');
       }
+    }
+
+    function downloadAll() {
+      const files = [
+        { url: '2-Number%20Systems(2).pdf', name: '2-Number Systems(2).pdf' },
+        { url: '3-Gates%20and%20Circuits(2).pdf', name: '3-Gates and Circuits(2).pdf' },
+        { url: '4-Data%20Manipulation(2).pdf', name: '4-Data Manipulation(2).pdf' }
+      ];
+
+      showToast('正在開始批次下載檔案...');
+      files.forEach((file, index) => {
+        setTimeout(() => {
+          const a = document.createElement('a');
+          a.href = file.url;
+          a.download = file.name;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }, index * 400);
+      });
     }
   </script>
 </body>
